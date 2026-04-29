@@ -1,0 +1,5 @@
+Modelo,Precisión,Sensibilidad,F1-Score,AUC-ROC,MAE,Disp. Proyectada,VP,FP,VN,FN
+Preventivo tradicional (línea base),0.1095,0.1938,0.1400,0.5038,0.2177,0.8383,31,252,1338,129
+Regresión Logística,0.0929,1.0000,0.1700,0.5254,0.4888,0.0160,160,1562,28,0
+Random Forest,0.0966,0.7750,0.1717,0.5531,0.4165,0.2663,124,1160,430,36
+Gradient Boosting,0.0995,0.5500,0.1686,0.5436,0.3578,0.4949,88,796,794,72

@@ -1,0 +1,15 @@
+variable,importancia,importancia_pct
+servicios_en_w,0.19293411046667971,19.29
+km_en_w,0.16921782696326093,16.92
+dias_desde_ultima_interv,0.11309588376525931,11.31
+disponibilidad_w,0.09898437992139715,9.9
+downtime_total_dias_w,0.09072397711628884,9.07
+downtime_promedio_dias_w,0.08281940135272362,8.28
+n_eventos_equipamiento_w,0.05369392703732034,5.37
+n_total_mant_w,0.04932930918776074,4.93
+n_eventos_vehicular_w,0.03623202401406361,3.62
+n_eventos_electrico_w,0.03475609695167752,3.48
+n_pm_w,0.03048608790822341,3.05
+n_episodios_downtime_w,0.023492680447048872,2.35
+n_cm_w,0.021216621502852025,2.12
+equipamiento_funcional,0.0030176733654440797,0.3

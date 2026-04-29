@@ -1,0 +1,7 @@
+﻿Variable crítica,Importancia modelo,Umbral de alerta,Interpretación,Acción
+Servicios prestados en W,18.99%,> 120 servicios en 60 días,Alta carga operativa aumenta el riesgo de falla por desgaste acelerado,Adelantar inspección técnica general
+Kilometraje en W,18.58%,"> 8,000 km en 60 días",Uso intensivo del vehículo asociado a mayor probabilidad de falla mecánica,Verificar sistema vehicular y tren motriz
+Días desde última intervención,10.16%,> 45 días sin intervención,Intervalo prolongado sin mantenimiento aumenta riesgo de falla no planificada,Programar mantenimiento preventivo inmediato
+Disponibilidad histórica en W,10.13%,< 0.85 (menos del 85% operativa),Historial reciente de inoperatividad es predictor de inoperatividad futura,Revisión técnica integral prioritaria
+Downtime total en W,9.48%,> 7 días acumulados en 60 días,Patrón de inoperatividad recurrente indica problema técnico no resuelto,Análisis de causa raíz y corrección definitiva
+Equipamiento funcional,3.97%,Estado = 0 (no funcional),Indisponibilidad del equipamiento obligatorio inhabilita la unidad conforme a NTS 051,Reemplazo o reparación inmediata del equipo

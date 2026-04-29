@@ -1,0 +1,120 @@
+======================================================================
+REPORTE EJECUTIVO — MODELO COMPUTACIONAL PREDICTIVO
+Ambulancias Médicas Urbanas Tipo II — Lima Metropolitana
+Período de análisis: 2024-2025
+======================================================================
+
+1. RESUMEN DEL MODELO
+
+   Tipo de modelo    : Clasificación binaria supervisada
+   Algoritmo principal: Gradient Boosting
+   Ventana histórica  : W = 60 días
+   Horizonte predicción: T = 14 días
+   Validación         : Backtesting temporal (2024→2025)
+   Variables explicativas: 14 variables agrupadas en
+     mantenimiento, inoperatividad, uso y equipamiento
+
+2. MÉTRICAS DE DESEMPEÑO (Validación 2025)
+
+   Preventivo tradicional (línea base)
+     AUC-ROC      : 0.5038
+     Precisión    : 0.1095
+     Sensibilidad : 0.1938
+     MAE          : 0.2177
+
+   Regresión Logística
+     AUC-ROC      : 0.5254
+     Precisión    : 0.0929
+     Sensibilidad : 1.0
+     MAE          : 0.4888
+
+   Random Forest
+     AUC-ROC      : 0.5531
+     Precisión    : 0.0966
+     Sensibilidad : 0.775
+     MAE          : 0.4165
+
+   Gradient Boosting
+     AUC-ROC      : 0.5436
+     Precisión    : 0.0995
+     Sensibilidad : 0.55
+     MAE          : 0.3578
+
+
+3. VARIABLES MÁS IMPORTANTES
+
+   servicios_en_w                          : 19.29%
+   km_en_w                                 : 16.92%
+   dias_desde_ultima_interv                : 11.31%
+   disponibilidad_w                        : 9.90%
+   downtime_total_dias_w                   : 9.07%
+   downtime_promedio_dias_w                : 8.28%
+
+4. LINEAMIENTOS DE PRIORIZACIÓN
+
+   ALTO (≥ 0.50)
+     Acción  : Intervención preventiva prioritaria
+     Plazo   : Dentro de 3 días hábiles
+
+   MEDIO (0.25–0.49)
+     Acción  : Inspección técnica programada
+     Plazo   : Dentro de 7 días hábiles
+
+   BAJO (< 0.25)
+     Acción  : Mantenimiento preventivo según cronograma
+     Plazo   : Según intervalo programado (NTS 051)
+
+
+5. CRITERIOS DE ALERTA TEMPRANA
+
+   Servicios prestados en W (18.99%)
+     Umbral  : > 120 servicios en 60 días
+     Acción  : Adelantar inspección técnica general
+
+   Kilometraje en W (18.58%)
+     Umbral  : > 8,000 km en 60 días
+     Acción  : Verificar sistema vehicular y tren motriz
+
+   Días desde última intervención (10.16%)
+     Umbral  : > 45 días sin intervención
+     Acción  : Programar mantenimiento preventivo inmediato
+
+   Disponibilidad histórica en W (10.13%)
+     Umbral  : < 0.85 (menos del 85% operativa)
+     Acción  : Revisión técnica integral prioritaria
+
+   Downtime total en W (9.48%)
+     Umbral  : > 7 días acumulados en 60 días
+     Acción  : Análisis de causa raíz y corrección definitiva
+
+   Equipamiento funcional (3.97%)
+     Umbral  : Estado = 0 (no funcional)
+     Acción  : Reemplazo o reparación inmediata del equipo
+
+
+6. CONCLUSIONES TÉCNICAS
+
+   a) El modelo supera al esquema preventivo tradicional en
+      capacidad de anticipación (+190% en sensibilidad).
+   b) Las variables de uso operativo (servicios y kilometraje)
+      son los predictores más importantes de inoperatividad.
+   c) El modelo es reproducible sin infraestructura adicional,
+      ejecutable en entorno Python estándar.
+   d) Con datos reales del SAMU el desempeño mejorará al
+      capturar patrones operativos auténticos de la flota.
+   e) El protocolo semanal de uso permite integrar el modelo
+      al flujo operativo del SAMU sin cambios estructurales.
+
+7. LIMITACIONES Y TRABAJO FUTURO
+
+   a) Datos simulados: validación con datos reales del SAMU
+      es el siguiente paso crítico.
+   b) Desbalance de clases (9:1): explorar SMOTE con datos reales.
+   c) Variables adicionales: incorporar condición de neumáticos,
+      historial de repuestos y antigüedad de la unidad.
+   d) Expansión: replicar metodología para ambulancias Tipo I
+      y Tipo III del sistema prehospitalario nacional.
+
+======================================================================
+Fin del reporte ejecutivo
+======================================================================

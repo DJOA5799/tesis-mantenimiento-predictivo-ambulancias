@@ -1,0 +1,8 @@
+﻿Área,Recomendación,Prioridad,Fundamento
+Estandarización de registros,Adoptar una codificación uniforme para subsistemas y tipos de falla en todos los formularios de mantenimiento.,Alta,ISO 17359:2018 — trazabilidad de datos
+Trazabilidad temporal,Registrar con precisión las fechas y horas de inicio y fin de cada evento de mantenimiento e inoperatividad.,Alta,Prytz (2014) — calidad de datos históricos
+Identificadores únicos,Asignar y mantener un identificador único por ambulancia que se use consistentemente en todos los sistemas de registro.,Alta,Requisito para construcción del dataset
+Registro de uso operativo,Registrar el kilometraje y número de servicios por ambulancia con periodicidad al menos mensual.,Media,Variables de mayor importancia en el modelo
+Calidad de datos,"Implementar reglas de validación básicas: fecha_fin ≥ fecha_inicio, identificadores no nulos, duraciones positivas.",Media,Taoufyq et al. (2025) — gobernanza de datos
+Actualización del modelo,Reentrenar el modelo con datos reales cada 6 meses para mantener su vigencia y mejorar su capacidad predictiva.,Media,Si et al. (2011) — modelos adaptativos
+Infraestructura tecnológica,"El modelo puede ejecutarse en cualquier computadora con Python instalado, sin requerir servidores especializados ni infraestructura adicional.",Informativa,Viabilidad declarada en perfil de proyecto

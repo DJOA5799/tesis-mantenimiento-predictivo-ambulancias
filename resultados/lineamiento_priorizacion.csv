@@ -1,0 +1,4 @@
+﻿Nivel de riesgo,Acción recomendada,Plazo sugerido,Responsable,Fundamento,Subsistema prioritario
+ALTO (≥ 0.50),Intervención preventiva prioritaria,Dentro de 3 días hábiles,Técnico de mantenimiento asignado,Probabilidad estimada de inoperatividad ≥ 50% en 14 días,Verificar subsistema con mayor historial de fallas
+MEDIO (0.25–0.49),Inspección técnica programada,Dentro de 7 días hábiles,Técnico de mantenimiento,Probabilidad estimada entre 25% y 49% en 14 días,Revisión general con énfasis en subsistema eléctrico
+BAJO (< 0.25),Mantenimiento preventivo según cronograma,Según intervalo programado (NTS 051),Equipo de mantenimiento,Probabilidad estimada < 25% en 14 días,Seguimiento rutinario del plan preventivo

@@ -1,0 +1,844 @@
+id_ambulancia,fecha_inicio,fecha_fin,tipo_mantenimiento,subsistema,deriva_inoperatividad,duracion_dias,observaciones
+AMB-T2-001,2024-01-03,2024-01-04,preventivo,vehicular,False,1.3,Inspección del sistema de refrigeración
+AMB-T2-001,2024-02-08,2024-02-09,preventivo,vehicular,False,1.5,Revisión de frenos y suspensión
+AMB-T2-001,2024-03-07,2024-03-08,preventivo,vehicular,False,1.0,Rotación y balanceo de neumáticos
+AMB-T2-001,2024-03-22,2024-03-25,correctivo,electrico,True,3.0,Reparación del sistema de iluminación de emergencia
+AMB-T2-001,2024-04-04,2024-04-05,preventivo,electrico,False,1.0,Revisión del sistema eléctrico de cabina
+AMB-T2-001,2024-05-06,2024-05-08,preventivo,vehicular,False,1.6,Inspección del sistema de refrigeración
+AMB-T2-001,2024-05-14,2024-05-19,correctivo,electrico,True,4.7,Reemplazo de fusibles del sistema eléctrico
+AMB-T2-001,2024-05-28,2024-05-29,preventivo,equipamiento,False,1.3,Revisión del oxímetro de pulso portátil
+AMB-T2-001,2024-06-29,2024-06-30,preventivo,electrico,False,1.1,Verificación de conexiones eléctricas
+AMB-T2-001,2024-07-22,2024-07-22,preventivo,vehicular,False,0.6,Revisión general del motor
+AMB-T2-001,2024-08-19,2024-08-21,preventivo,vehicular,False,1.4,Revisión general del motor
+AMB-T2-001,2024-09-13,2024-09-14,preventivo,vehicular,False,1.4,Inspección del sistema de refrigeración
+AMB-T2-001,2024-10-16,2024-10-17,preventivo,electrico,False,1.5,Mantenimiento del sistema de iluminación
+AMB-T2-001,2024-11-05,2024-11-07,preventivo,vehicular,False,1.6,Revisión general del motor
+AMB-T2-001,2024-12-08,2024-12-09,preventivo,vehicular,False,1.3,Revisión general del motor
+AMB-T2-001,2024-12-13,2024-12-15,correctivo,electrico,True,2.8,Reparación del inversor de corriente de cabina
+AMB-T2-001,2025-01-12,2025-01-13,preventivo,vehicular,False,0.6,Cambio de aceite y filtros
+AMB-T2-001,2025-02-08,2025-02-09,preventivo,vehicular,False,1.1,Revisión general del motor
+AMB-T2-001,2025-03-10,2025-03-11,preventivo,vehicular,False,1.3,Inspección del sistema de refrigeración
+AMB-T2-001,2025-04-10,2025-04-12,preventivo,equipamiento,False,1.4,Revisión del oxímetro de pulso portátil
+AMB-T2-001,2025-05-14,2025-05-16,preventivo,vehicular,False,1.6,Revisión de frenos y suspensión
+AMB-T2-001,2025-06-10,2025-06-11,preventivo,vehicular,False,1.1,Inspección del sistema de refrigeración
+AMB-T2-001,2025-07-11,2025-07-11,preventivo,electrico,False,0.5,Revisión del sistema eléctrico de cabina
+AMB-T2-001,2025-08-09,2025-08-10,preventivo,vehicular,False,0.9,Cambio de aceite y filtros
+AMB-T2-001,2025-09-04,2025-09-05,preventivo,vehicular,False,0.9,Revisión de frenos y suspensión
+AMB-T2-001,2025-09-28,2025-09-29,preventivo,vehicular,False,1.2,Revisión general del motor
+AMB-T2-001,2025-10-28,2025-10-29,preventivo,electrico,False,1.3,Mantenimiento del sistema de iluminación
+AMB-T2-001,2025-11-01,2025-11-06,correctivo,vehicular,True,5.2,Reparación de fuga en sistema de frenos
+AMB-T2-001,2025-11-21,2025-11-23,preventivo,electrico,False,1.8,Mantenimiento del sistema de iluminación
+AMB-T2-001,2025-12-22,2025-12-23,preventivo,vehicular,False,1.4,Inspección del sistema de refrigeración
+AMB-T2-002,2024-01-03,2024-01-03,preventivo,electrico,False,1.0,Verificación de conexiones eléctricas
+AMB-T2-002,2024-02-10,2024-02-11,preventivo,electrico,False,1.4,Revisión del sistema eléctrico de cabina
+AMB-T2-002,2024-03-13,2024-03-14,preventivo,electrico,False,1.3,Mantenimiento del sistema de iluminación
+AMB-T2-002,2024-04-08,2024-04-09,preventivo,electrico,False,1.3,Revisión del sistema de carga de equipos
+AMB-T2-002,2024-05-17,2024-05-19,preventivo,equipamiento,False,1.2,Calibración de equipos de monitorización
+AMB-T2-002,2024-06-22,2024-06-24,preventivo,vehicular,False,1.7,Inspección del sistema de refrigeración
+AMB-T2-002,2024-07-21,2024-07-22,preventivo,vehicular,False,1.5,Cambio de aceite y filtros
+AMB-T2-002,2024-08-31,2024-09-02,preventivo,vehicular,False,1.3,Inspección del sistema de refrigeración
+AMB-T2-002,2024-09-27,2024-09-28,preventivo,vehicular,False,0.8,Revisión general del motor
+AMB-T2-002,2024-11-03,2024-11-05,preventivo,vehicular,False,1.5,Cambio de aceite y filtros
+AMB-T2-002,2024-12-11,2024-12-12,preventivo,vehicular,False,0.7,Revisión general del motor
+AMB-T2-002,2025-01-17,2025-01-17,preventivo,equipamiento,False,0.5,Verificación funcional del monitor desfibrilador
+AMB-T2-002,2025-02-14,2025-02-16,preventivo,vehicular,False,1.5,Inspección del sistema de refrigeración
+AMB-T2-002,2025-03-15,2025-03-15,preventivo,electrico,False,0.5,Mantenimiento del sistema de iluminación
+AMB-T2-002,2025-04-16,2025-04-17,preventivo,vehicular,False,1.2,Revisión general del motor
+AMB-T2-002,2025-05-22,2025-05-24,preventivo,equipamiento,False,1.1,Calibración de equipos de monitorización
+AMB-T2-002,2025-06-22,2025-06-23,preventivo,vehicular,False,1.3,Revisión de frenos y suspensión
+AMB-T2-002,2025-07-10,2025-07-11,correctivo,electrico,False,1.3,Reemplazo de fusibles del sistema eléctrico
+AMB-T2-002,2025-07-21,2025-07-21,preventivo,vehicular,False,0.8,Cambio de aceite y filtros
+AMB-T2-002,2025-08-25,2025-08-27,preventivo,vehicular,False,1.9,Revisión de frenos y suspensión
+AMB-T2-002,2025-09-29,2025-10-02,preventivo,electrico,False,2.7,Revisión del sistema eléctrico de cabina
+AMB-T2-002,2025-10-30,2025-10-31,preventivo,equipamiento,False,1.1,Inspección del equipamiento básico
+AMB-T2-002,2025-12-02,2025-12-03,preventivo,vehicular,False,0.9,Cambio de aceite y filtros
+AMB-T2-003,2024-01-15,2024-01-16,preventivo,vehicular,False,1.2,Revisión general del motor
+AMB-T2-003,2024-02-20,2024-02-22,preventivo,equipamiento,False,1.7,Calibración de equipos de monitorización
+AMB-T2-003,2024-04-01,2024-04-03,preventivo,vehicular,False,1.7,Revisión general del motor
+AMB-T2-003,2024-04-20,2024-04-24,correctivo,electrico,True,3.8,Corrección de falla en sistema de carga
+AMB-T2-003,2024-05-08,2024-05-10,preventivo,vehicular,False,1.5,Cambio de aceite y filtros
+AMB-T2-003,2024-06-11,2024-06-12,preventivo,vehicular,False,1.1,Cambio de aceite y filtros
+AMB-T2-003,2024-07-25,2024-07-27,preventivo,electrico,False,1.9,Verificación de conexiones eléctricas
+AMB-T2-003,2024-08-30,2024-08-31,preventivo,vehicular,False,1.3,Revisión general del motor
+AMB-T2-003,2024-10-13,2024-10-14,preventivo,vehicular,False,1.5,Revisión de frenos y suspensión
+AMB-T2-003,2024-11-21,2024-11-23,preventivo,vehicular,False,1.6,Revisión general del motor
+AMB-T2-003,2025-01-09,2025-01-11,preventivo,vehicular,False,1.7,Revisión de frenos y suspensión
+AMB-T2-003,2025-02-26,2025-02-27,preventivo,electrico,False,1.2,Revisión del sistema de carga de equipos
+AMB-T2-003,2025-04-10,2025-04-12,preventivo,electrico,False,1.6,Revisión del sistema de carga de equipos
+AMB-T2-003,2025-05-19,2025-05-21,preventivo,vehicular,False,2.0,Revisión general del motor
+AMB-T2-003,2025-07-02,2025-07-04,preventivo,vehicular,False,1.6,Revisión general del motor
+AMB-T2-003,2025-08-15,2025-08-16,preventivo,vehicular,False,1.0,Revisión general del motor
+AMB-T2-003,2025-09-22,2025-09-23,preventivo,electrico,False,1.1,Revisión del sistema eléctrico de cabina
+AMB-T2-003,2025-10-17,2025-10-19,correctivo,electrico,False,1.8,Corrección de falla en sistema de carga
+AMB-T2-003,2025-10-31,2025-11-01,preventivo,electrico,False,1.0,Revisión del sistema eléctrico de cabina
+AMB-T2-003,2025-12-14,2025-12-16,preventivo,vehicular,False,1.8,Cambio de aceite y filtros
+AMB-T2-004,2024-01-09,2024-01-11,preventivo,vehicular,False,2.5,Inspección del sistema de refrigeración
+AMB-T2-004,2024-02-10,2024-02-11,preventivo,equipamiento,False,1.6,Inspección del equipamiento básico
+AMB-T2-004,2024-02-26,2024-02-27,correctivo,vehicular,False,1.6,Cambio de correa de distribución
+AMB-T2-004,2024-03-09,2024-03-10,preventivo,equipamiento,False,1.1,Verificación funcional del monitor desfibrilador
+AMB-T2-004,2024-04-14,2024-04-14,preventivo,vehicular,False,0.5,Revisión general del motor
+AMB-T2-004,2024-05-27,2024-05-28,preventivo,vehicular,False,1.4,Rotación y balanceo de neumáticos
+AMB-T2-004,2024-06-28,2024-06-28,preventivo,equipamiento,False,0.6,Verificación funcional del monitor desfibrilador
+AMB-T2-004,2024-07-30,2024-08-01,preventivo,electrico,False,1.7,Verificación de conexiones eléctricas
+AMB-T2-004,2024-08-05,2024-08-07,correctivo,electrico,True,2.2,Corrección de falla en sistema de carga
+AMB-T2-004,2024-08-23,2024-08-25,preventivo,equipamiento,False,1.8,Inspección del equipamiento básico
+AMB-T2-004,2024-09-24,2024-09-24,preventivo,electrico,False,0.6,Revisión del sistema de carga de equipos
+AMB-T2-004,2024-10-30,2024-10-31,preventivo,electrico,False,0.9,Revisión del sistema eléctrico de cabina
+AMB-T2-004,2024-11-30,2024-12-01,preventivo,vehicular,False,0.5,Cambio de aceite y filtros
+AMB-T2-004,2025-01-04,2025-01-06,preventivo,equipamiento,False,1.6,Verificación funcional del monitor desfibrilador
+AMB-T2-004,2025-02-05,2025-02-07,preventivo,vehicular,False,1.3,Cambio de aceite y filtros
+AMB-T2-004,2025-03-22,2025-03-23,preventivo,electrico,False,0.9,Revisión del sistema de carga de equipos
+AMB-T2-004,2025-04-25,2025-04-26,preventivo,vehicular,False,1.0,Revisión general del motor
+AMB-T2-004,2025-05-29,2025-05-29,preventivo,vehicular,False,0.7,Revisión de frenos y suspensión
+AMB-T2-004,2025-06-25,2025-06-26,preventivo,vehicular,False,0.9,Cambio de aceite y filtros
+AMB-T2-004,2025-08-07,2025-08-08,preventivo,vehicular,False,0.6,Revisión general del motor
+AMB-T2-004,2025-08-25,2025-08-29,correctivo,vehicular,True,3.7,Cambio de batería vehicular
+AMB-T2-004,2025-09-12,2025-09-13,preventivo,electrico,False,1.1,Mantenimiento del sistema de iluminación
+AMB-T2-004,2025-10-10,2025-10-11,preventivo,equipamiento,False,1.3,Inspección del equipamiento básico
+AMB-T2-004,2025-11-08,2025-11-09,preventivo,electrico,False,0.9,Revisión del sistema eléctrico de cabina
+AMB-T2-004,2025-12-13,2025-12-14,preventivo,vehicular,False,1.2,Revisión general del motor
+AMB-T2-005,2024-01-09,2024-01-09,preventivo,vehicular,False,0.9,Inspección del sistema de refrigeración
+AMB-T2-005,2024-02-05,2024-02-06,preventivo,electrico,False,1.1,Mantenimiento del sistema de iluminación
+AMB-T2-005,2024-03-04,2024-03-05,preventivo,vehicular,False,0.9,Inspección del sistema de refrigeración
+AMB-T2-005,2024-03-31,2024-04-02,preventivo,electrico,False,1.7,Mantenimiento del sistema de iluminación
+AMB-T2-005,2024-04-24,2024-04-26,preventivo,vehicular,False,2.2,Revisión general del motor
+AMB-T2-005,2024-05-15,2024-05-16,preventivo,vehicular,False,1.5,Rotación y balanceo de neumáticos
+AMB-T2-005,2024-06-02,2024-06-06,correctivo,vehicular,True,3.9,Reparación de fuga en sistema de frenos
+AMB-T2-005,2024-06-10,2024-06-11,preventivo,electrico,False,1.9,Verificación de conexiones eléctricas
+AMB-T2-005,2024-06-29,2024-06-30,preventivo,electrico,False,1.7,Revisión del sistema eléctrico de cabina
+AMB-T2-005,2024-07-24,2024-07-25,preventivo,vehicular,False,1.2,Revisión general del motor
+AMB-T2-005,2024-08-21,2024-08-23,preventivo,electrico,False,1.4,Verificación de conexiones eléctricas
+AMB-T2-005,2024-09-06,2024-09-08,preventivo,vehicular,False,1.3,Rotación y balanceo de neumáticos
+AMB-T2-005,2024-09-28,2024-09-30,preventivo,equipamiento,False,2.0,Revisión del oxímetro de pulso portátil
+AMB-T2-005,2024-10-22,2024-10-23,preventivo,vehicular,False,1.0,Revisión de frenos y suspensión
+AMB-T2-005,2024-11-23,2024-11-24,preventivo,vehicular,False,1.2,Revisión de frenos y suspensión
+AMB-T2-005,2024-12-06,2024-12-07,correctivo,vehicular,True,1.6,Reparación de fuga en sistema de frenos
+AMB-T2-005,2024-12-20,2024-12-22,preventivo,vehicular,False,2.0,Revisión general del motor
+AMB-T2-005,2025-01-16,2025-01-17,preventivo,vehicular,False,1.2,Revisión de frenos y suspensión
+AMB-T2-005,2025-02-20,2025-02-21,preventivo,vehicular,False,1.3,Inspección del sistema de refrigeración
+AMB-T2-005,2025-03-21,2025-03-22,preventivo,vehicular,False,1.3,Rotación y balanceo de neumáticos
+AMB-T2-005,2025-04-24,2025-04-24,preventivo,vehicular,False,0.5,Cambio de aceite y filtros
+AMB-T2-005,2025-05-21,2025-05-22,preventivo,equipamiento,False,0.7,Revisión del oxímetro de pulso portátil
+AMB-T2-005,2025-06-25,2025-06-26,preventivo,electrico,False,1.6,Revisión del sistema eléctrico de cabina
+AMB-T2-005,2025-07-29,2025-07-30,preventivo,electrico,False,1.4,Revisión del sistema de carga de equipos
+AMB-T2-005,2025-08-22,2025-08-23,preventivo,vehicular,False,0.9,Revisión de frenos y suspensión
+AMB-T2-005,2025-09-17,2025-09-18,preventivo,vehicular,False,0.5,Cambio de aceite y filtros
+AMB-T2-005,2025-10-10,2025-10-11,preventivo,vehicular,False,1.0,Cambio de aceite y filtros
+AMB-T2-005,2025-10-25,2025-10-27,preventivo,equipamiento,False,1.5,Inspección del equipamiento básico
+AMB-T2-005,2025-11-05,2025-11-07,correctivo,equipamiento,True,2.1,Reemplazo de componente de equipamiento básico
+AMB-T2-005,2025-11-24,2025-11-26,preventivo,electrico,False,1.3,Mantenimiento del sistema de iluminación
+AMB-T2-005,2025-12-29,2025-12-30,preventivo,electrico,False,1.0,Verificación de conexiones eléctricas
+AMB-T2-006,2024-01-14,2024-01-15,preventivo,vehicular,False,1.3,Revisión general del motor
+AMB-T2-006,2024-03-04,2024-03-06,preventivo,electrico,False,1.4,Mantenimiento del sistema de iluminación
+AMB-T2-006,2024-04-22,2024-04-24,preventivo,electrico,False,1.5,Revisión del sistema eléctrico de cabina
+AMB-T2-006,2024-06-25,2024-06-26,preventivo,electrico,False,1.0,Verificación de conexiones eléctricas
+AMB-T2-006,2024-08-08,2024-08-10,correctivo,vehicular,False,2.2,Cambio de correa de distribución
+AMB-T2-006,2024-08-09,2024-08-11,preventivo,equipamiento,False,1.3,Revisión del oxímetro de pulso portátil
+AMB-T2-006,2024-09-15,2024-09-18,correctivo,electrico,True,2.3,Reemplazo de fusibles del sistema eléctrico
+AMB-T2-006,2024-09-29,2024-09-30,preventivo,electrico,False,1.4,Mantenimiento del sistema de iluminación
+AMB-T2-006,2024-10-13,2024-10-16,correctivo,equipamiento,True,3.6,Reemplazo de monitor desfibrilador por falla técnica
+AMB-T2-006,2024-12-01,2024-12-02,preventivo,vehicular,False,1.1,Revisión general del motor
+AMB-T2-006,2024-12-07,2024-12-10,correctivo,equipamiento,True,3.8,Corrección de falla en equipo de monitorización
+AMB-T2-006,2025-01-17,2025-01-18,preventivo,equipamiento,False,1.4,Verificación funcional del monitor desfibrilador
+AMB-T2-006,2025-03-11,2025-03-12,preventivo,vehicular,False,1.3,Cambio de aceite y filtros
+AMB-T2-006,2025-04-29,2025-04-30,preventivo,vehicular,False,1.4,Revisión de frenos y suspensión
+AMB-T2-006,2025-06-18,2025-06-19,preventivo,electrico,False,1.5,Verificación de conexiones eléctricas
+AMB-T2-006,2025-08-20,2025-08-21,preventivo,vehicular,False,0.8,Revisión general del motor
+AMB-T2-006,2025-10-18,2025-10-19,preventivo,vehicular,False,1.0,Inspección del sistema de refrigeración
+AMB-T2-006,2025-11-30,2025-12-02,preventivo,vehicular,False,1.3,Inspección del sistema de refrigeración
+AMB-T2-006,2025-12-06,2025-12-10,correctivo,vehicular,True,3.6,Reparación de fuga de aceite
+AMB-T2-007,2024-01-08,2024-01-09,preventivo,equipamiento,False,1.0,Calibración de equipos de monitorización
+AMB-T2-007,2024-02-08,2024-02-10,preventivo,vehicular,False,1.7,Inspección del sistema de refrigeración
+AMB-T2-007,2024-03-09,2024-03-10,preventivo,equipamiento,False,1.1,Revisión del oxímetro de pulso portátil
+AMB-T2-007,2024-04-11,2024-04-12,preventivo,vehicular,False,1.6,Inspección del sistema de refrigeración
+AMB-T2-007,2024-05-13,2024-05-14,preventivo,vehicular,False,1.1,Rotación y balanceo de neumáticos
+AMB-T2-007,2024-06-12,2024-06-13,preventivo,vehicular,False,1.3,Revisión de frenos y suspensión
+AMB-T2-007,2024-06-30,2024-07-03,correctivo,vehicular,True,3.0,Reparación del sistema de dirección
+AMB-T2-007,2024-07-21,2024-07-22,preventivo,vehicular,False,1.2,Revisión general del motor
+AMB-T2-007,2024-08-12,2024-08-13,correctivo,vehicular,True,1.2,Reparación de fuga en sistema de frenos
+AMB-T2-007,2024-08-23,2024-08-24,preventivo,vehicular,False,0.8,Revisión general del motor
+AMB-T2-007,2024-09-22,2024-09-22,preventivo,vehicular,False,0.8,Inspección del sistema de refrigeración
+AMB-T2-007,2024-10-26,2024-10-27,preventivo,vehicular,False,1.3,Revisión general del motor
+AMB-T2-007,2024-12-01,2024-12-03,preventivo,vehicular,False,1.7,Inspección del sistema de refrigeración
+AMB-T2-007,2024-12-23,2024-12-25,preventivo,vehicular,False,1.6,Inspección del sistema de refrigeración
+AMB-T2-007,2025-01-28,2025-01-29,preventivo,equipamiento,False,1.1,Calibración de equipos de monitorización
+AMB-T2-007,2025-03-04,2025-03-06,preventivo,electrico,False,1.6,Verificación de conexiones eléctricas
+AMB-T2-007,2025-04-13,2025-04-15,preventivo,vehicular,False,1.7,Inspección del sistema de refrigeración
+AMB-T2-007,2025-05-18,2025-05-19,preventivo,vehicular,False,1.1,Cambio de aceite y filtros
+AMB-T2-007,2025-06-26,2025-06-28,preventivo,equipamiento,False,1.4,Calibración de equipos de monitorización
+AMB-T2-007,2025-07-29,2025-07-31,preventivo,electrico,False,1.7,Revisión del sistema eléctrico de cabina
+AMB-T2-007,2025-08-30,2025-08-31,preventivo,electrico,False,1.1,Revisión del sistema eléctrico de cabina
+AMB-T2-007,2025-09-26,2025-09-28,preventivo,equipamiento,False,1.9,Inspección del equipamiento básico
+AMB-T2-007,2025-11-05,2025-11-06,preventivo,vehicular,False,1.0,Rotación y balanceo de neumáticos
+AMB-T2-007,2025-12-15,2025-12-16,preventivo,vehicular,False,0.9,Revisión general del motor
+AMB-T2-008,2024-01-01,2024-01-02,preventivo,vehicular,False,1.9,Revisión de frenos y suspensión
+AMB-T2-008,2024-02-07,2024-02-08,preventivo,vehicular,False,1.3,Rotación y balanceo de neumáticos
+AMB-T2-008,2024-03-14,2024-03-15,preventivo,equipamiento,False,1.6,Revisión del oxímetro de pulso portátil
+AMB-T2-008,2024-04-16,2024-04-18,preventivo,vehicular,False,1.3,Inspección del sistema de refrigeración
+AMB-T2-008,2024-04-17,2024-04-21,correctivo,electrico,True,4.2,Reemplazo de fusibles del sistema eléctrico
+AMB-T2-008,2024-05-20,2024-05-22,correctivo,electrico,False,1.6,Reemplazo de fusibles del sistema eléctrico
+AMB-T2-008,2024-05-26,2024-05-27,preventivo,vehicular,False,1.0,Revisión de frenos y suspensión
+AMB-T2-008,2024-07-09,2024-07-10,preventivo,electrico,False,1.3,Mantenimiento del sistema de iluminación
+AMB-T2-008,2024-08-11,2024-08-12,preventivo,equipamiento,False,1.5,Inspección del equipamiento básico
+AMB-T2-008,2024-09-16,2024-09-18,preventivo,electrico,False,2.0,Mantenimiento del sistema de iluminación
+AMB-T2-008,2024-10-21,2024-10-22,preventivo,vehicular,False,1.3,Inspección del sistema de refrigeración
+AMB-T2-008,2024-11-18,2024-11-21,preventivo,vehicular,False,2.2,Revisión de frenos y suspensión
+AMB-T2-008,2024-12-25,2024-12-25,preventivo,vehicular,False,0.7,Cambio de aceite y filtros
+AMB-T2-008,2025-01-24,2025-01-24,preventivo,electrico,False,0.6,Verificación de conexiones eléctricas
+AMB-T2-008,2025-02-27,2025-02-28,preventivo,vehicular,False,1.1,Inspección del sistema de refrigeración
+AMB-T2-008,2025-03-09,2025-03-11,correctivo,electrico,True,2.0,Corrección de falla en sistema de carga
+AMB-T2-008,2025-04-10,2025-04-12,preventivo,electrico,False,1.2,Revisión del sistema eléctrico de cabina
+AMB-T2-008,2025-05-21,2025-05-23,preventivo,equipamiento,False,1.7,Revisión del oxímetro de pulso portátil
+AMB-T2-008,2025-06-29,2025-07-01,preventivo,vehicular,False,1.3,Revisión general del motor
+AMB-T2-008,2025-08-01,2025-08-02,preventivo,electrico,False,1.1,Verificación de conexiones eléctricas
+AMB-T2-008,2025-08-24,2025-08-28,correctivo,vehicular,True,3.3,Reparación de fuga en sistema de frenos
+AMB-T2-008,2025-08-29,2025-08-29,preventivo,electrico,False,0.5,Revisión del sistema de carga de equipos
+AMB-T2-008,2025-08-31,2025-09-05,correctivo,vehicular,True,4.4,Reparación del sistema de dirección
+AMB-T2-008,2025-09-04,2025-09-05,correctivo,equipamiento,True,0.5,Reparación del oxímetro de pulso
+AMB-T2-008,2025-10-08,2025-10-09,preventivo,vehicular,False,1.2,Inspección del sistema de refrigeración
+AMB-T2-008,2025-11-19,2025-11-20,preventivo,vehicular,False,1.2,Rotación y balanceo de neumáticos
+AMB-T2-008,2025-12-14,2025-12-16,correctivo,vehicular,True,2.1,Reparación de fuga en sistema de frenos
+AMB-T2-008,2025-12-24,2025-12-25,preventivo,vehicular,False,1.1,Revisión de frenos y suspensión
+AMB-T2-009,2024-01-12,2024-01-12,preventivo,equipamiento,False,0.9,Calibración de equipos de monitorización
+AMB-T2-009,2024-02-12,2024-02-13,preventivo,equipamiento,False,1.2,Verificación funcional del monitor desfibrilador
+AMB-T2-009,2024-02-16,2024-02-19,correctivo,vehicular,False,3.6,Reparación de fuga de aceite
+AMB-T2-009,2024-03-10,2024-03-11,preventivo,vehicular,False,1.0,Revisión de frenos y suspensión
+AMB-T2-009,2024-04-03,2024-04-05,preventivo,equipamiento,False,1.1,Verificación funcional del monitor desfibrilador
+AMB-T2-009,2024-05-04,2024-05-06,preventivo,vehicular,False,2.2,Inspección del sistema de refrigeración
+AMB-T2-009,2024-05-27,2024-05-28,preventivo,electrico,False,1.4,Mantenimiento del sistema de iluminación
+AMB-T2-009,2024-06-12,2024-06-13,preventivo,vehicular,False,0.8,Revisión general del motor
+AMB-T2-009,2024-06-24,2024-06-28,correctivo,vehicular,True,3.4,Cambio de batería vehicular
+AMB-T2-009,2024-07-09,2024-07-09,preventivo,vehicular,False,0.6,Revisión general del motor
+AMB-T2-009,2024-08-01,2024-08-03,preventivo,vehicular,False,1.6,Inspección del sistema de refrigeración
+AMB-T2-009,2024-08-29,2024-08-29,preventivo,electrico,False,0.5,Mantenimiento del sistema de iluminación
+AMB-T2-009,2024-09-27,2024-09-28,preventivo,equipamiento,False,0.9,Calibración de equipos de monitorización
+AMB-T2-009,2024-10-22,2024-10-24,preventivo,equipamiento,False,1.6,Inspección del equipamiento básico
+AMB-T2-009,2024-11-25,2024-11-26,preventivo,vehicular,False,1.6,Revisión de frenos y suspensión
+AMB-T2-009,2024-12-21,2024-12-22,preventivo,vehicular,False,0.9,Rotación y balanceo de neumáticos
+AMB-T2-009,2025-01-20,2025-01-21,preventivo,electrico,False,0.9,Revisión del sistema eléctrico de cabina
+AMB-T2-009,2025-02-14,2025-02-14,preventivo,equipamiento,False,0.7,Calibración de equipos de monitorización
+AMB-T2-009,2025-03-17,2025-03-18,preventivo,electrico,False,1.0,Verificación de conexiones eléctricas
+AMB-T2-009,2025-04-10,2025-04-11,preventivo,equipamiento,False,1.7,Revisión del oxímetro de pulso portátil
+AMB-T2-009,2025-04-30,2025-05-01,preventivo,electrico,False,1.4,Revisión del sistema de carga de equipos
+AMB-T2-009,2025-05-24,2025-05-25,preventivo,electrico,False,1.3,Revisión del sistema eléctrico de cabina
+AMB-T2-009,2025-06-17,2025-06-18,preventivo,vehicular,False,1.0,Inspección del sistema de refrigeración
+AMB-T2-009,2025-07-24,2025-07-25,preventivo,electrico,False,1.1,Verificación de conexiones eléctricas
+AMB-T2-009,2025-08-10,2025-08-11,preventivo,vehicular,False,1.2,Rotación y balanceo de neumáticos
+AMB-T2-009,2025-08-31,2025-09-01,preventivo,vehicular,False,1.4,Revisión general del motor
+AMB-T2-009,2025-09-25,2025-09-26,preventivo,equipamiento,False,0.9,Inspección del equipamiento básico
+AMB-T2-009,2025-10-26,2025-10-27,preventivo,equipamiento,False,1.1,Verificación funcional del monitor desfibrilador
+AMB-T2-009,2025-11-15,2025-11-16,correctivo,vehicular,True,1.4,Reparación del sistema de dirección
+AMB-T2-009,2025-11-17,2025-11-17,preventivo,electrico,False,0.7,Mantenimiento del sistema de iluminación
+AMB-T2-009,2025-12-14,2025-12-15,preventivo,vehicular,False,1.1,Rotación y balanceo de neumáticos
+AMB-T2-010,2024-01-14,2024-01-15,preventivo,vehicular,False,1.4,Revisión de frenos y suspensión
+AMB-T2-010,2024-02-22,2024-02-23,preventivo,electrico,False,0.8,Revisión del sistema eléctrico de cabina
+AMB-T2-010,2024-04-02,2024-04-03,preventivo,vehicular,False,0.6,Rotación y balanceo de neumáticos
+AMB-T2-010,2024-05-15,2024-05-16,preventivo,electrico,False,1.5,Verificación de conexiones eléctricas
+AMB-T2-010,2024-06-05,2024-06-07,correctivo,vehicular,True,2.0,Reparación del sistema de dirección
+AMB-T2-010,2024-06-28,2024-06-29,preventivo,electrico,False,1.4,Revisión del sistema de carga de equipos
+AMB-T2-010,2024-08-05,2024-08-06,preventivo,vehicular,False,1.4,Rotación y balanceo de neumáticos
+AMB-T2-010,2024-09-13,2024-09-14,preventivo,vehicular,False,1.2,Revisión de frenos y suspensión
+AMB-T2-010,2024-10-21,2024-10-23,preventivo,vehicular,False,1.6,Revisión de frenos y suspensión
+AMB-T2-010,2024-11-28,2024-11-30,preventivo,vehicular,False,1.4,Cambio de aceite y filtros
+AMB-T2-010,2024-12-04,2024-12-09,correctivo,electrico,True,4.6,Corrección de falla en sistema de carga
+AMB-T2-010,2025-01-16,2025-01-17,preventivo,equipamiento,False,1.6,Revisión del oxímetro de pulso portátil
+AMB-T2-010,2025-02-28,2025-03-02,preventivo,vehicular,False,1.5,Revisión de frenos y suspensión
+AMB-T2-010,2025-04-20,2025-04-22,preventivo,vehicular,False,1.9,Rotación y balanceo de neumáticos
+AMB-T2-010,2025-05-28,2025-05-29,preventivo,vehicular,False,1.1,Rotación y balanceo de neumáticos
+AMB-T2-010,2025-07-10,2025-07-11,preventivo,equipamiento,False,1.0,Calibración de equipos de monitorización
+AMB-T2-010,2025-08-19,2025-08-21,preventivo,electrico,False,1.2,Mantenimiento del sistema de iluminación
+AMB-T2-010,2025-09-30,2025-09-30,preventivo,vehicular,False,0.7,Rotación y balanceo de neumáticos
+AMB-T2-010,2025-11-07,2025-11-09,preventivo,equipamiento,False,1.7,Verificación funcional del monitor desfibrilador
+AMB-T2-010,2025-12-17,2025-12-18,preventivo,vehicular,False,1.3,Rotación y balanceo de neumáticos
+AMB-T2-011,2024-01-04,2024-01-05,preventivo,vehicular,False,1.9,Revisión de frenos y suspensión
+AMB-T2-011,2024-01-16,2024-01-20,correctivo,vehicular,True,4.3,Cambio de batería vehicular
+AMB-T2-011,2024-02-21,2024-02-22,preventivo,electrico,False,1.3,Revisión del sistema eléctrico de cabina
+AMB-T2-011,2024-04-09,2024-04-10,preventivo,vehicular,False,1.8,Cambio de aceite y filtros
+AMB-T2-011,2024-05-19,2024-05-20,preventivo,vehicular,False,0.7,Rotación y balanceo de neumáticos
+AMB-T2-011,2024-07-13,2024-07-14,preventivo,electrico,False,1.6,Revisión del sistema de carga de equipos
+AMB-T2-011,2024-08-27,2024-08-29,preventivo,vehicular,False,1.4,Revisión de frenos y suspensión
+AMB-T2-011,2024-10-14,2024-10-15,preventivo,electrico,False,1.1,Revisión del sistema de carga de equipos
+AMB-T2-011,2024-11-26,2024-11-27,preventivo,electrico,False,1.1,Revisión del sistema eléctrico de cabina
+AMB-T2-011,2025-01-13,2025-01-14,preventivo,vehicular,False,1.8,Rotación y balanceo de neumáticos
+AMB-T2-011,2025-03-04,2025-03-05,preventivo,equipamiento,False,1.8,Calibración de equipos de monitorización
+AMB-T2-011,2025-05-03,2025-05-05,preventivo,vehicular,False,1.5,Revisión general del motor
+AMB-T2-011,2025-06-22,2025-06-23,preventivo,vehicular,False,1.3,Rotación y balanceo de neumáticos
+AMB-T2-011,2025-08-05,2025-08-06,preventivo,equipamiento,False,1.3,Verificación funcional del monitor desfibrilador
+AMB-T2-011,2025-09-26,2025-09-26,preventivo,vehicular,False,0.5,Rotación y balanceo de neumáticos
+AMB-T2-011,2025-11-15,2025-11-16,preventivo,vehicular,False,0.9,Revisión general del motor
+AMB-T2-012,2024-01-06,2024-01-07,preventivo,vehicular,False,1.1,Cambio de aceite y filtros
+AMB-T2-012,2024-01-16,2024-01-19,correctivo,vehicular,False,3.6,Reparación de fuga en sistema de frenos
+AMB-T2-012,2024-02-18,2024-02-19,preventivo,vehicular,False,1.3,Cambio de aceite y filtros
+AMB-T2-012,2024-04-05,2024-04-07,preventivo,equipamiento,False,1.4,Verificación funcional del monitor desfibrilador
+AMB-T2-012,2024-05-26,2024-05-27,preventivo,electrico,False,1.2,Revisión del sistema de carga de equipos
+AMB-T2-012,2024-07-12,2024-07-13,preventivo,vehicular,False,1.0,Revisión de frenos y suspensión
+AMB-T2-012,2024-08-25,2024-08-27,preventivo,vehicular,False,1.6,Revisión de frenos y suspensión
+AMB-T2-012,2024-09-05,2024-09-09,correctivo,vehicular,True,3.5,Reparación de fuga en sistema de frenos
+AMB-T2-012,2024-10-15,2024-10-16,preventivo,electrico,False,0.6,Verificación de conexiones eléctricas
+AMB-T2-012,2024-11-25,2024-11-25,preventivo,vehicular,False,0.5,Cambio de aceite y filtros
+AMB-T2-012,2025-01-10,2025-01-11,preventivo,vehicular,False,1.1,Revisión de frenos y suspensión
+AMB-T2-012,2025-03-12,2025-03-13,preventivo,equipamiento,False,1.2,Revisión del oxímetro de pulso portátil
+AMB-T2-012,2025-04-20,2025-04-20,preventivo,electrico,False,0.5,Revisión del sistema de carga de equipos
+AMB-T2-012,2025-06-09,2025-06-10,preventivo,electrico,False,0.5,Revisión del sistema de carga de equipos
+AMB-T2-012,2025-07-02,2025-07-05,correctivo,vehicular,True,3.0,Cambio de correa de distribución
+AMB-T2-012,2025-07-27,2025-07-28,preventivo,equipamiento,False,0.9,Verificación funcional del monitor desfibrilador
+AMB-T2-012,2025-09-09,2025-09-10,preventivo,vehicular,False,1.4,Rotación y balanceo de neumáticos
+AMB-T2-012,2025-10-26,2025-10-27,preventivo,vehicular,False,1.8,Cambio de aceite y filtros
+AMB-T2-012,2025-11-25,2025-11-28,correctivo,vehicular,True,3.7,Cambio de batería vehicular
+AMB-T2-012,2025-12-07,2025-12-09,preventivo,vehicular,False,1.4,Cambio de aceite y filtros
+AMB-T2-013,2024-01-08,2024-01-09,preventivo,vehicular,False,1.3,Rotación y balanceo de neumáticos
+AMB-T2-013,2024-02-24,2024-02-25,preventivo,vehicular,False,0.6,Revisión general del motor
+AMB-T2-013,2024-03-21,2024-03-26,correctivo,vehicular,True,4.9,Reparación del sistema de dirección
+AMB-T2-013,2024-04-03,2024-04-04,preventivo,electrico,False,1.6,Verificación de conexiones eléctricas
+AMB-T2-013,2024-05-20,2024-05-21,preventivo,vehicular,False,0.7,Inspección del sistema de refrigeración
+AMB-T2-013,2024-06-10,2024-06-13,correctivo,vehicular,True,2.9,Reparación del sistema de dirección
+AMB-T2-013,2024-06-25,2024-06-27,preventivo,vehicular,False,1.8,Cambio de aceite y filtros
+AMB-T2-013,2024-07-16,2024-07-17,correctivo,electrico,True,0.8,Reparación del sistema de iluminación de emergencia
+AMB-T2-013,2024-08-05,2024-08-07,preventivo,equipamiento,False,1.6,Calibración de equipos de monitorización
+AMB-T2-013,2024-09-02,2024-09-04,preventivo,equipamiento,False,1.6,Verificación funcional del monitor desfibrilador
+AMB-T2-013,2024-10-06,2024-10-07,preventivo,vehicular,False,0.8,Cambio de aceite y filtros
+AMB-T2-013,2024-11-17,2024-11-19,preventivo,electrico,False,1.1,Revisión del sistema de carga de equipos
+AMB-T2-013,2024-12-29,2024-12-30,preventivo,electrico,False,1.2,Mantenimiento del sistema de iluminación
+AMB-T2-013,2025-01-28,2025-01-29,preventivo,vehicular,False,1.1,Rotación y balanceo de neumáticos
+AMB-T2-013,2025-03-13,2025-03-15,preventivo,vehicular,False,1.4,Rotación y balanceo de neumáticos
+AMB-T2-013,2025-04-19,2025-04-21,preventivo,electrico,False,1.4,Verificación de conexiones eléctricas
+AMB-T2-013,2025-05-25,2025-05-26,preventivo,electrico,False,0.8,Revisión del sistema eléctrico de cabina
+AMB-T2-013,2025-06-30,2025-07-02,preventivo,vehicular,False,1.4,Rotación y balanceo de neumáticos
+AMB-T2-013,2025-07-20,2025-07-25,correctivo,equipamiento,True,4.3,Reparación del oxímetro de pulso
+AMB-T2-013,2025-08-07,2025-08-08,preventivo,vehicular,False,1.4,Revisión general del motor
+AMB-T2-013,2025-09-14,2025-09-14,preventivo,electrico,False,0.8,Mantenimiento del sistema de iluminación
+AMB-T2-013,2025-10-16,2025-10-17,preventivo,vehicular,False,1.2,Inspección del sistema de refrigeración
+AMB-T2-013,2025-11-13,2025-11-14,preventivo,vehicular,False,1.4,Inspección del sistema de refrigeración
+AMB-T2-014,2024-01-12,2024-01-13,preventivo,equipamiento,False,1.7,Revisión del oxímetro de pulso portátil
+AMB-T2-014,2024-02-09,2024-02-11,preventivo,vehicular,False,1.6,Inspección del sistema de refrigeración
+AMB-T2-014,2024-02-27,2024-02-29,preventivo,vehicular,False,1.1,Revisión de frenos y suspensión
+AMB-T2-014,2024-03-23,2024-03-24,preventivo,electrico,False,1.2,Revisión del sistema eléctrico de cabina
+AMB-T2-014,2024-04-13,2024-04-15,preventivo,electrico,False,1.5,Mantenimiento del sistema de iluminación
+AMB-T2-014,2024-05-05,2024-05-07,preventivo,electrico,False,1.2,Revisión del sistema eléctrico de cabina
+AMB-T2-014,2024-05-29,2024-05-30,preventivo,vehicular,False,1.2,Revisión general del motor
+AMB-T2-014,2024-06-04,2024-06-07,correctivo,vehicular,True,2.9,Reparación del sistema de dirección
+AMB-T2-014,2024-06-18,2024-06-19,preventivo,electrico,False,1.0,Mantenimiento del sistema de iluminación
+AMB-T2-014,2024-07-03,2024-07-05,correctivo,equipamiento,True,2.1,Reemplazo de componente de equipamiento básico
+AMB-T2-014,2024-07-05,2024-07-06,preventivo,electrico,False,1.0,Revisión del sistema eléctrico de cabina
+AMB-T2-014,2024-07-20,2024-07-22,preventivo,electrico,False,1.6,Revisión del sistema de carga de equipos
+AMB-T2-014,2024-08-15,2024-08-16,preventivo,vehicular,False,1.5,Revisión general del motor
+AMB-T2-014,2024-08-30,2024-09-01,preventivo,vehicular,False,2.3,Revisión general del motor
+AMB-T2-014,2024-09-19,2024-09-21,preventivo,vehicular,False,1.1,Revisión general del motor
+AMB-T2-014,2024-10-11,2024-10-12,preventivo,vehicular,False,0.8,Revisión general del motor
+AMB-T2-014,2024-10-26,2024-10-28,preventivo,vehicular,False,1.4,Rotación y balanceo de neumáticos
+AMB-T2-014,2024-11-20,2024-11-21,preventivo,vehicular,False,0.7,Revisión general del motor
+AMB-T2-014,2024-12-09,2024-12-10,preventivo,electrico,False,0.8,Revisión del sistema de carga de equipos
+AMB-T2-014,2025-01-04,2025-01-06,preventivo,vehicular,False,1.3,Revisión de frenos y suspensión
+AMB-T2-014,2025-01-31,2025-02-01,preventivo,vehicular,False,0.8,Revisión general del motor
+AMB-T2-014,2025-02-21,2025-02-22,preventivo,electrico,False,1.3,Revisión del sistema de carga de equipos
+AMB-T2-014,2025-03-17,2025-03-19,preventivo,electrico,False,1.3,Verificación de conexiones eléctricas
+AMB-T2-014,2025-04-12,2025-04-14,preventivo,vehicular,False,1.1,Rotación y balanceo de neumáticos
+AMB-T2-014,2025-05-02,2025-05-04,preventivo,vehicular,False,1.2,Inspección del sistema de refrigeración
+AMB-T2-014,2025-05-23,2025-05-24,preventivo,vehicular,False,1.2,Rotación y balanceo de neumáticos
+AMB-T2-014,2025-06-07,2025-06-08,preventivo,vehicular,False,0.8,Inspección del sistema de refrigeración
+AMB-T2-014,2025-06-26,2025-06-27,preventivo,vehicular,False,1.0,Revisión de frenos y suspensión
+AMB-T2-014,2025-07-22,2025-07-22,preventivo,electrico,False,0.9,Mantenimiento del sistema de iluminación
+AMB-T2-014,2025-08-11,2025-08-12,preventivo,equipamiento,False,1.2,Inspección del equipamiento básico
+AMB-T2-014,2025-09-08,2025-09-10,preventivo,electrico,False,1.9,Revisión del sistema de carga de equipos
+AMB-T2-014,2025-09-30,2025-10-01,preventivo,vehicular,False,0.8,Inspección del sistema de refrigeración
+AMB-T2-014,2025-10-16,2025-10-17,preventivo,vehicular,False,1.1,Rotación y balanceo de neumáticos
+AMB-T2-014,2025-11-07,2025-11-08,preventivo,electrico,False,1.1,Verificación de conexiones eléctricas
+AMB-T2-014,2025-12-01,2025-12-03,preventivo,vehicular,False,1.1,Revisión de frenos y suspensión
+AMB-T2-014,2025-12-24,2025-12-26,preventivo,vehicular,False,1.8,Inspección del sistema de refrigeración
+AMB-T2-015,2024-01-13,2024-01-14,preventivo,vehicular,False,1.4,Inspección del sistema de refrigeración
+AMB-T2-015,2024-02-05,2024-02-07,correctivo,equipamiento,True,2.0,Reemplazo de componente de equipamiento básico
+AMB-T2-015,2024-03-01,2024-03-02,preventivo,electrico,False,1.5,Mantenimiento del sistema de iluminación
+AMB-T2-015,2024-04-18,2024-04-19,preventivo,electrico,False,1.4,Revisión del sistema de carga de equipos
+AMB-T2-015,2024-06-02,2024-06-03,preventivo,electrico,False,0.7,Revisión del sistema de carga de equipos
+AMB-T2-015,2024-07-23,2024-07-24,preventivo,vehicular,False,1.0,Revisión de frenos y suspensión
+AMB-T2-015,2024-09-07,2024-09-09,preventivo,electrico,False,1.7,Revisión del sistema de carga de equipos
+AMB-T2-015,2024-10-21,2024-10-22,preventivo,electrico,False,1.2,Mantenimiento del sistema de iluminación
+AMB-T2-015,2024-12-08,2024-12-10,preventivo,electrico,False,1.6,Verificación de conexiones eléctricas
+AMB-T2-015,2025-01-17,2025-01-18,preventivo,electrico,False,0.5,Revisión del sistema de carga de equipos
+AMB-T2-015,2025-03-04,2025-03-05,preventivo,vehicular,False,0.8,Revisión general del motor
+AMB-T2-015,2025-04-16,2025-04-17,preventivo,vehicular,False,1.0,Cambio de aceite y filtros
+AMB-T2-015,2025-06-10,2025-06-11,preventivo,vehicular,False,1.1,Revisión de frenos y suspensión
+AMB-T2-015,2025-08-04,2025-08-05,preventivo,electrico,False,1.7,Mantenimiento del sistema de iluminación
+AMB-T2-015,2025-09-12,2025-09-13,preventivo,electrico,False,1.4,Revisión del sistema de carga de equipos
+AMB-T2-015,2025-10-31,2025-11-02,preventivo,vehicular,False,1.5,Revisión general del motor
+AMB-T2-015,2025-12-11,2025-12-11,preventivo,vehicular,False,0.5,Rotación y balanceo de neumáticos
+AMB-T2-016,2024-01-06,2024-01-07,preventivo,electrico,False,1.9,Revisión del sistema de carga de equipos
+AMB-T2-016,2024-02-12,2024-02-13,preventivo,electrico,False,1.3,Mantenimiento del sistema de iluminación
+AMB-T2-016,2024-03-18,2024-03-20,preventivo,vehicular,False,1.3,Revisión general del motor
+AMB-T2-016,2024-04-21,2024-04-22,preventivo,vehicular,False,1.0,Revisión general del motor
+AMB-T2-016,2024-05-12,2024-05-16,correctivo,vehicular,True,3.4,Cambio de batería vehicular
+AMB-T2-016,2024-06-04,2024-06-05,preventivo,vehicular,False,1.0,Cambio de aceite y filtros
+AMB-T2-016,2024-07-14,2024-07-15,preventivo,vehicular,False,1.1,Rotación y balanceo de neumáticos
+AMB-T2-016,2024-08-25,2024-08-26,preventivo,vehicular,False,1.1,Inspección del sistema de refrigeración
+AMB-T2-016,2024-10-01,2024-10-02,preventivo,equipamiento,False,0.5,Revisión del oxímetro de pulso portátil
+AMB-T2-016,2024-11-10,2024-11-12,preventivo,vehicular,False,1.2,Revisión de frenos y suspensión
+AMB-T2-016,2024-12-16,2024-12-17,preventivo,electrico,False,0.8,Mantenimiento del sistema de iluminación
+AMB-T2-016,2024-12-27,2024-12-31,correctivo,equipamiento,True,3.6,Corrección de falla en equipo de monitorización
+AMB-T2-016,2025-01-28,2025-01-30,preventivo,electrico,False,1.2,Revisión del sistema eléctrico de cabina
+AMB-T2-016,2025-03-24,2025-03-25,preventivo,electrico,False,1.3,Verificación de conexiones eléctricas
+AMB-T2-016,2025-04-29,2025-04-29,preventivo,equipamiento,False,0.9,Revisión del oxímetro de pulso portátil
+AMB-T2-016,2025-06-09,2025-06-10,preventivo,vehicular,False,1.1,Cambio de aceite y filtros
+AMB-T2-016,2025-07-23,2025-07-23,preventivo,vehicular,False,0.8,Revisión general del motor
+AMB-T2-016,2025-08-20,2025-08-21,preventivo,electrico,False,1.1,Revisión del sistema de carga de equipos
+AMB-T2-016,2025-10-01,2025-10-01,preventivo,electrico,False,0.9,Revisión del sistema de carga de equipos
+AMB-T2-016,2025-11-12,2025-11-13,preventivo,vehicular,False,0.5,Revisión general del motor
+AMB-T2-016,2025-12-25,2025-12-26,preventivo,vehicular,False,1.2,Revisión general del motor
+AMB-T2-017,2024-01-01,2024-01-02,preventivo,vehicular,False,1.4,Cambio de aceite y filtros
+AMB-T2-017,2024-02-13,2024-02-14,preventivo,vehicular,False,0.8,Inspección del sistema de refrigeración
+AMB-T2-017,2024-04-08,2024-04-09,preventivo,vehicular,False,1.4,Inspección del sistema de refrigeración
+AMB-T2-017,2024-05-25,2024-05-26,preventivo,vehicular,False,1.0,Rotación y balanceo de neumáticos
+AMB-T2-017,2024-07-23,2024-07-24,preventivo,electrico,False,1.6,Verificación de conexiones eléctricas
+AMB-T2-017,2024-09-11,2024-09-12,preventivo,vehicular,False,1.6,Rotación y balanceo de neumáticos
+AMB-T2-017,2024-10-22,2024-10-24,preventivo,equipamiento,False,1.7,Inspección del equipamiento básico
+AMB-T2-017,2024-10-23,2024-10-28,correctivo,vehicular,False,4.4,Reparación de fuga de aceite
+AMB-T2-017,2024-12-07,2024-12-08,preventivo,vehicular,False,0.9,Cambio de aceite y filtros
+AMB-T2-017,2025-01-27,2025-01-28,preventivo,vehicular,False,1.2,Revisión general del motor
+AMB-T2-017,2025-03-20,2025-03-20,preventivo,electrico,False,0.7,Verificación de conexiones eléctricas
+AMB-T2-017,2025-05-07,2025-05-08,preventivo,vehicular,False,1.0,Inspección del sistema de refrigeración
+AMB-T2-017,2025-06-19,2025-06-21,preventivo,equipamiento,False,1.3,Inspección del equipamiento básico
+AMB-T2-017,2025-08-15,2025-08-16,preventivo,equipamiento,False,1.3,Verificación funcional del monitor desfibrilador
+AMB-T2-017,2025-10-07,2025-10-08,preventivo,vehicular,False,1.0,Revisión de frenos y suspensión
+AMB-T2-017,2025-12-01,2025-12-02,preventivo,vehicular,False,1.3,Inspección del sistema de refrigeración
+AMB-T2-018,2024-01-09,2024-01-10,preventivo,vehicular,False,1.1,Cambio de aceite y filtros
+AMB-T2-018,2024-01-24,2024-01-26,correctivo,vehicular,True,2.4,Reparación de fuga en sistema de frenos
+AMB-T2-018,2024-02-24,2024-02-25,preventivo,electrico,False,1.1,Mantenimiento del sistema de iluminación
+AMB-T2-018,2024-04-11,2024-04-13,preventivo,vehicular,False,1.6,Rotación y balanceo de neumáticos
+AMB-T2-018,2024-05-16,2024-05-17,correctivo,vehicular,False,1.2,Reparación del sistema de dirección
+AMB-T2-018,2024-06-01,2024-06-03,preventivo,electrico,False,1.5,Verificación de conexiones eléctricas
+AMB-T2-018,2024-07-15,2024-07-16,preventivo,vehicular,False,1.0,Inspección del sistema de refrigeración
+AMB-T2-018,2024-09-02,2024-09-04,preventivo,vehicular,False,1.8,Revisión de frenos y suspensión
+AMB-T2-018,2024-09-21,2024-09-25,correctivo,equipamiento,False,3.4,Reemplazo de monitor desfibrilador por falla técnica
+AMB-T2-018,2024-10-26,2024-10-27,preventivo,equipamiento,False,0.8,Inspección del equipamiento básico
+AMB-T2-018,2024-12-21,2024-12-21,preventivo,electrico,False,0.6,Revisión del sistema eléctrico de cabina
+AMB-T2-018,2025-02-07,2025-02-08,preventivo,vehicular,False,0.5,Inspección del sistema de refrigeración
+AMB-T2-018,2025-03-28,2025-03-29,preventivo,vehicular,False,1.5,Inspección del sistema de refrigeración
+AMB-T2-018,2025-05-08,2025-05-12,correctivo,vehicular,True,4.6,Reparación de fuga de aceite
+AMB-T2-018,2025-05-14,2025-05-16,preventivo,vehicular,False,1.5,Inspección del sistema de refrigeración
+AMB-T2-018,2025-05-19,2025-05-22,correctivo,vehicular,False,2.7,Reparación de fuga en sistema de frenos
+AMB-T2-018,2025-05-23,2025-05-24,correctivo,electrico,False,1.0,Corrección de falla en sistema de carga
+AMB-T2-018,2025-07-01,2025-07-02,preventivo,equipamiento,False,1.3,Revisión del oxímetro de pulso portátil
+AMB-T2-018,2025-08-24,2025-08-25,preventivo,vehicular,False,1.3,Revisión general del motor
+AMB-T2-018,2025-10-21,2025-10-23,preventivo,vehicular,False,1.5,Rotación y balanceo de neumáticos
+AMB-T2-018,2025-12-09,2025-12-09,preventivo,electrico,False,0.5,Mantenimiento del sistema de iluminación
+AMB-T2-019,2024-01-06,2024-01-06,preventivo,vehicular,False,0.9,Rotación y balanceo de neumáticos
+AMB-T2-019,2024-02-05,2024-02-06,preventivo,equipamiento,False,1.1,Verificación funcional del monitor desfibrilador
+AMB-T2-019,2024-03-05,2024-03-06,preventivo,vehicular,False,1.4,Revisión general del motor
+AMB-T2-019,2024-04-04,2024-04-06,preventivo,electrico,False,1.7,Revisión del sistema eléctrico de cabina
+AMB-T2-019,2024-05-12,2024-05-13,preventivo,vehicular,False,1.1,Revisión general del motor
+AMB-T2-019,2024-06-14,2024-06-15,preventivo,vehicular,False,1.0,Cambio de aceite y filtros
+AMB-T2-019,2024-07-20,2024-07-21,preventivo,vehicular,False,0.8,Inspección del sistema de refrigeración
+AMB-T2-019,2024-08-27,2024-08-28,preventivo,electrico,False,1.2,Verificación de conexiones eléctricas
+AMB-T2-019,2024-09-30,2024-10-01,preventivo,vehicular,False,0.5,Revisión general del motor
+AMB-T2-019,2024-10-29,2024-10-31,preventivo,electrico,False,1.6,Verificación de conexiones eléctricas
+AMB-T2-019,2024-11-23,2024-11-25,correctivo,electrico,True,2.1,Reparación del sistema de iluminación de emergencia
+AMB-T2-019,2024-12-03,2024-12-04,preventivo,electrico,False,1.4,Revisión del sistema eléctrico de cabina
+AMB-T2-019,2025-01-04,2025-01-05,preventivo,vehicular,False,1.1,Rotación y balanceo de neumáticos
+AMB-T2-019,2025-01-19,2025-01-24,correctivo,electrico,False,4.9,Reparación del inversor de corriente de cabina
+AMB-T2-019,2025-02-05,2025-02-06,preventivo,electrico,False,1.3,Revisión del sistema de carga de equipos
+AMB-T2-019,2025-03-18,2025-03-19,preventivo,electrico,False,1.3,Verificación de conexiones eléctricas
+AMB-T2-019,2025-05-02,2025-05-03,preventivo,vehicular,False,1.2,Inspección del sistema de refrigeración
+AMB-T2-019,2025-06-07,2025-06-08,preventivo,vehicular,False,1.5,Cambio de aceite y filtros
+AMB-T2-019,2025-07-12,2025-07-14,preventivo,vehicular,False,1.6,Rotación y balanceo de neumáticos
+AMB-T2-019,2025-08-17,2025-08-18,preventivo,vehicular,False,1.6,Rotación y balanceo de neumáticos
+AMB-T2-019,2025-09-19,2025-09-21,preventivo,vehicular,False,2.1,Cambio de aceite y filtros
+AMB-T2-019,2025-10-19,2025-10-20,preventivo,vehicular,False,0.5,Cambio de aceite y filtros
+AMB-T2-019,2025-12-01,2025-12-03,preventivo,vehicular,False,1.8,Rotación y balanceo de neumáticos
+AMB-T2-020,2024-01-04,2024-01-05,preventivo,vehicular,False,1.5,Revisión de frenos y suspensión
+AMB-T2-020,2024-01-31,2024-02-02,preventivo,vehicular,False,1.7,Inspección del sistema de refrigeración
+AMB-T2-020,2024-03-10,2024-03-12,preventivo,vehicular,False,1.8,Rotación y balanceo de neumáticos
+AMB-T2-020,2024-04-09,2024-04-10,preventivo,vehicular,False,1.3,Revisión de frenos y suspensión
+AMB-T2-020,2024-05-14,2024-05-15,preventivo,equipamiento,False,1.0,Calibración de equipos de monitorización
+AMB-T2-020,2024-06-08,2024-06-09,preventivo,vehicular,False,0.6,Revisión general del motor
+AMB-T2-020,2024-07-16,2024-07-17,preventivo,vehicular,False,1.1,Revisión de frenos y suspensión
+AMB-T2-020,2024-08-06,2024-08-07,preventivo,equipamiento,False,0.7,Verificación funcional del monitor desfibrilador
+AMB-T2-020,2024-08-23,2024-08-27,correctivo,vehicular,True,3.4,Reparación de fuga en sistema de frenos
+AMB-T2-020,2024-08-31,2024-09-01,preventivo,vehicular,False,1.0,Inspección del sistema de refrigeración
+AMB-T2-020,2024-10-01,2024-10-02,preventivo,electrico,False,0.9,Revisión del sistema eléctrico de cabina
+AMB-T2-020,2024-11-07,2024-11-08,preventivo,vehicular,False,1.2,Inspección del sistema de refrigeración
+AMB-T2-020,2024-12-14,2024-12-15,preventivo,electrico,False,1.0,Revisión del sistema eléctrico de cabina
+AMB-T2-020,2025-01-05,2025-01-08,correctivo,electrico,False,3.5,Reparación del sistema de iluminación de emergencia
+AMB-T2-020,2025-01-14,2025-01-15,preventivo,equipamiento,False,1.4,Verificación funcional del monitor desfibrilador
+AMB-T2-020,2025-02-19,2025-02-20,preventivo,vehicular,False,1.4,Rotación y balanceo de neumáticos
+AMB-T2-020,2025-03-27,2025-03-29,preventivo,vehicular,False,1.9,Rotación y balanceo de neumáticos
+AMB-T2-020,2025-05-01,2025-05-02,preventivo,vehicular,False,1.5,Rotación y balanceo de neumáticos
+AMB-T2-020,2025-05-26,2025-05-28,preventivo,vehicular,False,1.7,Cambio de aceite y filtros
+AMB-T2-020,2025-07-10,2025-07-11,preventivo,equipamiento,False,0.7,Inspección del equipamiento básico
+AMB-T2-020,2025-08-20,2025-08-21,preventivo,electrico,False,1.1,Revisión del sistema de carga de equipos
+AMB-T2-020,2025-09-24,2025-09-25,preventivo,vehicular,False,1.2,Revisión general del motor
+AMB-T2-020,2025-11-01,2025-11-01,preventivo,electrico,False,0.5,Verificación de conexiones eléctricas
+AMB-T2-020,2025-12-16,2025-12-18,preventivo,electrico,False,1.4,Revisión del sistema de carga de equipos
+AMB-T2-021,2024-01-15,2024-01-16,preventivo,equipamiento,False,1.2,Verificación funcional del monitor desfibrilador
+AMB-T2-021,2024-02-13,2024-02-15,preventivo,vehicular,False,1.5,Cambio de aceite y filtros
+AMB-T2-021,2024-03-20,2024-03-20,preventivo,equipamiento,False,0.9,Verificación funcional del monitor desfibrilador
+AMB-T2-021,2024-04-21,2024-04-23,preventivo,vehicular,False,1.4,Rotación y balanceo de neumáticos
+AMB-T2-021,2024-05-13,2024-05-15,preventivo,electrico,False,1.4,Revisión del sistema eléctrico de cabina
+AMB-T2-021,2024-06-18,2024-06-19,preventivo,electrico,False,1.1,Mantenimiento del sistema de iluminación
+AMB-T2-021,2024-07-20,2024-07-21,preventivo,electrico,False,1.4,Verificación de conexiones eléctricas
+AMB-T2-021,2024-08-19,2024-08-20,preventivo,equipamiento,False,1.5,Verificación funcional del monitor desfibrilador
+AMB-T2-021,2024-09-18,2024-09-19,preventivo,equipamiento,False,0.6,Verificación funcional del monitor desfibrilador
+AMB-T2-021,2024-10-21,2024-10-22,preventivo,vehicular,False,0.9,Cambio de aceite y filtros
+AMB-T2-021,2024-11-23,2024-11-25,preventivo,equipamiento,False,1.7,Revisión del oxímetro de pulso portátil
+AMB-T2-021,2024-12-24,2024-12-25,preventivo,electrico,False,1.5,Revisión del sistema de carga de equipos
+AMB-T2-021,2025-01-19,2025-01-20,preventivo,vehicular,False,0.8,Inspección del sistema de refrigeración
+AMB-T2-021,2025-02-21,2025-02-21,preventivo,vehicular,False,0.5,Revisión de frenos y suspensión
+AMB-T2-021,2025-03-24,2025-03-25,preventivo,electrico,False,0.9,Revisión del sistema eléctrico de cabina
+AMB-T2-021,2025-04-17,2025-04-18,preventivo,vehicular,False,1.1,Revisión de frenos y suspensión
+AMB-T2-021,2025-05-19,2025-05-21,preventivo,vehicular,False,1.3,Revisión de frenos y suspensión
+AMB-T2-021,2025-06-15,2025-06-16,preventivo,electrico,False,1.1,Revisión del sistema eléctrico de cabina
+AMB-T2-021,2025-07-21,2025-07-22,preventivo,equipamiento,False,0.9,Inspección del equipamiento básico
+AMB-T2-021,2025-08-23,2025-08-25,preventivo,vehicular,False,1.8,Revisión de frenos y suspensión
+AMB-T2-021,2025-09-28,2025-09-29,preventivo,vehicular,False,1.1,Rotación y balanceo de neumáticos
+AMB-T2-021,2025-10-31,2025-11-02,preventivo,electrico,False,2.1,Revisión del sistema eléctrico de cabina
+AMB-T2-021,2025-11-29,2025-11-30,preventivo,vehicular,False,1.2,Cambio de aceite y filtros
+AMB-T2-022,2024-01-09,2024-01-10,preventivo,vehicular,False,1.5,Cambio de aceite y filtros
+AMB-T2-022,2024-02-14,2024-02-16,preventivo,electrico,False,1.7,Revisión del sistema eléctrico de cabina
+AMB-T2-022,2024-04-06,2024-04-07,preventivo,vehicular,False,1.2,Revisión general del motor
+AMB-T2-022,2024-05-23,2024-05-24,preventivo,equipamiento,False,1.0,Calibración de equipos de monitorización
+AMB-T2-022,2024-07-14,2024-07-15,preventivo,vehicular,False,0.7,Cambio de aceite y filtros
+AMB-T2-022,2024-08-18,2024-08-22,correctivo,electrico,False,3.4,Reparación del inversor de corriente de cabina
+AMB-T2-022,2024-09-03,2024-09-04,preventivo,equipamiento,False,1.1,Verificación funcional del monitor desfibrilador
+AMB-T2-022,2024-10-15,2024-10-16,preventivo,vehicular,False,1.1,Revisión general del motor
+AMB-T2-022,2024-12-03,2024-12-05,preventivo,equipamiento,False,2.0,Calibración de equipos de monitorización
+AMB-T2-022,2025-01-20,2025-01-21,preventivo,vehicular,False,1.0,Rotación y balanceo de neumáticos
+AMB-T2-022,2025-03-07,2025-03-08,preventivo,vehicular,False,1.5,Revisión de frenos y suspensión
+AMB-T2-022,2025-04-26,2025-04-27,preventivo,vehicular,False,0.7,Revisión de frenos y suspensión
+AMB-T2-022,2025-06-06,2025-06-08,preventivo,electrico,False,1.9,Revisión del sistema eléctrico de cabina
+AMB-T2-022,2025-08-01,2025-08-02,preventivo,equipamiento,False,1.3,Verificación funcional del monitor desfibrilador
+AMB-T2-022,2025-09-18,2025-09-20,preventivo,vehicular,False,1.3,Revisión de frenos y suspensión
+AMB-T2-022,2025-11-05,2025-11-06,preventivo,electrico,False,0.9,Mantenimiento del sistema de iluminación
+AMB-T2-022,2025-12-07,2025-12-10,correctivo,electrico,False,2.8,Corrección de falla en sistema de carga
+AMB-T2-022,2025-12-22,2025-12-22,preventivo,vehicular,False,0.9,Rotación y balanceo de neumáticos
+AMB-T2-023,2024-01-08,2024-01-09,preventivo,electrico,False,1.8,Verificación de conexiones eléctricas
+AMB-T2-023,2024-02-01,2024-02-03,preventivo,equipamiento,False,1.7,Verificación funcional del monitor desfibrilador
+AMB-T2-023,2024-02-19,2024-02-21,correctivo,electrico,True,1.7,Corrección de falla en sistema de carga
+AMB-T2-023,2024-02-26,2024-02-28,preventivo,vehicular,False,2.0,Revisión de frenos y suspensión
+AMB-T2-023,2024-03-23,2024-03-25,preventivo,equipamiento,False,1.7,Revisión del oxímetro de pulso portátil
+AMB-T2-023,2024-04-26,2024-04-27,preventivo,vehicular,False,1.0,Revisión de frenos y suspensión
+AMB-T2-023,2024-06-06,2024-06-06,preventivo,equipamiento,False,0.6,Calibración de equipos de monitorización
+AMB-T2-023,2024-07-03,2024-07-05,preventivo,equipamiento,False,1.4,Calibración de equipos de monitorización
+AMB-T2-023,2024-07-20,2024-07-21,preventivo,equipamiento,False,1.2,Revisión del oxímetro de pulso portátil
+AMB-T2-023,2024-08-16,2024-08-17,preventivo,electrico,False,0.6,Verificación de conexiones eléctricas
+AMB-T2-023,2024-09-17,2024-09-19,preventivo,vehicular,False,1.5,Cambio de aceite y filtros
+AMB-T2-023,2024-09-19,2024-09-23,correctivo,equipamiento,True,4.1,Corrección de falla en equipo de monitorización
+AMB-T2-023,2024-10-15,2024-10-17,preventivo,vehicular,False,1.8,Inspección del sistema de refrigeración
+AMB-T2-023,2024-11-06,2024-11-10,correctivo,electrico,True,4.2,Corrección de falla en sistema de carga
+AMB-T2-023,2024-11-17,2024-11-18,preventivo,vehicular,False,1.1,Inspección del sistema de refrigeración
+AMB-T2-023,2024-12-14,2024-12-15,preventivo,vehicular,False,1.4,Inspección del sistema de refrigeración
+AMB-T2-023,2025-01-09,2025-01-10,preventivo,equipamiento,False,0.6,Verificación funcional del monitor desfibrilador
+AMB-T2-023,2025-02-04,2025-02-05,preventivo,equipamiento,False,0.6,Inspección del equipamiento básico
+AMB-T2-023,2025-02-19,2025-02-21,preventivo,electrico,False,2.0,Revisión del sistema de carga de equipos
+AMB-T2-023,2025-03-11,2025-03-13,preventivo,electrico,False,1.6,Revisión del sistema de carga de equipos
+AMB-T2-023,2025-04-01,2025-04-02,preventivo,equipamiento,False,1.8,Verificación funcional del monitor desfibrilador
+AMB-T2-023,2025-04-22,2025-04-24,preventivo,vehicular,False,1.2,Revisión de frenos y suspensión
+AMB-T2-023,2025-05-16,2025-05-19,correctivo,vehicular,True,2.9,Reparación del sistema de dirección
+AMB-T2-023,2025-05-25,2025-05-26,preventivo,vehicular,False,1.6,Revisión general del motor
+AMB-T2-023,2025-06-21,2025-06-23,preventivo,equipamiento,False,1.8,Revisión del oxímetro de pulso portátil
+AMB-T2-023,2025-07-04,2025-07-06,correctivo,electrico,True,2.3,Reparación del inversor de corriente de cabina
+AMB-T2-023,2025-07-18,2025-07-20,preventivo,electrico,False,1.2,Verificación de conexiones eléctricas
+AMB-T2-023,2025-08-17,2025-08-18,preventivo,vehicular,False,1.5,Inspección del sistema de refrigeración
+AMB-T2-023,2025-09-21,2025-09-22,preventivo,electrico,False,0.8,Mantenimiento del sistema de iluminación
+AMB-T2-023,2025-10-06,2025-10-08,preventivo,vehicular,False,1.7,Rotación y balanceo de neumáticos
+AMB-T2-023,2025-11-08,2025-11-09,preventivo,vehicular,False,0.5,Revisión de frenos y suspensión
+AMB-T2-023,2025-12-13,2025-12-14,preventivo,vehicular,False,1.1,Rotación y balanceo de neumáticos
+AMB-T2-023,2025-12-17,2025-12-19,correctivo,electrico,True,2.5,Reemplazo de fusibles del sistema eléctrico
+AMB-T2-024,2024-01-09,2024-01-09,preventivo,vehicular,False,0.8,Inspección del sistema de refrigeración
+AMB-T2-024,2024-01-25,2024-01-29,correctivo,electrico,True,4.6,Reparación del inversor de corriente de cabina
+AMB-T2-024,2024-01-30,2024-01-31,preventivo,vehicular,False,1.3,Cambio de aceite y filtros
+AMB-T2-024,2024-02-24,2024-02-25,correctivo,vehicular,False,0.7,Reparación de fuga en sistema de frenos
+AMB-T2-024,2024-03-01,2024-03-02,preventivo,electrico,False,0.8,Verificación de conexiones eléctricas
+AMB-T2-024,2024-04-03,2024-04-04,preventivo,electrico,False,1.1,Revisión del sistema de carga de equipos
+AMB-T2-024,2024-05-01,2024-05-03,preventivo,vehicular,False,1.6,Cambio de aceite y filtros
+AMB-T2-024,2024-05-25,2024-05-26,preventivo,equipamiento,False,0.7,Inspección del equipamiento básico
+AMB-T2-024,2024-06-28,2024-06-30,preventivo,vehicular,False,1.7,Cambio de aceite y filtros
+AMB-T2-024,2024-08-04,2024-08-04,preventivo,vehicular,False,0.5,Rotación y balanceo de neumáticos
+AMB-T2-024,2024-09-02,2024-09-04,preventivo,vehicular,False,1.4,Inspección del sistema de refrigeración
+AMB-T2-024,2024-10-04,2024-10-06,preventivo,vehicular,False,1.9,Revisión general del motor
+AMB-T2-024,2024-11-07,2024-11-08,preventivo,vehicular,False,1.4,Inspección del sistema de refrigeración
+AMB-T2-024,2024-11-18,2024-11-20,correctivo,equipamiento,True,2.2,Corrección de falla en equipo de monitorización
+AMB-T2-024,2024-12-03,2024-12-04,preventivo,electrico,False,0.9,Mantenimiento del sistema de iluminación
+AMB-T2-024,2025-01-02,2025-01-03,preventivo,electrico,False,1.2,Mantenimiento del sistema de iluminación
+AMB-T2-024,2025-01-29,2025-01-30,preventivo,vehicular,False,1.5,Revisión general del motor
+AMB-T2-024,2025-02-27,2025-02-28,preventivo,vehicular,False,1.0,Inspección del sistema de refrigeración
+AMB-T2-024,2025-03-21,2025-03-22,preventivo,vehicular,False,1.0,Cambio de aceite y filtros
+AMB-T2-024,2025-04-14,2025-04-15,preventivo,electrico,False,0.7,Verificación de conexiones eléctricas
+AMB-T2-024,2025-05-17,2025-05-18,preventivo,electrico,False,1.2,Mantenimiento del sistema de iluminación
+AMB-T2-024,2025-06-14,2025-06-16,preventivo,equipamiento,False,1.1,Verificación funcional del monitor desfibrilador
+AMB-T2-024,2025-07-10,2025-07-11,preventivo,electrico,False,1.2,Verificación de conexiones eléctricas
+AMB-T2-024,2025-08-02,2025-08-02,preventivo,vehicular,False,0.5,Rotación y balanceo de neumáticos
+AMB-T2-024,2025-08-31,2025-09-02,preventivo,electrico,False,1.3,Verificación de conexiones eléctricas
+AMB-T2-024,2025-09-25,2025-09-26,preventivo,equipamiento,False,1.0,Calibración de equipos de monitorización
+AMB-T2-024,2025-10-24,2025-10-26,preventivo,vehicular,False,2.0,Inspección del sistema de refrigeración
+AMB-T2-024,2025-11-27,2025-11-29,preventivo,electrico,False,2.0,Mantenimiento del sistema de iluminación
+AMB-T2-024,2025-12-24,2025-12-26,preventivo,vehicular,False,1.6,Cambio de aceite y filtros
+AMB-T2-025,2024-01-03,2024-01-04,preventivo,equipamiento,False,1.4,Inspección del equipamiento básico
+AMB-T2-025,2024-01-22,2024-01-24,preventivo,vehicular,False,1.8,Cambio de aceite y filtros
+AMB-T2-025,2024-02-10,2024-02-11,preventivo,vehicular,False,1.4,Cambio de aceite y filtros
+AMB-T2-025,2024-03-11,2024-03-13,preventivo,electrico,False,1.8,Mantenimiento del sistema de iluminación
+AMB-T2-025,2024-03-29,2024-04-02,correctivo,electrico,True,3.7,Reparación del sistema de iluminación de emergencia
+AMB-T2-025,2024-04-05,2024-04-06,preventivo,vehicular,False,1.0,Cambio de aceite y filtros
+AMB-T2-025,2024-04-24,2024-04-25,preventivo,equipamiento,False,1.3,Verificación funcional del monitor desfibrilador
+AMB-T2-025,2024-05-13,2024-05-14,preventivo,electrico,False,1.3,Verificación de conexiones eléctricas
+AMB-T2-025,2024-06-11,2024-06-13,preventivo,vehicular,False,1.1,Revisión de frenos y suspensión
+AMB-T2-025,2024-07-12,2024-07-12,preventivo,electrico,False,1.0,Revisión del sistema de carga de equipos
+AMB-T2-025,2024-08-08,2024-08-10,preventivo,equipamiento,False,1.1,Inspección del equipamiento básico
+AMB-T2-025,2024-08-23,2024-08-25,preventivo,vehicular,False,1.8,Inspección del sistema de refrigeración
+AMB-T2-025,2024-09-22,2024-09-24,preventivo,vehicular,False,1.5,Inspección del sistema de refrigeración
+AMB-T2-025,2024-10-18,2024-10-20,preventivo,vehicular,False,1.5,Cambio de aceite y filtros
+AMB-T2-025,2024-11-12,2024-11-14,preventivo,electrico,False,1.6,Verificación de conexiones eléctricas
+AMB-T2-025,2024-12-08,2024-12-10,preventivo,vehicular,False,2.0,Revisión general del motor
+AMB-T2-025,2024-12-31,2025-01-01,preventivo,vehicular,False,1.8,Revisión de frenos y suspensión
+AMB-T2-025,2025-01-26,2025-01-27,preventivo,vehicular,False,0.9,Rotación y balanceo de neumáticos
+AMB-T2-025,2025-02-22,2025-02-23,preventivo,vehicular,False,1.5,Revisión general del motor
+AMB-T2-025,2025-03-20,2025-03-21,preventivo,vehicular,False,1.4,Inspección del sistema de refrigeración
+AMB-T2-025,2025-04-10,2025-04-11,preventivo,electrico,False,1.1,Revisión del sistema de carga de equipos
+AMB-T2-025,2025-04-20,2025-04-22,correctivo,vehicular,True,2.1,Cambio de batería vehicular
+AMB-T2-025,2025-05-09,2025-05-11,preventivo,vehicular,False,1.4,Revisión general del motor
+AMB-T2-025,2025-06-05,2025-06-06,preventivo,equipamiento,False,0.5,Verificación funcional del monitor desfibrilador
+AMB-T2-025,2025-06-29,2025-07-01,preventivo,vehicular,False,1.6,Revisión general del motor
+AMB-T2-025,2025-07-27,2025-07-28,preventivo,electrico,False,1.3,Revisión del sistema eléctrico de cabina
+AMB-T2-025,2025-08-21,2025-08-21,preventivo,vehicular,False,0.5,Rotación y balanceo de neumáticos
+AMB-T2-025,2025-09-17,2025-09-19,preventivo,vehicular,False,1.9,Cambio de aceite y filtros
+AMB-T2-025,2025-10-21,2025-10-22,preventivo,equipamiento,False,1.0,Revisión del oxímetro de pulso portátil
+AMB-T2-025,2025-11-16,2025-11-17,preventivo,vehicular,False,1.1,Rotación y balanceo de neumáticos
+AMB-T2-025,2025-12-10,2025-12-11,preventivo,vehicular,False,0.9,Rotación y balanceo de neumáticos
+AMB-T2-026,2024-01-01,2024-01-02,preventivo,vehicular,False,1.6,Cambio de aceite y filtros
+AMB-T2-026,2024-02-14,2024-02-16,preventivo,vehicular,False,2.1,Revisión general del motor
+AMB-T2-026,2024-03-30,2024-03-31,preventivo,vehicular,False,0.8,Revisión general del motor
+AMB-T2-026,2024-05-09,2024-05-10,preventivo,equipamiento,False,0.8,Revisión del oxímetro de pulso portátil
+AMB-T2-026,2024-05-10,2024-05-13,correctivo,vehicular,True,2.8,Reparación de fuga en sistema de frenos
+AMB-T2-026,2024-06-13,2024-06-14,preventivo,equipamiento,False,1.9,Inspección del equipamiento básico
+AMB-T2-026,2024-07-23,2024-07-25,preventivo,equipamiento,False,1.9,Verificación funcional del monitor desfibrilador
+AMB-T2-026,2024-07-30,2024-08-02,correctivo,vehicular,False,3.2,Reparación del sistema de dirección
+AMB-T2-026,2024-08-29,2024-08-31,preventivo,vehicular,False,1.9,Revisión de frenos y suspensión
+AMB-T2-026,2024-09-30,2024-10-02,correctivo,vehicular,True,1.5,Reparación de fuga en sistema de frenos
+AMB-T2-026,2024-10-10,2024-10-12,preventivo,vehicular,False,1.4,Cambio de aceite y filtros
+AMB-T2-026,2024-11-24,2024-11-25,preventivo,vehicular,False,1.0,Revisión general del motor
+AMB-T2-026,2024-12-27,2024-12-28,preventivo,vehicular,False,0.9,Inspección del sistema de refrigeración
+AMB-T2-026,2025-01-28,2025-01-28,preventivo,vehicular,False,0.6,Inspección del sistema de refrigeración
+AMB-T2-026,2025-01-30,2025-02-01,correctivo,electrico,True,2.6,Reparación del sistema de iluminación de emergencia
+AMB-T2-026,2025-03-08,2025-03-09,preventivo,vehicular,False,1.2,Cambio de aceite y filtros
+AMB-T2-026,2025-04-12,2025-04-14,preventivo,electrico,False,1.5,Mantenimiento del sistema de iluminación
+AMB-T2-026,2025-05-24,2025-05-26,preventivo,vehicular,False,1.5,Inspección del sistema de refrigeración
+AMB-T2-026,2025-06-28,2025-06-29,preventivo,vehicular,False,1.3,Cambio de aceite y filtros
+AMB-T2-026,2025-08-08,2025-08-09,preventivo,electrico,False,1.8,Mantenimiento del sistema de iluminación
+AMB-T2-026,2025-09-14,2025-09-15,preventivo,electrico,False,1.2,Revisión del sistema eléctrico de cabina
+AMB-T2-026,2025-10-16,2025-10-17,preventivo,vehicular,False,0.7,Revisión general del motor
+AMB-T2-026,2025-11-26,2025-11-27,preventivo,vehicular,False,1.2,Cambio de aceite y filtros
+AMB-T2-027,2024-01-14,2024-01-14,preventivo,electrico,False,0.5,Revisión del sistema de carga de equipos
+AMB-T2-027,2024-02-16,2024-02-17,preventivo,electrico,False,1.4,Revisión del sistema eléctrico de cabina
+AMB-T2-027,2024-03-05,2024-03-06,preventivo,electrico,False,1.0,Revisión del sistema eléctrico de cabina
+AMB-T2-027,2024-03-31,2024-04-01,preventivo,vehicular,False,1.4,Rotación y balanceo de neumáticos
+AMB-T2-027,2024-04-19,2024-04-20,preventivo,vehicular,False,1.4,Revisión general del motor
+AMB-T2-027,2024-05-13,2024-05-14,preventivo,vehicular,False,0.6,Revisión de frenos y suspensión
+AMB-T2-027,2024-05-29,2024-05-30,preventivo,vehicular,False,1.1,Revisión general del motor
+AMB-T2-027,2024-06-17,2024-06-18,preventivo,electrico,False,1.3,Revisión del sistema eléctrico de cabina
+AMB-T2-027,2024-07-13,2024-07-15,preventivo,equipamiento,False,1.4,Verificación funcional del monitor desfibrilador
+AMB-T2-027,2024-07-28,2024-07-30,preventivo,vehicular,False,1.5,Inspección del sistema de refrigeración
+AMB-T2-027,2024-08-26,2024-08-27,preventivo,electrico,False,1.0,Verificación de conexiones eléctricas
+AMB-T2-027,2024-09-12,2024-09-14,preventivo,vehicular,False,1.6,Inspección del sistema de refrigeración
+AMB-T2-027,2024-10-04,2024-10-05,preventivo,vehicular,False,1.5,Inspección del sistema de refrigeración
+AMB-T2-027,2024-11-04,2024-11-05,preventivo,vehicular,False,1.0,Rotación y balanceo de neumáticos
+AMB-T2-027,2024-11-25,2024-11-27,preventivo,vehicular,False,1.6,Rotación y balanceo de neumáticos
+AMB-T2-027,2024-12-21,2024-12-22,preventivo,electrico,False,1.6,Verificación de conexiones eléctricas
+AMB-T2-027,2025-01-08,2025-01-11,correctivo,vehicular,True,3.0,Reparación del sistema de dirección
+AMB-T2-027,2025-01-15,2025-01-16,preventivo,electrico,False,0.7,Verificación de conexiones eléctricas
+AMB-T2-027,2025-02-11,2025-02-12,preventivo,electrico,False,0.7,Mantenimiento del sistema de iluminación
+AMB-T2-027,2025-03-04,2025-03-05,preventivo,electrico,False,1.1,Revisión del sistema de carga de equipos
+AMB-T2-027,2025-03-28,2025-03-29,preventivo,vehicular,False,1.1,Rotación y balanceo de neumáticos
+AMB-T2-027,2025-04-10,2025-04-11,correctivo,vehicular,False,1.3,Cambio de batería vehicular
+AMB-T2-027,2025-04-20,2025-04-22,preventivo,electrico,False,1.5,Revisión del sistema de carga de equipos
+AMB-T2-027,2025-05-11,2025-05-12,preventivo,vehicular,False,1.3,Cambio de aceite y filtros
+AMB-T2-027,2025-05-27,2025-05-29,preventivo,equipamiento,False,1.4,Inspección del equipamiento básico
+AMB-T2-027,2025-06-25,2025-06-26,preventivo,equipamiento,False,1.0,Verificación funcional del monitor desfibrilador
+AMB-T2-027,2025-07-05,2025-07-10,correctivo,electrico,False,4.8,Reparación del sistema de iluminación de emergencia
+AMB-T2-027,2025-07-24,2025-07-25,preventivo,vehicular,False,1.0,Rotación y balanceo de neumáticos
+AMB-T2-027,2025-08-15,2025-08-16,preventivo,equipamiento,False,0.9,Calibración de equipos de monitorización
+AMB-T2-027,2025-09-05,2025-09-07,preventivo,vehicular,False,1.2,Rotación y balanceo de neumáticos
+AMB-T2-027,2025-09-13,2025-09-15,correctivo,vehicular,True,1.9,Reparación del sistema de dirección
+AMB-T2-027,2025-09-22,2025-09-23,preventivo,vehicular,False,0.8,Rotación y balanceo de neumáticos
+AMB-T2-027,2025-10-07,2025-10-08,preventivo,vehicular,False,0.7,Rotación y balanceo de neumáticos
+AMB-T2-027,2025-10-28,2025-10-29,preventivo,vehicular,False,1.3,Revisión de frenos y suspensión
+AMB-T2-027,2025-11-24,2025-11-25,preventivo,vehicular,False,1.8,Revisión de frenos y suspensión
+AMB-T2-027,2025-12-18,2025-12-19,preventivo,vehicular,False,0.8,Cambio de aceite y filtros
+AMB-T2-028,2024-01-05,2024-01-06,preventivo,vehicular,False,1.9,Revisión de frenos y suspensión
+AMB-T2-028,2024-02-10,2024-02-11,preventivo,electrico,False,1.0,Verificación de conexiones eléctricas
+AMB-T2-028,2024-03-24,2024-03-25,preventivo,electrico,False,1.2,Revisión del sistema eléctrico de cabina
+AMB-T2-028,2024-04-30,2024-05-01,preventivo,vehicular,False,1.7,Cambio de aceite y filtros
+AMB-T2-028,2024-05-04,2024-05-06,correctivo,vehicular,True,2.7,Reparación de fuga de aceite
+AMB-T2-028,2024-06-16,2024-06-17,preventivo,vehicular,False,1.2,Rotación y balanceo de neumáticos
+AMB-T2-028,2024-06-24,2024-06-28,correctivo,electrico,True,4.2,Reemplazo de fusibles del sistema eléctrico
+AMB-T2-028,2024-07-14,2024-07-17,correctivo,vehicular,True,2.8,Reparación de fuga de aceite
+AMB-T2-028,2024-07-30,2024-07-31,preventivo,vehicular,False,1.0,Inspección del sistema de refrigeración
+AMB-T2-028,2024-09-10,2024-09-11,preventivo,vehicular,False,1.9,Rotación y balanceo de neumáticos
+AMB-T2-028,2024-10-15,2024-10-16,preventivo,equipamiento,False,0.9,Inspección del equipamiento básico
+AMB-T2-028,2024-11-26,2024-11-27,preventivo,electrico,False,1.7,Revisión del sistema eléctrico de cabina
+AMB-T2-028,2024-12-31,2025-01-01,preventivo,vehicular,False,1.4,Revisión general del motor
+AMB-T2-028,2025-02-12,2025-02-13,preventivo,vehicular,False,1.2,Inspección del sistema de refrigeración
+AMB-T2-028,2025-03-22,2025-03-23,preventivo,vehicular,False,1.6,Cambio de aceite y filtros
+AMB-T2-028,2025-05-06,2025-05-08,preventivo,vehicular,False,1.4,Revisión general del motor
+AMB-T2-028,2025-06-19,2025-06-20,preventivo,vehicular,False,1.1,Revisión general del motor
+AMB-T2-028,2025-07-29,2025-07-30,preventivo,vehicular,False,1.0,Cambio de aceite y filtros
+AMB-T2-028,2025-09-03,2025-09-04,preventivo,electrico,False,1.3,Mantenimiento del sistema de iluminación
+AMB-T2-028,2025-10-17,2025-10-19,preventivo,vehicular,False,1.1,Inspección del sistema de refrigeración
+AMB-T2-028,2025-11-22,2025-11-23,preventivo,vehicular,False,0.8,Revisión general del motor
+AMB-T2-028,2025-12-23,2025-12-24,preventivo,vehicular,False,1.5,Cambio de aceite y filtros
+AMB-T2-029,2024-01-10,2024-01-11,preventivo,electrico,False,1.5,Mantenimiento del sistema de iluminación
+AMB-T2-029,2024-02-23,2024-02-24,preventivo,vehicular,False,1.0,Cambio de aceite y filtros
+AMB-T2-029,2024-04-15,2024-04-16,preventivo,vehicular,False,0.8,Revisión de frenos y suspensión
+AMB-T2-029,2024-05-22,2024-05-24,preventivo,equipamiento,False,1.5,Inspección del equipamiento básico
+AMB-T2-029,2024-06-28,2024-06-30,preventivo,vehicular,False,1.8,Rotación y balanceo de neumáticos
+AMB-T2-029,2024-08-19,2024-08-21,preventivo,vehicular,False,1.6,Inspección del sistema de refrigeración
+AMB-T2-029,2024-10-10,2024-10-11,preventivo,vehicular,False,1.2,Cambio de aceite y filtros
+AMB-T2-029,2024-11-18,2024-11-20,preventivo,equipamiento,False,1.3,Calibración de equipos de monitorización
+AMB-T2-029,2025-01-02,2025-01-03,preventivo,equipamiento,False,1.3,Calibración de equipos de monitorización
+AMB-T2-029,2025-02-09,2025-02-10,preventivo,vehicular,False,1.3,Revisión de frenos y suspensión
+AMB-T2-029,2025-03-28,2025-03-29,preventivo,vehicular,False,1.1,Cambio de aceite y filtros
+AMB-T2-029,2025-05-19,2025-05-20,preventivo,vehicular,False,1.6,Rotación y balanceo de neumáticos
+AMB-T2-029,2025-06-30,2025-07-01,preventivo,vehicular,False,0.9,Cambio de aceite y filtros
+AMB-T2-029,2025-08-12,2025-08-13,preventivo,equipamiento,False,1.6,Calibración de equipos de monitorización
+AMB-T2-029,2025-09-26,2025-09-26,preventivo,electrico,False,0.5,Verificación de conexiones eléctricas
+AMB-T2-029,2025-10-11,2025-10-14,correctivo,vehicular,True,3.1,Reparación de fuga en sistema de frenos
+AMB-T2-029,2025-11-01,2025-11-02,preventivo,vehicular,False,0.7,Rotación y balanceo de neumáticos
+AMB-T2-029,2025-12-17,2025-12-19,preventivo,electrico,False,1.3,Mantenimiento del sistema de iluminación
+AMB-T2-030,2024-01-04,2024-01-05,preventivo,vehicular,False,1.4,Revisión general del motor
+AMB-T2-030,2024-02-25,2024-02-26,preventivo,vehicular,False,0.9,Revisión general del motor
+AMB-T2-030,2024-04-14,2024-04-16,preventivo,equipamiento,False,1.5,Inspección del equipamiento básico
+AMB-T2-030,2024-06-09,2024-06-09,preventivo,vehicular,False,0.5,Revisión general del motor
+AMB-T2-030,2024-08-01,2024-08-02,preventivo,vehicular,False,0.9,Revisión de frenos y suspensión
+AMB-T2-030,2024-09-24,2024-09-25,preventivo,vehicular,False,1.0,Revisión general del motor
+AMB-T2-030,2024-11-23,2024-11-23,preventivo,vehicular,False,0.5,Revisión general del motor
+AMB-T2-030,2025-01-17,2025-01-18,preventivo,vehicular,False,1.3,Cambio de aceite y filtros
+AMB-T2-030,2025-03-09,2025-03-10,preventivo,vehicular,False,1.2,Revisión general del motor
+AMB-T2-030,2025-04-25,2025-04-27,correctivo,vehicular,True,1.8,Reparación de fuga de aceite
+AMB-T2-030,2025-04-25,2025-04-25,preventivo,vehicular,False,0.5,Inspección del sistema de refrigeración
+AMB-T2-030,2025-06-11,2025-06-12,preventivo,vehicular,False,1.3,Revisión de frenos y suspensión
+AMB-T2-030,2025-07-19,2025-07-20,preventivo,vehicular,False,0.9,Revisión de frenos y suspensión
+AMB-T2-030,2025-08-02,2025-08-04,correctivo,equipamiento,True,1.9,Reemplazo de componente de equipamiento básico
+AMB-T2-030,2025-09-04,2025-09-04,preventivo,equipamiento,False,1.0,Inspección del equipamiento básico
+AMB-T2-030,2025-10-25,2025-10-26,preventivo,electrico,False,0.9,Verificación de conexiones eléctricas
+AMB-T2-030,2025-12-05,2025-12-06,preventivo,vehicular,False,0.8,Revisión de frenos y suspensión
+AMB-T2-031,2024-01-08,2024-01-08,preventivo,vehicular,False,0.8,Rotación y balanceo de neumáticos
+AMB-T2-031,2024-02-03,2024-02-05,correctivo,vehicular,True,3.0,Reparación del sistema de dirección
+AMB-T2-031,2024-02-13,2024-02-15,preventivo,vehicular,False,1.6,Rotación y balanceo de neumáticos
+AMB-T2-031,2024-03-09,2024-03-11,correctivo,vehicular,True,2.2,Cambio de batería vehicular
+AMB-T2-031,2024-03-09,2024-03-10,preventivo,equipamiento,False,0.5,Inspección del equipamiento básico
+AMB-T2-031,2024-04-16,2024-04-17,preventivo,vehicular,False,1.3,Rotación y balanceo de neumáticos
+AMB-T2-031,2024-05-03,2024-05-04,preventivo,vehicular,False,1.2,Revisión de frenos y suspensión
+AMB-T2-031,2024-06-07,2024-06-07,preventivo,vehicular,False,0.5,Inspección del sistema de refrigeración
+AMB-T2-031,2024-07-11,2024-07-12,preventivo,electrico,False,1.5,Verificación de conexiones eléctricas
+AMB-T2-031,2024-08-07,2024-08-08,preventivo,electrico,False,1.7,Mantenimiento del sistema de iluminación
+AMB-T2-031,2024-09-06,2024-09-06,preventivo,electrico,False,0.8,Revisión del sistema eléctrico de cabina
+AMB-T2-031,2024-09-30,2024-10-01,preventivo,vehicular,False,0.7,Rotación y balanceo de neumáticos
+AMB-T2-031,2024-10-04,2024-10-04,correctivo,vehicular,True,0.5,Reparación de fuga en sistema de frenos
+AMB-T2-031,2024-11-03,2024-11-04,preventivo,vehicular,False,1.1,Cambio de aceite y filtros
+AMB-T2-031,2024-12-03,2024-12-04,preventivo,electrico,False,0.8,Verificación de conexiones eléctricas
+AMB-T2-031,2025-01-10,2025-01-10,preventivo,electrico,False,0.7,Verificación de conexiones eléctricas
+AMB-T2-031,2025-02-12,2025-02-13,preventivo,equipamiento,False,1.2,Verificación funcional del monitor desfibrilador
+AMB-T2-031,2025-03-17,2025-03-18,preventivo,equipamiento,False,1.1,Revisión del oxímetro de pulso portátil
+AMB-T2-031,2025-04-21,2025-04-22,preventivo,vehicular,False,0.9,Revisión de frenos y suspensión
+AMB-T2-031,2025-05-27,2025-05-28,preventivo,vehicular,False,1.2,Inspección del sistema de refrigeración
+AMB-T2-031,2025-06-30,2025-07-01,preventivo,electrico,False,1.0,Verificación de conexiones eléctricas
+AMB-T2-031,2025-08-02,2025-08-04,preventivo,vehicular,False,1.7,Cambio de aceite y filtros
+AMB-T2-031,2025-09-01,2025-09-02,preventivo,vehicular,False,1.1,Revisión de frenos y suspensión
+AMB-T2-031,2025-10-01,2025-10-03,preventivo,vehicular,False,1.5,Revisión de frenos y suspensión
+AMB-T2-031,2025-10-31,2025-11-01,preventivo,equipamiento,False,1.5,Inspección del equipamiento básico
+AMB-T2-031,2025-12-06,2025-12-07,preventivo,vehicular,False,1.3,Revisión general del motor
+AMB-T2-032,2024-01-04,2024-01-04,preventivo,vehicular,False,0.9,Revisión de frenos y suspensión
+AMB-T2-032,2024-02-05,2024-02-06,preventivo,electrico,False,1.0,Revisión del sistema eléctrico de cabina
+AMB-T2-032,2024-03-03,2024-03-04,preventivo,vehicular,False,0.8,Inspección del sistema de refrigeración
+AMB-T2-032,2024-04-09,2024-04-10,preventivo,electrico,False,0.7,Revisión del sistema eléctrico de cabina
+AMB-T2-032,2024-05-15,2024-05-17,preventivo,vehicular,False,2.0,Rotación y balanceo de neumáticos
+AMB-T2-032,2024-06-22,2024-06-24,preventivo,equipamiento,False,1.9,Inspección del equipamiento básico
+AMB-T2-032,2024-07-19,2024-07-20,correctivo,vehicular,False,0.6,Reparación de fuga de aceite
+AMB-T2-032,2024-07-21,2024-07-22,preventivo,vehicular,False,0.9,Revisión general del motor
+AMB-T2-032,2024-08-22,2024-08-23,preventivo,vehicular,False,0.8,Revisión de frenos y suspensión
+AMB-T2-032,2024-09-21,2024-09-22,preventivo,electrico,False,0.9,Verificación de conexiones eléctricas
+AMB-T2-032,2024-10-04,2024-10-06,correctivo,vehicular,True,2.8,Reparación del sistema de dirección
+AMB-T2-032,2024-11-01,2024-11-03,preventivo,electrico,False,1.8,Revisión del sistema de carga de equipos
+AMB-T2-032,2024-11-30,2024-12-01,preventivo,vehicular,False,1.1,Revisión de frenos y suspensión
+AMB-T2-032,2025-01-05,2025-01-06,preventivo,electrico,False,0.7,Mantenimiento del sistema de iluminación
+AMB-T2-032,2025-02-02,2025-02-03,preventivo,vehicular,False,1.4,Revisión de frenos y suspensión
+AMB-T2-032,2025-03-03,2025-03-04,preventivo,vehicular,False,1.7,Revisión de frenos y suspensión
+AMB-T2-032,2025-04-11,2025-04-12,preventivo,equipamiento,False,1.4,Inspección del equipamiento básico
+AMB-T2-032,2025-05-21,2025-05-22,preventivo,vehicular,False,0.5,Inspección del sistema de refrigeración
+AMB-T2-032,2025-06-22,2025-06-23,preventivo,electrico,False,1.7,Revisión del sistema eléctrico de cabina
+AMB-T2-032,2025-07-25,2025-07-27,preventivo,vehicular,False,2.3,Revisión general del motor
+AMB-T2-032,2025-08-31,2025-09-01,preventivo,vehicular,False,1.1,Rotación y balanceo de neumáticos
+AMB-T2-032,2025-10-01,2025-10-03,correctivo,electrico,False,2.9,Corrección de falla en sistema de carga
+AMB-T2-032,2025-10-04,2025-10-04,preventivo,electrico,False,0.6,Revisión del sistema eléctrico de cabina
+AMB-T2-032,2025-11-09,2025-11-10,preventivo,vehicular,False,1.7,Rotación y balanceo de neumáticos
+AMB-T2-032,2025-12-19,2025-12-20,preventivo,electrico,False,0.5,Revisión del sistema de carga de equipos
+AMB-T2-033,2024-01-05,2024-01-05,preventivo,vehicular,False,0.5,Rotación y balanceo de neumáticos
+AMB-T2-033,2024-02-05,2024-02-06,preventivo,equipamiento,False,0.8,Verificación funcional del monitor desfibrilador
+AMB-T2-033,2024-03-06,2024-03-07,preventivo,vehicular,False,0.9,Revisión general del motor
+AMB-T2-033,2024-03-15,2024-03-17,correctivo,electrico,True,2.3,Reparación del sistema de iluminación de emergencia
+AMB-T2-033,2024-04-17,2024-04-18,preventivo,vehicular,False,1.1,Rotación y balanceo de neumáticos
+AMB-T2-033,2024-05-22,2024-05-23,preventivo,vehicular,False,0.9,Inspección del sistema de refrigeración
+AMB-T2-033,2024-05-23,2024-05-26,correctivo,vehicular,True,2.6,Reparación de fuga de aceite
+AMB-T2-033,2024-06-23,2024-06-24,preventivo,electrico,False,1.8,Revisión del sistema eléctrico de cabina
+AMB-T2-033,2024-08-03,2024-08-05,preventivo,electrico,False,1.6,Revisión del sistema de carga de equipos
+AMB-T2-033,2024-09-12,2024-09-14,preventivo,electrico,False,1.6,Revisión del sistema de carga de equipos
+AMB-T2-033,2024-10-24,2024-10-25,preventivo,vehicular,False,1.3,Rotación y balanceo de neumáticos
+AMB-T2-033,2024-11-20,2024-11-21,preventivo,vehicular,False,1.3,Revisión general del motor
+AMB-T2-033,2024-12-27,2024-12-28,preventivo,vehicular,False,0.8,Inspección del sistema de refrigeración
+AMB-T2-033,2025-02-12,2025-02-13,preventivo,vehicular,False,1.2,Cambio de aceite y filtros
+AMB-T2-033,2025-03-28,2025-03-29,preventivo,vehicular,False,1.4,Inspección del sistema de refrigeración
+AMB-T2-033,2025-04-01,2025-04-03,correctivo,vehicular,True,2.6,Cambio de batería vehicular
+AMB-T2-033,2025-04-09,2025-04-11,correctivo,vehicular,True,2.4,Reparación de fuga en sistema de frenos
+AMB-T2-033,2025-05-07,2025-05-08,preventivo,vehicular,False,1.1,Revisión de frenos y suspensión
+AMB-T2-033,2025-06-11,2025-06-13,preventivo,vehicular,False,1.3,Inspección del sistema de refrigeración
+AMB-T2-033,2025-07-13,2025-07-14,preventivo,vehicular,False,1.2,Rotación y balanceo de neumáticos
+AMB-T2-033,2025-08-09,2025-08-10,preventivo,electrico,False,0.7,Revisión del sistema de carga de equipos
+AMB-T2-033,2025-09-10,2025-09-10,preventivo,vehicular,False,0.5,Cambio de aceite y filtros
+AMB-T2-033,2025-09-20,2025-09-21,correctivo,vehicular,True,1.6,Reparación de fuga en sistema de frenos
+AMB-T2-033,2025-10-16,2025-10-17,preventivo,vehicular,False,0.8,Cambio de aceite y filtros
+AMB-T2-033,2025-11-20,2025-11-21,preventivo,electrico,False,0.9,Revisión del sistema de carga de equipos
+AMB-T2-033,2025-12-25,2025-12-26,preventivo,electrico,False,0.9,Verificación de conexiones eléctricas
+AMB-T2-034,2024-01-15,2024-01-16,preventivo,electrico,False,1.3,Revisión del sistema eléctrico de cabina
+AMB-T2-034,2024-02-27,2024-02-28,preventivo,vehicular,False,0.5,Inspección del sistema de refrigeración
+AMB-T2-034,2024-04-12,2024-04-13,preventivo,vehicular,False,1.5,Revisión general del motor
+AMB-T2-034,2024-05-30,2024-05-31,preventivo,vehicular,False,0.9,Inspección del sistema de refrigeración
+AMB-T2-034,2024-07-18,2024-07-19,preventivo,electrico,False,1.3,Revisión del sistema eléctrico de cabina
+AMB-T2-034,2024-09-04,2024-09-06,preventivo,vehicular,False,1.7,Revisión general del motor
+AMB-T2-034,2024-10-21,2024-10-22,preventivo,vehicular,False,0.6,Revisión de frenos y suspensión
+AMB-T2-034,2024-12-03,2024-12-04,preventivo,electrico,False,1.1,Verificación de conexiones eléctricas
+AMB-T2-034,2025-01-19,2025-01-21,preventivo,equipamiento,False,1.3,Inspección del equipamiento básico
+AMB-T2-034,2025-03-08,2025-03-09,preventivo,vehicular,False,1.7,Revisión general del motor
+AMB-T2-034,2025-04-10,2025-04-10,preventivo,vehicular,False,0.6,Inspección del sistema de refrigeración
+AMB-T2-034,2025-05-08,2025-05-11,correctivo,vehicular,True,2.8,Reparación de fuga de aceite
+AMB-T2-034,2025-05-24,2025-05-25,preventivo,electrico,False,1.3,Mantenimiento del sistema de iluminación
+AMB-T2-034,2025-07-16,2025-07-17,preventivo,vehicular,False,1.4,Revisión general del motor
+AMB-T2-034,2025-08-27,2025-08-29,preventivo,vehicular,False,1.3,Inspección del sistema de refrigeración
+AMB-T2-034,2025-09-16,2025-09-17,correctivo,vehicular,True,0.5,Reparación del sistema de dirección
+AMB-T2-034,2025-10-13,2025-10-13,preventivo,electrico,False,0.9,Revisión del sistema de carga de equipos
+AMB-T2-034,2025-11-24,2025-11-26,preventivo,equipamiento,False,1.1,Inspección del equipamiento básico
+AMB-T2-035,2024-01-01,2024-01-01,preventivo,vehicular,False,0.7,Cambio de aceite y filtros
+AMB-T2-035,2024-02-07,2024-02-08,preventivo,vehicular,False,0.5,Cambio de aceite y filtros
+AMB-T2-035,2024-03-05,2024-03-07,preventivo,electrico,False,1.6,Verificación de conexiones eléctricas
+AMB-T2-035,2024-03-25,2024-03-26,preventivo,electrico,False,1.1,Revisión del sistema de carga de equipos
+AMB-T2-035,2024-04-09,2024-04-11,preventivo,electrico,False,1.4,Verificación de conexiones eléctricas
+AMB-T2-035,2024-05-06,2024-05-07,preventivo,vehicular,False,1.4,Revisión general del motor
+AMB-T2-035,2024-06-06,2024-06-07,preventivo,equipamiento,False,1.1,Verificación funcional del monitor desfibrilador
+AMB-T2-035,2024-07-01,2024-07-03,preventivo,equipamiento,False,1.7,Revisión del oxímetro de pulso portátil
+AMB-T2-035,2024-07-22,2024-07-22,preventivo,vehicular,False,0.6,Inspección del sistema de refrigeración
+AMB-T2-035,2024-08-08,2024-08-10,preventivo,electrico,False,1.9,Verificación de conexiones eléctricas
+AMB-T2-035,2024-08-26,2024-08-27,preventivo,vehicular,False,1.3,Revisión general del motor
+AMB-T2-035,2024-09-25,2024-09-26,preventivo,electrico,False,1.3,Verificación de conexiones eléctricas
+AMB-T2-035,2024-10-19,2024-10-21,preventivo,vehicular,False,1.7,Inspección del sistema de refrigeración
+AMB-T2-035,2024-11-08,2024-11-09,preventivo,electrico,False,1.1,Verificación de conexiones eléctricas
+AMB-T2-035,2024-12-07,2024-12-09,preventivo,vehicular,False,2.0,Revisión de frenos y suspensión
+AMB-T2-035,2025-01-10,2025-01-12,preventivo,electrico,False,1.1,Revisión del sistema de carga de equipos
+AMB-T2-035,2025-01-28,2025-01-30,preventivo,vehicular,False,1.4,Revisión general del motor
+AMB-T2-035,2025-03-05,2025-03-05,preventivo,electrico,False,0.8,Revisión del sistema eléctrico de cabina
+AMB-T2-035,2025-03-14,2025-03-16,correctivo,vehicular,True,2.8,Reparación de fuga en sistema de frenos
+AMB-T2-035,2025-03-22,2025-03-23,preventivo,electrico,False,1.2,Revisión del sistema eléctrico de cabina
+AMB-T2-035,2025-04-14,2025-04-15,preventivo,vehicular,False,1.2,Cambio de aceite y filtros
+AMB-T2-035,2025-05-08,2025-05-09,preventivo,electrico,False,1.0,Revisión del sistema eléctrico de cabina
+AMB-T2-035,2025-06-05,2025-06-06,preventivo,equipamiento,False,1.6,Revisión del oxímetro de pulso portátil
+AMB-T2-035,2025-07-03,2025-07-05,preventivo,vehicular,False,1.7,Cambio de aceite y filtros
+AMB-T2-035,2025-07-27,2025-07-27,preventivo,vehicular,False,0.9,Revisión de frenos y suspensión
+AMB-T2-035,2025-09-01,2025-09-03,preventivo,vehicular,False,1.7,Cambio de aceite y filtros
+AMB-T2-035,2025-09-20,2025-09-22,preventivo,vehicular,False,1.2,Rotación y balanceo de neumáticos
+AMB-T2-035,2025-10-09,2025-10-10,preventivo,equipamiento,False,1.8,Verificación funcional del monitor desfibrilador
+AMB-T2-035,2025-11-16,2025-11-16,preventivo,electrico,False,0.6,Mantenimiento del sistema de iluminación
+AMB-T2-035,2025-12-10,2025-12-11,preventivo,electrico,False,1.1,Verificación de conexiones eléctricas
