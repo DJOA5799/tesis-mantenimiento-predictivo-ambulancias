@@ -327,141 +327,117 @@ def analizar_falsos_negativos(df_soporte: pd.DataFrame,
 def generar_visualizacion_lineamientos(df_soporte: pd.DataFrame,
                                         df_val: pd.DataFrame) -> None:
     """
-    Genera visualizaciones de soporte para los lineamientos técnicos.
+    Genera visualizaciones de lineamientos tecnicos con estilo cientifico.
+    Paneles: evolucion temporal, distribucion por riesgo,
+             ranking por ambulancia, protocolo semanal.
     """
-    fig = plt.figure(figsize=(16, 12))
-    gs = GridSpec(2, 3, figure=fig, hspace=0.4, wspace=0.35)
+    import matplotlib
+    import matplotlib.patches as mpatches
+    from matplotlib.patches import FancyBboxPatch
+    from matplotlib.gridspec import GridSpec
+    matplotlib.rcParams.update({
+        'font.family': 'serif', 'axes.spines.top': False,
+        'axes.spines.right': False, 'grid.color': '#dddddd',
+        'grid.linewidth': 0.5, 'figure.facecolor': 'white',
+        'axes.facecolor': 'white',
+    })
+    NEGRO='#1a1a1a'; GRIS_OS='#3d3d3d'; GRIS_ME='#767676'
+    ROJO='#7B1515'; VERDE='#1A5236'; MARRON='#6B5200'; AZUL='#1B4F8A'
+    C_RIESGO = {'ALTO': ROJO, 'MEDIO': MARRON, 'BAJO': VERDE}
 
-    colores_riesgo = {'ALTO': '#E74C3C', 'MEDIO': '#EF9F27', 'BAJO': '#1D9E75'}
-
-    # --- GRÁFICO 1: Distribución de riesgo por corte temporal ---
-    ax1 = fig.add_subplot(gs[0, :2])
-
+    df_soporte = df_soporte.copy()
     df_soporte['t0'] = pd.to_datetime(df_soporte['t0'])
-    dist_temporal = df_soporte.groupby(
-        ['t0', 'nivel_riesgo']
-    ).size().unstack(fill_value=0)
 
-    for nivel in ['ALTO', 'MEDIO', 'BAJO']:
-        if nivel in dist_temporal.columns:
-            ax1.plot(dist_temporal.index,
-                    dist_temporal[nivel],
-                    color=colores_riesgo[nivel],
-                    linewidth=2,
-                    label=f'Riesgo {nivel}',
-                    marker='o', markersize=3)
+    fig = plt.figure(figsize=(15, 10))
+    gs  = GridSpec(2, 3, figure=fig, hspace=0.45, wspace=0.38)
 
-    ax1.set_xlabel('Fecha del corte temporal', fontsize=10)
-    ax1.set_ylabel('Número de ambulancias', fontsize=10)
-    ax1.set_title('Evolución del nivel de riesgo operativo — Flota Tipo II (2025)',
-                  fontsize=11, fontweight='bold')
-    ax1.legend(fontsize=9)
-    ax1.grid(True, alpha=0.3)
-    ax1.tick_params(axis='x', rotation=45)
+    # Panel 1: Evolucion temporal
+    ax1 = fig.add_subplot(gs[0, :2])
+    dist = df_soporte.groupby(['t0','nivel_riesgo']).size().unstack(fill_value=0)
+    for niv, ls, lw in [('ALTO','-',1.8),('MEDIO','--',1.5),('BAJO',':',1.5)]:
+        if niv in dist.columns:
+            ax1.plot(dist.index, dist[niv], color=C_RIESGO[niv],
+                     lw=lw, linestyle=ls, label=f'Riesgo {niv}',
+                     marker='o', markersize=2.5)
+    ax1.set_xlabel('Fecha del corte temporal', fontsize=9)
+    ax1.set_ylabel('Numero de ambulancias', fontsize=9)
+    ax1.set_title('Evolucion semanal del nivel de riesgo - Flota Tipo II 2025',
+                  fontsize=10, fontweight='bold')
+    ax1.legend(fontsize=8.5, frameon=True)
+    ax1.grid(True, alpha=0.30)
+    ax1.tick_params(axis='x', rotation=45, labelsize=8)
 
-    # --- GRÁFICO 2: Distribución de riesgo promedio ---
+    # Panel 2: Distribucion porcentual
     ax2 = fig.add_subplot(gs[0, 2])
+    orden = [n for n in ['ALTO','MEDIO','BAJO']
+             if n in df_soporte['nivel_riesgo'].values]
+    vals  = [df_soporte['nivel_riesgo'].value_counts()[n] for n in orden]
+    wedges, texts, autos = ax2.pie(
+        vals, labels=orden, colors=[C_RIESGO[n] for n in orden],
+        autopct='%1.1f%%', startangle=90,
+        textprops={'fontsize': 9}, wedgeprops={'edgecolor':'white','linewidth':1.5})
+    for a in autos:
+        a.set_fontsize(8.5); a.set_color('white'); a.set_fontweight('bold')
+    ax2.set_title('Distribucion porcentual por',
+              fontsize=10, fontweight='bold')
 
-    dist_total = df_soporte['nivel_riesgo'].value_counts()
-    colores_pie = [colores_riesgo.get(n, '#888') for n in dist_total.index]
-
-    wedges, texts, autotexts = ax2.pie(
-        dist_total.values,
-        labels=dist_total.index,
-        colors=colores_pie,
-        autopct='%1.1f%%',
-        startangle=90,
-        textprops={'fontsize': 10}
-    )
-    ax2.set_title('Distribución de riesgo\n(período de validación 2025)',
-                  fontsize=11, fontweight='bold')
-
-    # --- GRÁFICO 3: Probabilidad promedio por ambulancia ---
+    # Panel 3: Ranking por ambulancia
     ax3 = fig.add_subplot(gs[1, :2])
+    prob_amb = (df_soporte.groupby('id_ambulancia')['prob_inoperatividad']
+                .mean().sort_values(ascending=False))
+    cols_bar = [C_RIESGO['ALTO'] if p >= 0.50
+                else C_RIESGO['MEDIO'] if p >= 0.25
+                else C_RIESGO['BAJO'] for p in prob_amb.values]
+    ax3.bar(range(len(prob_amb)), prob_amb.values, color=cols_bar,
+            edgecolor='white', linewidth=0.5, width=0.75, zorder=3)
+    ax3.axhline(y=0.50, color=ROJO,   linestyle='--', lw=1.3, alpha=0.8)
+    ax3.axhline(y=0.25, color=MARRON, linestyle='--', lw=1.3, alpha=0.8)
+    ax3.set_xticks(range(len(prob_amb)))
+    ax3.set_xticklabels(prob_amb.index, rotation=90, fontsize=7)
+    ax3.set_xlabel('Ambulancia', fontsize=9)
+    ax3.set_ylabel('Probabilidad promedio de inoperatividad', fontsize=9)
+    ax3.set_title('Ranking de probabilidad promedio de inoperatividad por unidad',
+              fontsize=10, fontweight='bold')
+    ax3.grid(True, axis='y', alpha=0.30, zorder=0); ax3.set_ylim(0, 1.05)
+    ax3.legend(handles=[
+        mpatches.Patch(color=ROJO,   label='Riesgo ALTO   (P >= 0,50)'),
+        mpatches.Patch(color=MARRON, label='Riesgo MEDIO  (0,25 <= P < 0,50)'),
+        mpatches.Patch(color=VERDE,  label='Riesgo BAJO   (P < 0,25)'),
+    ], fontsize=8, loc='upper right', frameon=True)
 
-    prob_por_amb = df_soporte.groupby('id_ambulancia')['prob_inoperatividad'].mean().sort_values(ascending=False)
-    colores_barras = [
-        '#E74C3C' if p >= 0.50 else '#EF9F27' if p >= 0.25 else '#1D9E75'
-        for p in prob_por_amb.values
-    ]
-
-    bars = ax3.bar(range(len(prob_por_amb)),
-                   prob_por_amb.values,
-                   color=colores_barras,
-                   alpha=0.85,
-                   edgecolor='white',
-                   linewidth=0.5)
-
-    ax3.axhline(y=0.50, color='#E74C3C', linestyle='--',
-                linewidth=1.5, alpha=0.7, label='Umbral ALTO (0.50)')
-    ax3.axhline(y=0.25, color='#EF9F27', linestyle='--',
-                linewidth=1.5, alpha=0.7, label='Umbral MEDIO (0.25)')
-    ax3.set_xticks(range(len(prob_por_amb)))
-    ax3.set_xticklabels(prob_por_amb.index, rotation=90, fontsize=7)
-    ax3.set_xlabel('Ambulancia', fontsize=10)
-    ax3.set_ylabel('Probabilidad promedio de inoperatividad', fontsize=10)
-    ax3.set_title('Probabilidad promedio de inoperatividad por unidad\n(ordenado de mayor a menor riesgo)',
-                  fontsize=11, fontweight='bold')
-    ax3.legend(fontsize=9)
-    ax3.grid(True, axis='y', alpha=0.3)
-
-    parches = [
-        mpatches.Patch(color='#E74C3C', label='Riesgo ALTO'),
-        mpatches.Patch(color='#EF9F27', label='Riesgo MEDIO'),
-        mpatches.Patch(color='#1D9E75', label='Riesgo BAJO')
-    ]
-    ax3.legend(handles=parches, fontsize=8, loc='upper right')
-
-    # --- GRÁFICO 4: Protocolo de ciclo semanal ---
+    # Panel 4: Protocolo semanal
     ax4 = fig.add_subplot(gs[1, 2])
-    ax4.axis('off')
-
+    ax4.set_xlim(0, 5); ax4.set_ylim(0, 7.5); ax4.axis('off')
+    ax4.set_title('Protocolo semanal',
+              fontsize=10, fontweight='bold')
     pasos = [
-        '① Actualizar\nregistros',
-        '② Ejecutar\nmodelo',
-        '③ Revisar\nranking',
-        '④ Programar\nintervenciones',
-        '⑤ Ejecutar y\nregistrar',
-        '⑥ Retroalimentar\nmodelo'
+        ('1. Actualizar registros operativos',   GRIS_OS),
+        ('2. Ejecutar modelo Gradient Boosting', AZUL),
+        ('3. Revisar ranking de riesgo',         GRIS_OS),
+        ('4. Programar intervenciones',          ROJO),
+        ('5. Ejecutar y registrar',              GRIS_OS),
+        ('6. Retroalimentar con nuevos datos',   VERDE),
     ]
-    colores_pasos = ['#1D9E75', '#534AB7', '#EF9F27',
-                     '#E74C3C', '#534AB7', '#1D9E75']
-
-    for i, (paso, color) in enumerate(zip(pasos, colores_pasos)):
-        y_pos = 0.95 - i * 0.16
-        fancy = mpatches.FancyBboxPatch(
-            (0.05, y_pos - 0.07), 0.9, 0.12,
-            boxstyle="round,pad=0.02",
-            facecolor=color, alpha=0.85,
-            transform=ax4.transAxes
-        )
-        ax4.add_patch(fancy)
-        ax4.text(0.50, y_pos - 0.01, paso,
-                ha='center', va='center',
-                fontsize=8.5, color='white',
-                fontweight='bold',
-                transform=ax4.transAxes)
-
+    for i, (texto, color) in enumerate(pasos):
+        y = 6.8 - i * 1.08
+        ax4.add_patch(FancyBboxPatch(
+            (0.15, y - 0.38), 4.7, 0.76, boxstyle='round,pad=0.07',
+            facecolor=color, edgecolor='white', linewidth=1.5,
+            zorder=3, alpha=0.90))
+        ax4.text(2.5, y, texto, ha='center', va='center',
+                 fontsize=8.5, color='white', fontweight='bold', zorder=4)
         if i < len(pasos) - 1:
-            ax4.annotate('',
-                        xy=(0.50, y_pos - 0.08),
-                        xytext=(0.50, y_pos - 0.04),
-                        xycoords='axes fraction',
-                        textcoords='axes fraction',
-                        arrowprops=dict(arrowstyle='->', color='gray',
-                                       lw=1.5))
-
-    ax4.set_title('Protocolo de ciclo\nsemanal de uso',
-                  fontsize=11, fontweight='bold',
-                  pad=10)
+            ax4.annotate('', xy=(2.5, y - 0.40), xytext=(2.5, y - 0.60),
+                arrowprops=dict(arrowstyle='->', color=GRIS_ME, lw=1.2))
+    ax4.text(2.5, 0.25, 'Frecuencia: semanal (lunes). Responsable: jefe de mantenimiento',
+             ha='center', va='center', fontsize=7.5, color=GRIS_ME, style='italic')
 
     plt.suptitle(
-        'Lineamientos Técnicos y Operativos — Soporte Preventivo\n'
-        'Modelo Computacional Predictivo para Ambulancias Tipo II',
-        fontsize=13, fontweight='bold', y=1.01
-    )
+        'Lineamientos tecnicos y operativos. Soporte preventivo. Modelo computacional predictivo para ambulancias Tipo II  |  Periodo 2025',
+        fontsize=12, fontweight='bold', y=1.01)
 
-    plt.savefig('lineamientos_visualizacion.png', dpi=150, bbox_inches='tight')
+    plt.savefig('lineamientos_visualizacion.png', dpi=150,
+                bbox_inches='tight', facecolor='white')
     print("  Figura guardada: lineamientos_visualizacion.png")
     plt.close()
 
