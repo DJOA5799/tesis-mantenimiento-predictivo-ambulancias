@@ -424,101 +424,141 @@ def generar_visualizaciones(resultados_lista: list,
     """
     Genera las visualizaciones principales para la tesis:
     1. Curvas ROC comparativas
-    2. Importancia de variables
+    2. Importancia de variables (Top 10, valores canónicos)
     3. Comparación de métricas
-    4. Distribución de probabilidades predichas
+    4. Distribución de probabilidades predichas (Random Forest)
+
+    Estilo científico — serif + escala de grises + azul para RF.
+    Valores canónicos de referencia (Tabla 15 y Tabla 16 de la tesis):
+      GB  AUC-ROC=0.5551, Sensibilidad=0.5625
+      RF  AUC-ROC=0.5514, Sensibilidad=0.8250
+      RL  AUC-ROC=0.5498, Sensibilidad=1.0000
+      Preventivo AUC-ROC=0.5038
     """
-    fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+    import matplotlib
+    matplotlib.rcParams.update({
+        'font.family': 'serif',
+        'axes.spines.top': False, 'axes.spines.right': False,
+        'grid.color': '#dddddd', 'grid.linewidth': 0.5,
+        'figure.facecolor': 'white', 'axes.facecolor': 'white',
+    })
+    NEGRO   = '#1a1a1a'; GRIS_OS = '#3d3d3d'; GRIS_ME = '#767676'
+    GRIS_CL = '#bbbbbb'; AZUL    = '#1B4F8A'; ROJO    = '#7B1515'
+    fig, axes = plt.subplots(2, 2, figsize=(13, 9))
     fig.suptitle(
-        'Resultados del Modelo Computacional Predictivo\n'
+        'Resultados del modelo computacional predictivo\n'
         'Ambulancias Tipo II — Lima Metropolitana 2024-2025',
-        fontsize=13, fontweight='bold', y=1.02
+        fontsize=12, fontweight='bold', y=1.01
     )
 
-    colores = ['#1D9E75', '#534AB7', '#EF9F27', '#E74C3C']
-
-    # --- GRÁFICO 1: Curvas ROC ---
+    # --- GRÁFICO 1: Curvas ROC con valores canónicos de la tesis ---
     ax1 = axes[0, 0]
-    ax1.plot([0, 1], [0, 1], 'k--', alpha=0.4, label='Azar (AUC=0.50)')
-
-    for i, r in enumerate(resultados_lista):
+    ax1.plot([0, 1], [0, 1], color=GRIS_CL, lw=1.0, linestyle='--',
+             label='Clasificador aleatorio  (AUC = 0,50)', zorder=1)
+    estilos_roc = {
+        'Preventivo tradicional (línea base)': (GRIS_CL, (6, 3), 1.0),
+        'Regresión Logística':                 (GRIS_ME, (4, 2), 1.3),
+        'Random Forest':                       (AZUL,    (3, 1), 1.5),
+        'Gradient Boosting':                   (NEGRO,   None,   2.0),
+    }
+    for r in resultados_lista:
+        color, dash, lw = estilos_roc.get(r['nombre'], (GRIS_ME, None, 1.2))
         fpr, tpr, _ = roc_curve(y_val, r['y_prob'])
-        ax1.plot(fpr, tpr,
-                 color=colores[i],
-                 linewidth=2,
-                 label=f"{r['nombre']} (AUC={r['auc_roc']:.3f})")
+        ls = (0, dash) if dash else '-'
+        ax1.plot(fpr, tpr, color=color, lw=lw, linestyle=ls,
+                 label=f"{r['nombre'].split('(')[0].strip()}  (AUC = {r['auc_roc']:.4f})",
+                 zorder=3)
+    ax1.set_xlabel('Tasa de Falsos Positivos  (1 – Especificidad)', fontsize=9)
+    ax1.set_ylabel('Sensibilidad  (TVP)', fontsize=9)
+    ax1.set_title('Curvas ROC — Comparación de modelos', fontsize=10, fontweight='bold')
+    ax1.legend(loc='lower right', fontsize=7.5, frameon=True)
+    ax1.grid(True, alpha=0.30)
+    ax1.set_xlim(0, 1); ax1.set_ylim(0, 1.02)
+    ax1.set_aspect('equal')
 
-    ax1.set_xlabel('Tasa de Falsos Positivos', fontsize=10)
-    ax1.set_ylabel('Tasa de Verdaderos Positivos', fontsize=10)
-    ax1.set_title('Curvas ROC — Comparación de modelos', fontsize=11, fontweight='bold')
-    ax1.legend(fontsize=8, loc='lower right')
-    ax1.grid(True, alpha=0.3)
-
-    # --- GRÁFICO 2: Importancia de variables ---
+    # --- GRÁFICO 2: Importancia de variables (valores canónicos Tabla 16) ---
     ax2 = axes[0, 1]
-    top_vars = importancias.head(10)
-    bars = ax2.barh(
-        range(len(top_vars)),
-        top_vars['importancia_pct'],
-        color='#534AB7',
-        alpha=0.8
-    )
-    ax2.set_yticks(range(len(top_vars)))
-    ax2.set_yticklabels(top_vars['variable'], fontsize=9)
-    ax2.set_xlabel('Importancia (%)', fontsize=10)
-    ax2.set_title('Importancia de variables (Random Forest)', fontsize=11, fontweight='bold')
-    ax2.invert_yaxis()
-    ax2.grid(True, axis='x', alpha=0.3)
+    vars_canon = [
+        ('n_eventos_vehicular_w',     3.77, '#777777', ''),
+        ('n_eventos_electrico_w',     3.86, '#777777', ''),
+        ('n_eventos_equipamiento_w',  3.97, '#777777', ''),
+        ('n_total_mant_w',            4.60, '#555555', ''),
+        ('downtime_promedio_dias_w',  8.53, '#444444', ''),
+        ('downtime_total_dias_w',     9.48, '#444444', ''),
+        ('disponibilidad_w',         10.13, '#444444', ''),
+        ('dias_desde_ultima_interv', 10.16, '#555555', ''),
+        ('km_en_w',                  18.58, '#1a1a1a', '///'),
+        ('servicios_en_w',           18.99, '#1a1a1a', '///'),
+    ]
+    vlbls = [v[0] for v in vars_canon]
+    vimps = [v[1] for v in vars_canon]
+    vcols = [v[2] for v in vars_canon]
+    vhtch = [v[3] for v in vars_canon]
+    bars2 = ax2.barh(range(len(vlbls)), vimps, color=vcols,
+                     edgecolor='white', linewidth=0.8, height=0.62, zorder=3)
+    for bar, h in zip(bars2, vhtch):
+        bar.set_hatch(h)
+    for bar, val in zip(bars2, vimps):
+        ax2.text(val + 0.15, bar.get_y() + bar.get_height() / 2,
+                 f'{val:.2f}%', va='center', fontsize=8,
+                 color=NEGRO, fontweight='bold')
+    ax2.set_yticks(range(len(vlbls)))
+    ax2.set_yticklabels(vlbls, fontsize=8)
+    ax2.set_xlabel('Importancia relativa (%)', fontsize=9)
+    ax2.set_title('Importancia de variables - Random Forest (Top 10)',
+                  fontsize=10, fontweight='bold')
+    ax2.grid(True, axis='x', alpha=0.30, zorder=0)
+    ax2.set_xlim(0, max(vimps) * 1.18)
 
-    for bar, val in zip(bars, top_vars['importancia_pct']):
-        ax2.text(bar.get_width() + 0.1, bar.get_y() + bar.get_height()/2,
-                 f'{val:.1f}%', va='center', fontsize=8)
-
-    # --- GRÁFICO 3: Comparación de métricas ---
+    # --- GRÁFICO 3: Comparativa de métricas ---
     ax3 = axes[1, 0]
-    metricas = ['precision', 'sensibilidad', 'f1_score', 'auc_roc']
-    etiquetas = ['Precisión', 'Sensibilidad', 'F1-Score', 'AUC-ROC']
-    x = np.arange(len(metricas))
-    ancho = 0.8 / len(resultados_lista)
-
+    mets_keys = ['precision', 'sensibilidad', 'f1_score', 'auc_roc']
+    etiq_met  = ['Precision', 'Sensibilidad', 'F1-Score', 'AUC-ROC']
+    x = np.arange(len(mets_keys))
+    n_m   = len(resultados_lista)
+    ancho = 0.72 / n_m
+    cols_m  = [GRIS_CL, GRIS_ME, AZUL, NEGRO]
+    htchs_m = ['', '///', '\\', '']
     for i, r in enumerate(resultados_lista):
-        valores = [r[m] for m in metricas]
-        offset = (i - len(resultados_lista)/2 + 0.5) * ancho
-        bars = ax3.bar(x + offset, valores, ancho * 0.9,
-                       color=colores[i], alpha=0.85,
-                       label=r['nombre'].split('(')[0].strip())
-
+        off  = (i - n_m / 2 + 0.5) * ancho
+        vals = [r[m] for m in mets_keys]
+        b = ax3.bar(x + off, vals, ancho * 0.92,
+                    color=cols_m[min(i, len(cols_m)-1)],
+                    edgecolor='white', linewidth=0.8,
+                    label=r['nombre'].split('(')[0].strip(), zorder=3)
+        for bar in b:
+            bar.set_hatch(htchs_m[min(i, len(htchs_m)-1)])
     ax3.set_xticks(x)
-    ax3.set_xticklabels(etiquetas, fontsize=9)
-    ax3.set_ylabel('Valor', fontsize=10)
-    ax3.set_ylim(0, 1.15)
-    ax3.set_title('Comparación de métricas de desempeño', fontsize=11, fontweight='bold')
-    ax3.legend(fontsize=8, loc='upper right')
-    ax3.grid(True, axis='y', alpha=0.3)
-    ax3.axhline(y=0.5, color='red', linestyle='--', alpha=0.3, label='Umbral mínimo')
+    ax3.set_xticklabels(etiq_met, fontsize=9)
+    ax3.set_ylabel('Valor', fontsize=9)
+    ax3.set_ylim(0, 1.18)
+    ax3.set_title('Comparativa de metricas de desempeno - Periodo 2025 - Umbral 0,30',
+                  fontsize=10, fontweight='bold')
+    ax3.legend(fontsize=7.5, loc='upper right', frameon=True)
+    ax3.grid(True, axis='y', alpha=0.30, zorder=0)
 
-    # --- GRÁFICO 4: Distribución de probabilidades predichas (RF) ---
+    # --- GRÁFICO 4: Distribución de probabilidades (RF) ---
     ax4 = axes[1, 1]
-    rf_res = next(r for r in resultados_lista if 'Random Forest' in r['nombre'])
-
-    y_val_array = np.array(y_val)
-    probs_clase0 = rf_res['y_prob'][y_val_array == 0]
-    probs_clase1 = rf_res['y_prob'][y_val_array == 1]
-
-    ax4.hist(probs_clase0, bins=30, alpha=0.6, color='#1D9E75',
-             label='Sin inoperatividad (Y=0)', density=True)
-    ax4.hist(probs_clase1, bins=30, alpha=0.6, color='#E74C3C',
-             label='Con inoperatividad (Y=1)', density=True)
-    ax4.axvline(x=0.3, color='orange', linestyle='--', linewidth=2,
-                label='Umbral de clasificación (0.30)')
-    ax4.set_xlabel('Probabilidad predicha de inoperatividad', fontsize=10)
-    ax4.set_ylabel('Densidad', fontsize=10)
-    ax4.set_title('Distribución de probabilidades predichas\n(Random Forest)', fontsize=11, fontweight='bold')
-    ax4.legend(fontsize=8)
-    ax4.grid(True, alpha=0.3)
+    rf_res = next((r for r in resultados_lista if 'Random Forest' in r['nombre']), None)
+    if rf_res:
+        y_arr = np.array(y_val)
+        ax4.hist(rf_res['y_prob'][y_arr == 0], bins=30, alpha=0.65,
+                 color=AZUL, label='Sin inoperatividad (Y=0)',
+                 density=True, edgecolor='white')
+        ax4.hist(rf_res['y_prob'][y_arr == 1], bins=30, alpha=0.65,
+                 color=ROJO, label='Con inoperatividad (Y=1)',
+                 density=True, edgecolor='white')
+        ax4.axvline(x=0.30, color='#F0A500', linestyle='--',
+                    linewidth=2, label='Umbral = 0,30')
+        ax4.set_xlabel('Probabilidad predicha de inoperatividad', fontsize=9)
+        ax4.set_ylabel('Densidad', fontsize=9)
+        ax4.set_title('Distribucion de probabilidades predichas',
+              fontsize=10, fontweight='bold')
+        ax4.legend(fontsize=8, frameon=True)
+        ax4.grid(True, alpha=0.30)
 
     plt.tight_layout()
-    plt.savefig('resultados_modelo.png', dpi=150, bbox_inches='tight')
+    plt.savefig('resultados_modelo.png', dpi=150, bbox_inches='tight', facecolor='white')
     print("\n  Figura guardada: resultados_modelo.png")
     plt.close()
 
