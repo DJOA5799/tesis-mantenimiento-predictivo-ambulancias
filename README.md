@@ -4,7 +4,7 @@
 **Autor:** Osores Aguilar, Diego Jesús  
 **Institución:** Universidad Nacional Mayor de San Marcos — FIEE  
 **Escuela Profesional:** Ingeniería Biomédica  
-**Asesor:** Mg. Cabezas Huerta, Franklin Alfredo  
+**Asesor:** Dr. Cabezas Huerta, Franklin Alfredo  
 **Año:** 2026  
 
 ---
