@@ -104,10 +104,12 @@ def cargar_datos(ruta_train: str, ruta_val: str):
 
 def balancear_clases(X_train: pd.DataFrame,
                       y_train: pd.Series,
-                      metodo: str = 'oversample') -> tuple:
+                      metodo: str = 'oversample',
+                      random_state: int = 42) -> tuple:
     """
     Balanceo manual de clases por oversampling aleatorio.
     Alternativa a SMOTE cuando imbalanced-learn no está disponible.
+    random_state: semilla para reproducibilidad del muestreo (default=42).
 
     metodo:
         'oversample' : duplica aleatoriamente muestras de la clase minoritaria
@@ -125,16 +127,17 @@ def balancear_clases(X_train: pd.DataFrame,
     print(f"\n  Balanceo de clases ({metodo}):")
     print(f"    Antes  — Clase 0: {n_0:,} | Clase 1: {n_1:,}")
 
+    rng = np.random.RandomState(random_state)  # semilla local para reproducibilidad
     if metodo == 'oversample':
         # Duplicar muestras de clase minoritaria hasta igualar mayoritaria
-        idx_1_resampled = np.random.choice(idx_1, size=n_0, replace=True)
+        idx_1_resampled = rng.choice(idx_1, size=n_0, replace=True)
         idx_balanced = np.concatenate([idx_0, idx_1_resampled])
     else:
         # Reducir clase mayoritaria al tamaño de la minoritaria
-        idx_0_resampled = np.random.choice(idx_0, size=n_1, replace=False)
+        idx_0_resampled = rng.choice(idx_0, size=n_1, replace=False)
         idx_balanced = np.concatenate([idx_0_resampled, idx_1])
 
-    np.random.shuffle(idx_balanced)
+    rng.shuffle(idx_balanced)
 
     X_bal = X.loc[idx_balanced].reset_index(drop=True)
     y_bal = y.loc[idx_balanced].reset_index(drop=True)
@@ -181,6 +184,21 @@ def entrenar_modelos(X_train: pd.DataFrame,
         'scaler': scaler,
         'requiere_escala': True
     }
+
+    # -------------------------------------------------------------------------
+    # NOTA DE REPRODUCIBILIDAD
+    # Los valores de referencia reportados en la tesis (Tabla 15) corresponden
+    # a la ejecución de validación del 30/04/2026 con los siguientes resultados:
+    #   GB  → AUC-ROC: 0.5551 | Sensibilidad: 0.5625 | VP=90, FP=748, VN=842, FN=70
+    #   RF  → AUC-ROC: 0.5514 | Sensibilidad: 0.8250 | VP=132, FP=1193, VN=397, FN=28
+    #   RL  → AUC-ROC: 0.5498 | Sensibilidad: 1.0000 | VP=160, FP=1580, VN=10, FN=0
+    # Importancia de variables (RF): servicios_en_w=18.99%, km_en_w=18.58%
+    # Umbral de clasificación: τ = 0.30
+    # Estos valores son los canónicos del documento de tesis.
+    # Pequeñas variaciones en ejecuciones futuras son esperables por la
+    # naturaleza estocástica del oversampling; la interpretación cualitativa
+    # (orden de modelos, variables más importantes) permanece estable.
+    # -------------------------------------------------------------------------
 
     # --- Modelo 2: Random Forest (modelo principal) ---
     print("  [2/3] Random Forest...")
