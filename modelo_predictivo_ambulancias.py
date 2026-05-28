@@ -17,7 +17,7 @@ Modelos evaluados:
 - Mantenimiento preventivo tradicional (línea base operativa)
 
 Métricas de evaluación (OE4 — tesis):
-- Precisión, Sensibilidad, MAE, AUC-ROC, Disponibilidad proyectada
+- Exactitud, especificidad, precisión, sensibilidad, F1-Score, MAE, AUC-ROC y disponibilidad proyectada
 
 Referencias:
 - Prytz (2014), Taoufyq et al. (2025), Si et al. (2011)
@@ -587,6 +587,644 @@ def generar_visualizaciones(resultados_lista: list,
     print("\n  Figura guardada: resultados_modelo.png")
     plt.close()
 
+# =============================================================================
+# FUNCIÓN 8B: FIGURAS INDIVIDUALES PARA TESIS
+# =============================================================================
+
+def _configurar_estilo_figuras_tesis():
+    """
+    Configura un estilo visual sobrio, institucional y consistente
+    para las figuras individuales de la tesis.
+    """
+    import matplotlib
+    matplotlib.rcParams.update({
+        'font.family': 'serif',
+        'axes.spines.top': False,
+        'axes.spines.right': False,
+        'grid.color': '#E6E6E6',
+        'grid.linewidth': 0.6,
+        'figure.facecolor': 'white',
+        'axes.facecolor': 'white',
+        'axes.titleweight': 'bold',
+        'savefig.facecolor': 'white'
+    })
+
+
+def _asegurar_directorio_figuras():
+    """Crea el directorio de salida para figuras individuales de tesis."""
+    import os
+    os.makedirs("figuras_tesis", exist_ok=True)
+
+
+def _nombre_corto_modelo(nombre: str) -> str:
+    """Devuelve nombres cortos para etiquetas de gráficos."""
+    if 'Preventivo' in nombre:
+        return 'Preventivo\n(base)'
+    if 'Regresión' in nombre:
+        return 'Reg.\nLogística'
+    if 'Random Forest' in nombre:
+        return 'Random\nForest'
+    if 'Gradient' in nombre:
+        return 'Gradient\nBoosting'
+    return nombre
+
+
+def _mapear_variable_legible(variable: str) -> str:
+    """Convierte nombres técnicos de variables a etiquetas legibles."""
+    nombres_legibles = {
+        'n_pm_w': 'Mantenimientos preventivos en W',
+        'n_cm_w': 'Mantenimientos correctivos en W',
+        'n_total_mant_w': 'Mantenimientos totales en W',
+        'dias_desde_ultima_interv': 'Días desde última intervención',
+        'n_eventos_vehicular_w': 'Eventos vehiculares en W',
+        'n_eventos_electrico_w': 'Eventos eléctricos en W',
+        'n_eventos_equipamiento_w': 'Eventos de equipamiento en W',
+        'n_episodios_downtime_w': 'Episodios de downtime en W',
+        'downtime_total_dias_w': 'Downtime total en W',
+        'downtime_promedio_dias_w': 'Downtime promedio en W',
+        'disponibilidad_w': 'Disponibilidad en W',
+        'km_en_w': 'Kilometraje en W',
+        'servicios_en_w': 'Servicios prestados en W',
+        'equipamiento_funcional': 'Equipamiento funcional'
+    }
+    return nombres_legibles.get(variable, variable)
+
+
+def generar_figura_10_umbral_precision_sensibilidad(resultados_lista: list,
+                                                     y_val: pd.Series) -> None:
+    """
+    Genera la Figura 10:
+    Relación precisión-sensibilidad según el umbral de clasificación
+    y comparativa de sensibilidad entre los modelos evaluados.
+
+    La curva del panel izquierdo se calcula con las probabilidades del
+    modelo Random Forest, seleccionado como modelo predictivo principal.
+    """
+    _configurar_estilo_figuras_tesis()
+    _asegurar_directorio_figuras()
+
+    AZUL = '#355C7D'
+    AZUL_MEDIO = '#6C8EAD'
+    GRIS_OSCURO = '#4B5358'
+    GRIS_MEDIO = '#8E969B'
+    GRIS_CLARO = '#C9CED3'
+    ROJO = '#C96B63'
+    AMARILLO = '#F4D35E'
+
+    rf_res = next((r for r in resultados_lista if r['nombre'] == 'Random Forest'), None)
+    if rf_res is None:
+        print("  No se encontró Random Forest para generar la Figura 10.")
+        return
+
+    y_prob = np.asarray(rf_res['y_prob'])
+    y_true = np.asarray(y_val)
+
+    thresholds = np.linspace(0.01, 0.99, 99)
+    precisiones = []
+    sensibilidades = []
+
+    for t in thresholds:
+        y_pred_t = (y_prob >= t).astype(int)
+        precisiones.append(precision_score(y_true, y_pred_t, zero_division=0))
+        sensibilidades.append(recall_score(y_true, y_pred_t, zero_division=0))
+
+    fig, axes = plt.subplots(1, 2, figsize=(12, 4.8))
+
+    # -------------------------------------------------------------------------
+    # Panel 1: precisión y sensibilidad según umbral
+    # -------------------------------------------------------------------------
+    ax1 = axes[0]
+    ax1.plot(thresholds, sensibilidades, color=AZUL, lw=2.0,
+             label='Sensibilidad (recall)')
+    ax1.plot(thresholds, precisiones, color=GRIS_OSCURO, lw=1.8,
+             linestyle='--', label='Precisión')
+
+    ax1.axvline(x=0.30, color=ROJO, linestyle=':', lw=1.6,
+                label='Umbral seleccionado (τ = 0,30)')
+    ax1.axvline(x=0.50, color=GRIS_CLARO, linestyle='--', lw=1.2,
+                label='Umbral estándar (τ = 0,50)')
+
+    idx_03 = np.argmin(np.abs(thresholds - 0.30))
+
+    ax1.scatter([0.30], [sensibilidades[idx_03]], color=AZUL,
+                s=28, zorder=5)
+    ax1.scatter([0.30], [precisiones[idx_03]], color=GRIS_OSCURO,
+                s=28, zorder=5)
+
+    ax1.annotate(f"Sens. = {sensibilidades[idx_03]:.2f}",
+                 xy=(0.30, sensibilidades[idx_03]),
+                 xytext=(0.38, min(sensibilidades[idx_03] + 0.08, 1.02)),
+                 arrowprops=dict(arrowstyle='-', color=GRIS_MEDIO, lw=1),
+                 fontsize=8, color=GRIS_OSCURO)
+
+    ax1.annotate(f"Prec. = {precisiones[idx_03]:.2f}",
+                 xy=(0.30, precisiones[idx_03]),
+                 xytext=(0.38, max(precisiones[idx_03] - 0.10, 0.04)),
+                 arrowprops=dict(arrowstyle='-', color=GRIS_MEDIO, lw=1),
+                 fontsize=8, color=GRIS_OSCURO)
+
+    ax1.set_title('Relación entre precisión y sensibilidad\nsegún el umbral de clasificación',
+                  fontsize=10)
+    ax1.set_xlabel('Umbral de clasificación (τ)', fontsize=9)
+    ax1.set_ylabel('Valor de la métrica', fontsize=9)
+    ax1.set_xlim(0, 1)
+    ax1.set_ylim(0, 1.05)
+    ax1.grid(True, alpha=0.35)
+    ax1.legend(fontsize=7.5, frameon=True, loc='best')
+
+    # -------------------------------------------------------------------------
+    # Panel 2: sensibilidad comparativa
+    # -------------------------------------------------------------------------
+    ax2 = axes[1]
+    nombres = [_nombre_corto_modelo(r['nombre']) for r in resultados_lista]
+    sensibilidades_modelos = [r['sensibilidad'] for r in resultados_lista]
+
+    colores = [GRIS_CLARO, GRIS_MEDIO, AZUL, GRIS_OSCURO]
+    hatches = ['', '///', '\\\\', '']
+
+    x = np.arange(len(nombres))
+    barras = ax2.bar(x, sensibilidades_modelos,
+                     color=colores[:len(nombres)],
+                     edgecolor='white',
+                     linewidth=0.8)
+
+    for barra, hatch in zip(barras, hatches):
+        barra.set_hatch(hatch)
+
+    for barra, valor in zip(barras, sensibilidades_modelos):
+        ax2.text(barra.get_x() + barra.get_width() / 2,
+                 valor + 0.025,
+                 f"{valor:.4f}",
+                 ha='center',
+                 va='bottom',
+                 fontsize=8,
+                 fontweight='bold',
+                 color=GRIS_OSCURO)
+
+    ax2.axhline(y=resultados_lista[0]['sensibilidad'],
+                color=GRIS_CLARO,
+                linestyle='--',
+                lw=1)
+
+    ax2.set_xticks(x)
+    ax2.set_xticklabels(nombres, fontsize=8)
+    ax2.set_ylim(0, 1.12)
+    ax2.set_ylabel('Sensibilidad', fontsize=9)
+    ax2.set_title('Sensibilidad comparativa entre modelos\nValidación 2025 | Umbral τ = 0,30',
+                  fontsize=10)
+    ax2.grid(True, axis='y', alpha=0.35)
+
+    plt.suptitle(
+        'Relación precisión-sensibilidad según el umbral de clasificación\n'
+        'y comparativa de sensibilidad entre los modelos evaluados',
+        fontsize=11,
+        fontweight='bold',
+        y=1.03
+    )
+
+    plt.tight_layout()
+    plt.savefig("figuras_tesis/figura_10_umbral_precision_sensibilidad.png",
+                dpi=300, bbox_inches='tight')
+    plt.close()
+
+    print("  Figura guardada: figuras_tesis/figura_10_umbral_precision_sensibilidad.png")
+
+
+def generar_figura_18_construccion_dataset(df_train: pd.DataFrame,
+                                            df_val: pd.DataFrame) -> None:
+    """
+    Genera la Figura 18:
+    Diagrama de flujo del proceso de construcción del dataset mediante
+    ventanas temporales deslizantes.
+    """
+    _configurar_estilo_figuras_tesis()
+    _asegurar_directorio_figuras()
+
+    from matplotlib.patches import FancyBboxPatch
+
+    AZUL = '#355C7D'
+    GRIS_OSCURO = '#4B5358'
+    GRIS_MEDIO = '#8E969B'
+    ROJO = '#C96B63'
+    VERDE = '#78BFA3'
+    NEGRO = '#1F2326'
+
+    total_obs = len(df_train) + len(df_val)
+    n_unidades = pd.concat([
+        df_train[['id_ambulancia']],
+        df_val[['id_ambulancia']]
+    ], ignore_index=True)['id_ambulancia'].nunique()
+
+    fig, ax = plt.subplots(figsize=(10.5, 7.2))
+    ax.set_xlim(0, 10)
+    ax.set_ylim(0, 10)
+    ax.axis('off')
+
+    def caja(x, y, w, h, texto, color, fs=8.6):
+        rect = FancyBboxPatch(
+            (x, y), w, h,
+            boxstyle='round,pad=0.04',
+            facecolor=color,
+            edgecolor='white',
+            linewidth=1.4
+        )
+        ax.add_patch(rect)
+        ax.text(x + w / 2, y + h / 2, texto,
+                ha='center', va='center',
+                fontsize=fs, fontweight='bold',
+                color='white')
+
+    def flecha(x1, y1, x2, y2):
+        ax.annotate('', xy=(x2, y2), xytext=(x1, y1),
+                    arrowprops=dict(arrowstyle='->',
+                                    lw=1.2,
+                                    color=GRIS_MEDIO))
+
+    caja(0.7, 8.4, 2.0, 0.75, "Tabla\nMantenimiento", GRIS_OSCURO)
+    caja(4.0, 8.4, 2.0, 0.75, "Tabla\nDowntime", GRIS_OSCURO)
+    caja(7.3, 8.4, 2.0, 0.75, "Tabla\nUso operativo", GRIS_OSCURO)
+
+    caja(2.1, 6.95, 5.8, 0.82,
+         "Integración por ambulancia y período\n(cortes semanales)", AZUL)
+    caja(1.8, 5.50, 6.4, 0.82,
+         "Para cada corte temporal t₀:\ncalcular variables explicativas en W = 60 días previos",
+         GRIS_OSCURO)
+    caja(1.5, 4.05, 7.0, 0.88,
+         "Determinar variable objetivo en T = 14 días siguientes\n"
+         "Y = 1 si hubo inoperatividad | Y = 0 en caso contrario",
+         ROJO)
+    caja(2.2, 2.60, 5.6, 0.82,
+         "Observación modelada:\n14 variables explicativas + variable objetivo Y ∈ {0,1}",
+         VERDE)
+    caja(1.8, 1.12, 6.4, 0.90,
+         f"Dataset final: {total_obs:,} observaciones × 15 columnas\n"
+         f"{n_unidades} ambulancias simuladas | np.random.seed(42)",
+         NEGRO)
+
+    flecha(1.7, 8.4, 3.6, 7.77)
+    flecha(5.0, 8.4, 5.0, 7.77)
+    flecha(8.3, 8.4, 6.4, 7.77)
+    flecha(5.0, 6.95, 5.0, 6.32)
+    flecha(5.0, 5.50, 5.0, 4.93)
+    flecha(5.0, 4.05, 5.0, 3.42)
+    flecha(5.0, 2.60, 5.0, 2.02)
+
+    ax.text(5.0, 0.35,
+            f"Partición temporal: entrenamiento 2024 ({len(df_train):,} obs.) | "
+            f"validación 2025 ({len(df_val):,} obs.)",
+            ha='center',
+            va='center',
+            fontsize=8,
+            color=GRIS_OSCURO,
+            style='italic')
+
+    plt.title('Diagrama de flujo del proceso de construcción del dataset\n'
+              'mediante ventanas temporales deslizantes',
+              fontsize=11,
+              fontweight='bold')
+
+    plt.tight_layout()
+    plt.savefig("figuras_tesis/figura_18_construccion_dataset.png",
+                dpi=300, bbox_inches='tight')
+    plt.close()
+
+    print("  Figura guardada: figuras_tesis/figura_18_construccion_dataset.png")
+
+
+def generar_figura_19_pipeline_entrenamiento(resultados_lista: list,
+                                             df_train: pd.DataFrame) -> None:
+    """
+    Genera la Figura 19:
+    Diagrama de flujo del pipeline de entrenamiento de modelos de
+    clasificación supervisada.
+    """
+    _configurar_estilo_figuras_tesis()
+    _asegurar_directorio_figuras()
+
+    from matplotlib.patches import FancyBboxPatch
+
+    AZUL = '#355C7D'
+    GRIS_OSCURO = '#4B5358'
+    GRIS_MEDIO = '#8E969B'
+    NEGRO = '#1F2326'
+    VERDE = '#78BFA3'
+
+    rf_res = next((r for r in resultados_lista if r['nombre'] == 'Random Forest'), None)
+    auc_rf = rf_res['auc_roc'] if rf_res else 0.0
+    sens_rf = rf_res['sensibilidad'] if rf_res else 0.0
+
+    fig, ax = plt.subplots(figsize=(12.5, 4.8))
+    ax.set_xlim(0, 14.2)
+    ax.set_ylim(0, 4.2)
+    ax.axis('off')
+
+    def caja(x, y, w, h, texto, color, fs=8.2):
+        rect = FancyBboxPatch(
+            (x, y), w, h,
+            boxstyle='round,pad=0.04',
+            facecolor=color,
+            edgecolor='white',
+            linewidth=1.4
+        )
+        ax.add_patch(rect)
+        ax.text(x + w / 2, y + h / 2, texto,
+                ha='center', va='center',
+                fontsize=fs,
+                color='white',
+                fontweight='bold')
+
+    def flecha(x1, y1, x2, y2):
+        ax.annotate('', xy=(x2, y2), xytext=(x1, y1),
+                    arrowprops=dict(arrowstyle='->',
+                                    lw=1.2,
+                                    color=GRIS_MEDIO))
+
+    y = 1.75
+
+    caja(0.25, y, 1.75, 1.0,
+         f"Dataset\ntrain 2024\n{len(df_train):,} obs.",
+         AZUL)
+
+    caja(2.35, y, 2.05, 1.0,
+         "Balanceo\noversampling\nclase minoritaria",
+         GRIS_OSCURO)
+
+    caja(4.75, y, 1.85, 1.0,
+         "Escalado\nsolo Regresión\nLogística",
+         GRIS_OSCURO)
+
+    caja(6.95, y, 2.30, 1.0,
+         "Entrenamiento\n3 algoritmos\nRL | RF | GB",
+         GRIS_OSCURO)
+
+    caja(9.60, y, 2.10, 1.0,
+         "Validación\nretrospectiva 2025\nτ = 0,30",
+         GRIS_OSCURO)
+
+    caja(12.05, y, 1.85, 1.0,
+         "Modelo seleccionado\nRandom Forest",
+         VERDE)
+
+    flecha(2.00, y + 0.50, 2.35, y + 0.50)
+    flecha(4.40, y + 0.50, 4.75, y + 0.50)
+    flecha(6.60, y + 0.50, 6.95, y + 0.50)
+    flecha(9.25, y + 0.50, 9.60, y + 0.50)
+    flecha(11.70, y + 0.50, 12.05, y + 0.50)
+
+    ax.text(1.10, 1.35, "np.random.seed(42)",
+            ha='center', fontsize=7.2, color=GRIS_OSCURO, style='italic')
+    ax.text(3.38, 1.22, "Balanceo reproducible\nsin modificar validación",
+            ha='center', fontsize=7.2, color=GRIS_OSCURO, style='italic')
+    ax.text(5.68, 1.22, "StandardScaler\nsolo para RL",
+            ha='center', fontsize=7.2, color=GRIS_OSCURO, style='italic')
+    ax.text(8.10, 1.05,
+            "RL: C = 0,1\nRF: n = 200, depth = 8\nGB: n = 150, lr = 0,05",
+            ha='center', fontsize=7.1, color=GRIS_OSCURO, style='italic')
+    ax.text(10.65, 1.22,
+            "Métricas: exactitud, especificidad,\nprecisión, sensibilidad, F1, AUC y MAE",
+            ha='center', fontsize=7.1, color=GRIS_OSCURO, style='italic')
+    ax.text(12.98, 1.22,
+            f"AUC-ROC = {auc_rf:.4f}\nSens. = {sens_rf:.4f}",
+            ha='center', fontsize=7.2, color=GRIS_OSCURO, style='italic')
+
+    plt.title('Diagrama de flujo del pipeline de entrenamiento de los modelos\n'
+              'de clasificación supervisada',
+              fontsize=11,
+              fontweight='bold')
+
+    plt.tight_layout()
+    plt.savefig("figuras_tesis/figura_19_pipeline_entrenamiento.png",
+                dpi=300, bbox_inches='tight')
+    plt.close()
+
+    print("  Figura guardada: figuras_tesis/figura_19_pipeline_entrenamiento.png")
+
+
+def generar_figura_23_distribucion_variable_objetivo(df_train: pd.DataFrame,
+                                                      df_val: pd.DataFrame) -> None:
+    """
+    Genera la Figura 23:
+    Distribución de la variable objetivo por conjunto de datos.
+    """
+    _configurar_estilo_figuras_tesis()
+    _asegurar_directorio_figuras()
+
+    AZUL = '#355C7D'
+    ROJO = '#C96B63'
+    GRIS_OSCURO = '#4B5358'
+
+    df_total = pd.concat([df_train, df_val], ignore_index=True)
+
+    conjuntos = [
+        ("Dataset completo", df_total),
+        ("Entrenamiento 2024", df_train),
+        ("Validación 2025", df_val)
+    ]
+
+    fig, axes = plt.subplots(1, 3, figsize=(13, 4.5))
+
+    for ax, (titulo, df) in zip(axes, conjuntos):
+        clase_0 = int((df[TARGET] == 0).sum())
+        clase_1 = int((df[TARGET] == 1).sum())
+        total = len(df)
+
+        valores = [clase_0, clase_1]
+        colores = [AZUL, ROJO]
+
+        barras = ax.bar([0, 1], valores,
+                        color=colores,
+                        width=0.55,
+                        edgecolor='white',
+                        linewidth=0.8)
+
+        for barra, valor, color in zip(barras, valores, colores):
+            ax.text(barra.get_x() + barra.get_width() / 2,
+                    valor + total * 0.015,
+                    f"{valor:,}\n({valor / total * 100:.1f}%)",
+                    ha='center',
+                    va='bottom',
+                    fontsize=8,
+                    fontweight='bold',
+                    color=color)
+
+        ax.set_xticks([0, 1])
+        ax.set_xticklabels(['Y = 0\n(operativa)', 'Y = 1\n(inoperativa)'],
+                           fontsize=8)
+        ax.set_title(f"{titulo}\n(n = {total:,})",
+                     fontsize=10,
+                     fontweight='bold')
+        ax.set_ylabel('Observaciones', fontsize=9)
+        ax.grid(True, axis='y', alpha=0.35)
+        ax.tick_params(axis='y', labelsize=8)
+
+    plt.suptitle('Distribución de la variable objetivo por conjunto de datos\n'
+                 'Prevalencia de inoperatividad (Y = 1) en cada período',
+                 fontsize=11,
+                 fontweight='bold')
+
+    plt.tight_layout()
+    plt.savefig("figuras_tesis/figura_23_distribucion_variable_objetivo.png",
+                dpi=300, bbox_inches='tight')
+    plt.close()
+
+    print("  Figura guardada: figuras_tesis/figura_23_distribucion_variable_objetivo.png")
+
+
+def generar_figura_24_mapa_correlaciones(df_train: pd.DataFrame,
+                                          df_val: pd.DataFrame) -> None:
+    """
+    Genera la Figura 24:
+    Mapa de calor de correlaciones entre las 14 variables explicativas.
+    """
+    _configurar_estilo_figuras_tesis()
+    _asegurar_directorio_figuras()
+
+    df_total = pd.concat([
+        df_train[FEATURES],
+        df_val[FEATURES]
+    ], ignore_index=True)
+
+    corr = df_total.corr()
+
+    etiquetas = [_mapear_variable_legible(v) for v in FEATURES]
+
+    fig, ax = plt.subplots(figsize=(11, 8.7))
+    im = ax.imshow(corr, cmap='RdBu_r', vmin=-1, vmax=1)
+
+    ax.set_xticks(np.arange(len(FEATURES)))
+    ax.set_yticks(np.arange(len(FEATURES)))
+    ax.set_xticklabels(etiquetas, rotation=45, ha='right', fontsize=7.3)
+    ax.set_yticklabels(etiquetas, fontsize=7.3)
+
+    for i in range(len(FEATURES)):
+        for j in range(len(FEATURES)):
+            valor = corr.iloc[i, j]
+            ax.text(j, i, f"{valor:.2f}",
+                    ha='center',
+                    va='center',
+                    fontsize=6.2,
+                    color='white' if abs(valor) > 0.60 else '#1F2326')
+
+    cbar = plt.colorbar(im, ax=ax, fraction=0.045, pad=0.035)
+    cbar.set_label('Coeficiente de correlación de Pearson', fontsize=9)
+    cbar.ax.tick_params(labelsize=8)
+
+    ax.set_title('Mapa de calor de correlaciones entre las 14 variables explicativas\n'
+                 f'Dataset de observaciones | n = {len(df_total):,} | Período 2024-2025',
+                 fontsize=10,
+                 fontweight='bold')
+
+    plt.tight_layout()
+    plt.savefig("figuras_tesis/figura_24_mapa_correlaciones.png",
+                dpi=320, bbox_inches='tight')
+    plt.close()
+
+    print("  Figura guardada: figuras_tesis/figura_24_mapa_correlaciones.png")
+
+
+def generar_figura_25_matrices_confusion(resultados_lista: list) -> None:
+    """
+    Genera la Figura 25:
+    Matrices de confusión comparativas de los cuatro enfoques evaluados.
+    """
+    _configurar_estilo_figuras_tesis()
+    _asegurar_directorio_figuras()
+
+    modelos_orden = [
+        'Preventivo tradicional (línea base)',
+        'Regresión Logística',
+        'Random Forest',
+        'Gradient Boosting'
+    ]
+
+    AZUL = '#355C7D'
+    GRIS_OSCURO = '#4B5358'
+
+    fig, axes = plt.subplots(1, 4, figsize=(14, 3.8))
+
+    for ax, nombre in zip(axes, modelos_orden):
+        r = next((x for x in resultados_lista if x['nombre'] == nombre), None)
+
+        if r is None:
+            ax.axis('off')
+            continue
+
+        tp = r['verdaderos_positivos']
+        fp = r['falsos_positivos']
+        tn = r['verdaderos_negativos']
+        fn = r['falsos_negativos']
+
+        # Orden operacional:
+        # Filas: clase real positiva/negativa.
+        # Columnas: predicción positiva/negativa.
+        matriz = np.array([
+            [tp, fn],
+            [fp, tn]
+        ])
+
+        im = ax.imshow(matriz, cmap='Blues')
+
+        total = matriz.sum()
+        etiquetas = np.array([
+            ['VP', 'FN'],
+            ['FP', 'VN']
+        ])
+
+        for i in range(2):
+            for j in range(2):
+                valor = matriz[i, j]
+                pct = valor / total * 100 if total > 0 else 0
+                ax.text(j, i,
+                        f"{etiquetas[i, j]}\n{valor:,}\n({pct:.1f}%)",
+                        ha='center',
+                        va='center',
+                        fontsize=8,
+                        fontweight='bold',
+                        color='white' if valor > matriz.max() * 0.45 else GRIS_OSCURO)
+
+        ax.set_xticks([0, 1])
+        ax.set_yticks([0, 1])
+        ax.set_xticklabels(['Pred. Y=1', 'Pred. Y=0'], fontsize=7.5)
+        ax.set_yticklabels(['Real Y=1', 'Real Y=0'], fontsize=7.5)
+
+        ax.set_title(f"{_nombre_corto_modelo(nombre)}\n"
+                     f"Sens.={r['sensibilidad']:.4f} | AUC={r['auc_roc']:.4f}",
+                     fontsize=8.4,
+                     fontweight='bold')
+
+    plt.suptitle('Matrices de confusión de los cuatro enfoques evaluados\n'
+                 'Período de validación 2025 | n = 1 750 | Umbral τ = 0,30',
+                 fontsize=11,
+                 fontweight='bold')
+
+    plt.tight_layout()
+    plt.savefig("figuras_tesis/figura_25_matrices_confusion.png",
+                dpi=320, bbox_inches='tight')
+    plt.close()
+
+    print("  Figura guardada: figuras_tesis/figura_25_matrices_confusion.png")
+
+
+def generar_figuras_individuales_tesis(resultados_lista: list,
+                                        df_train: pd.DataFrame,
+                                        df_val: pd.DataFrame,
+                                        y_val: pd.Series) -> None:
+    """
+    Ejecuta la generación de figuras individuales para la tesis.
+
+    Estas figuras reemplazan versiones manuales o antiguas y se generan
+    directamente desde los resultados y datasets finales del flujo computacional.
+    """
+    print("\nGenerando figuras individuales para la tesis...")
+
+    generar_figura_10_umbral_precision_sensibilidad(resultados_lista, y_val)
+    generar_figura_18_construccion_dataset(df_train, df_val)
+    generar_figura_19_pipeline_entrenamiento(resultados_lista, df_train)
+    generar_figura_23_distribucion_variable_objetivo(df_train, df_val)
+    generar_figura_24_mapa_correlaciones(df_train, df_val)
+    generar_figura_25_matrices_confusion(resultados_lista)
+
+    print("  Figuras individuales generadas en la carpeta: figuras_tesis/")
 
 # =============================================================================
 # FUNCIÓN 9: GENERAR SALIDAS DE SOPORTE PREVENTIVO (Entregable 2)
@@ -756,6 +1394,13 @@ if __name__ == "__main__":
     print("Generando visualizaciones...")
     generar_visualizaciones(resultados_lista, importancias, y_val)
 
+    generar_figuras_individuales_tesis(
+        resultados_lista=resultados_lista,
+        df_train=df_train,
+        df_val=df_val,
+        y_val=y_val
+    )
+
     # --- EXPORTAR RESULTADOS ---
     print("\nExportando resultados...")
     import os
@@ -769,6 +1414,12 @@ if __name__ == "__main__":
     print(f"  importancia_variables.csv")
     print(f"  soporte_preventivo_completo.csv")
     print(f"  resultados_modelo.png")
+    print(f"  figuras_tesis/figura_10_umbral_precision_sensibilidad.png")
+    print(f"  figuras_tesis/figura_18_construccion_dataset.png")
+    print(f"  figuras_tesis/figura_19_pipeline_entrenamiento.png")
+    print(f"  figuras_tesis/figura_23_distribucion_variable_objetivo.png")
+    print(f"  figuras_tesis/figura_24_mapa_correlaciones.png")
+    print(f"  figuras_tesis/figura_25_matrices_confusion.png")
 
     print("\n¡Fase 3-4 completada exitosamente!")
     print("Siguiente paso: Fase 5 — Lineamientos técnicos y redacción de resultados")

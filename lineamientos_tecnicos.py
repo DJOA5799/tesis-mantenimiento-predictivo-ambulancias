@@ -24,6 +24,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from matplotlib.gridspec import GridSpec
+import os
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -608,6 +609,220 @@ def generar_visualizacion_lineamientos(df_soporte: pd.DataFrame,
     print(f"  Corte semanal utilizado para ranking y distribución: {corte_txt}")
     plt.close()
 
+# =============================================================================
+# FUNCIÓN 7B: FIGURA INDIVIDUAL PARA TESIS — PROTOCOLO SEMANAL
+# =============================================================================
+
+def generar_figura_32_protocolo_semanal() -> None:
+    """
+    Genera la Figura 32:
+    Protocolo semanal de uso del modelo computacional predictivo
+    para soporte al mantenimiento preventivo de ambulancias Tipo II.
+
+    Esta figura reemplaza la versión antigua del protocolo y mantiene
+    coherencia con el modelo predictivo seleccionado: Random Forest.
+    """
+    import matplotlib
+    from matplotlib.patches import FancyBboxPatch
+
+    # Directorio de salida
+    os.makedirs("figuras_tesis", exist_ok=True)
+
+    # Estilo institucional sobrio
+    matplotlib.rcParams.update({
+        'font.family': 'serif',
+        'axes.spines.top': False,
+        'axes.spines.right': False,
+        'grid.color': '#E6E6E6',
+        'grid.linewidth': 0.6,
+        'figure.facecolor': 'white',
+        'axes.facecolor': 'white',
+        'axes.titleweight': 'bold',
+        'savefig.facecolor': 'white'
+    })
+
+    # Paleta visual definida para la tesis
+    AZUL_MARINO = '#355C7D'
+    AZUL_MEDIO  = '#6C8EAD'
+    GRIS_OSCURO = '#4B5358'
+    GRIS_MEDIO  = '#8E969B'
+    NEGRO       = '#1F2326'
+
+    ROJO_RIESGO  = '#C96B63'
+    AMBAR_RIESGO = '#F4D35E'
+    VERDE_RIESGO = '#78BFA3'
+
+    fig, ax = plt.subplots(figsize=(8.2, 10.2))
+    ax.set_xlim(0, 10)
+    ax.set_ylim(0, 14)
+    ax.axis('off')
+
+    def caja(x, y, w, h, texto, color, fs=8.7, text_color='white'):
+        rect = FancyBboxPatch(
+            (x, y),
+            w,
+            h,
+            boxstyle='round,pad=0.05',
+            facecolor=color,
+            edgecolor='white',
+            linewidth=1.4,
+            alpha=0.97
+        )
+        ax.add_patch(rect)
+        ax.text(
+            x + w / 2,
+            y + h / 2,
+            texto,
+            ha='center',
+            va='center',
+            fontsize=fs,
+            fontweight='bold',
+            color=text_color
+        )
+
+    def flecha(x1, y1, x2, y2):
+        ax.annotate(
+            '',
+            xy=(x2, y2),
+            xytext=(x1, y1),
+            arrowprops=dict(
+                arrowstyle='->',
+                lw=1.15,
+                color=GRIS_MEDIO
+            )
+        )
+
+    # Bloque superior
+    caja(
+        3.0, 12.55, 4.0, 0.75,
+        "INICIO — Lunes de cada semana",
+        AZUL_MARINO,
+        fs=8.8
+    )
+
+    caja(
+        2.15, 11.05, 5.70, 0.82,
+        "1. Actualizar registros operativos\n"
+        "mantenimiento, downtime y uso semanal",
+        GRIS_OSCURO
+    )
+
+    caja(
+        2.15, 9.55, 5.70, 0.82,
+        "2. Calcular variables explicativas\n"
+        "ventana histórica W = 60 días",
+        GRIS_OSCURO
+    )
+
+    caja(
+        2.15, 8.05, 5.70, 0.82,
+        "3. Ejecutar modelo Random Forest\n"
+        "estimar P(inoperatividad) por unidad",
+        AZUL_MEDIO
+    )
+
+    caja(
+        2.15, 6.55, 5.70, 0.82,
+        "4. Clasificar nivel de riesgo operativo\n"
+        "según umbrales definidos",
+        GRIS_OSCURO
+    )
+
+    # Bloques de riesgo
+    caja(
+        0.55, 4.15, 2.75, 1.30,
+        "RIESGO ALTO\n"
+        "P ≥ 0,50\n"
+        "Intervención prioritaria\n"
+        "≤ 3 días hábiles",
+        ROJO_RIESGO,
+        fs=8.2
+    )
+
+    caja(
+        3.65, 4.15, 2.75, 1.30,
+        "RIESGO MEDIO\n"
+        "0,25 ≤ P < 0,50\n"
+        "Inspección programada\n"
+        "≤ 7 días hábiles",
+        AMBAR_RIESGO,
+        fs=8.2,
+        text_color='white'
+    )
+
+    caja(
+        6.75, 4.15, 2.75, 1.30,
+        "RIESGO BAJO\n"
+        "P < 0,25\n"
+        "Seguimiento rutinario\n"
+        "según cronograma",
+        VERDE_RIESGO,
+        fs=8.2
+    )
+
+    caja(
+        1.65, 2.15, 6.70, 0.85,
+        "5. Programar, ejecutar y registrar acciones de mantenimiento",
+        GRIS_OSCURO,
+        fs=8.6
+    )
+
+    caja(
+        1.65, 0.85, 6.70, 0.85,
+        "6. Retroalimentar el modelo con nuevos registros operativos",
+        NEGRO,
+        fs=8.6
+    )
+
+    # Flechas principales
+    flecha(5.0, 12.55, 5.0, 11.87)
+    flecha(5.0, 11.05, 5.0, 10.37)
+    flecha(5.0, 9.55, 5.0, 8.87)
+    flecha(5.0, 8.05, 5.0, 7.37)
+    flecha(5.0, 6.55, 5.0, 5.50)
+
+    # Ramificación hacia niveles de riesgo
+    flecha(5.0, 6.55, 1.93, 5.45)
+    flecha(5.0, 6.55, 5.03, 5.45)
+    flecha(5.0, 6.55, 8.13, 5.45)
+
+    # Convergencia hacia ejecución
+    flecha(1.93, 4.15, 5.0, 3.00)
+    flecha(5.03, 4.15, 5.0, 3.00)
+    flecha(8.13, 4.15, 5.0, 3.00)
+
+    # Cierre y retroalimentación
+    flecha(5.0, 2.15, 5.0, 1.70)
+
+    ax.text(
+        5.0,
+        0.28,
+        "Frecuencia sugerida: semanal. Responsable: jefatura o coordinación de mantenimiento.",
+        ha='center',
+        va='center',
+        fontsize=7.4,
+        color=GRIS_MEDIO,
+        style='italic'
+    )
+
+    plt.title(
+        'Protocolo semanal de uso del modelo computacional predictivo\n'
+        'para soporte al mantenimiento preventivo de ambulancias Tipo II',
+        fontsize=11,
+        fontweight='bold',
+        pad=16
+    )
+
+    plt.tight_layout()
+    plt.savefig(
+        "figuras_tesis/figura_32_protocolo_semanal.png",
+        dpi=300,
+        bbox_inches='tight',
+        facecolor='white'
+    )
+    plt.close()
+
+    print("  Figura guardada: figuras_tesis/figura_32_protocolo_semanal.png")
 
 # =============================================================================
 # FUNCIÓN 8: REPORTE EJECUTIVO CONSOLIDADO
@@ -736,6 +951,7 @@ if __name__ == "__main__":
     # Visualizaciones
     print("\n[6/6] Generando visualizaciones de lineamientos...")
     generar_visualizacion_lineamientos(df_soporte, df_val)
+    generar_figura_32_protocolo_semanal()
 
     # Reporte ejecutivo
     print("\n" + "="*60)
@@ -769,6 +985,7 @@ if __name__ == "__main__":
     print(f"  recomendaciones_datos.csv")
     print(f"  reporte_ejecutivo.txt")
     print(f"  lineamientos_visualizacion.png")
+    print(f"  figuras_tesis/figura_32_protocolo_semanal.png")
 
     print("\n¡Fase 5 completada exitosamente!")
     print("\nRESUMEN DE ENTREGABLES DE TESIS:")
