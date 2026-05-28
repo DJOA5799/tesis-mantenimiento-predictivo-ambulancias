@@ -6,7 +6,7 @@ Ambulancias Tipo II — Lima Metropolitana 2024-2025
 
 Estructura:
 1. Lineamientos de priorización de intervenciones
-2. Protocolo de uso del modelo como soporte preventivo
+2. Protocolo de uso del modelo como soporte predictivo para mantenimiento
 3. Criterios de alerta temprana por nivel de riesgo
 4. Recomendaciones de gestión de datos para implementación real
 5. Reporte ejecutivo consolidado (PDF-ready)
@@ -112,7 +112,7 @@ def generar_protocolo_uso() -> pd.DataFrame:
             'Paso': 3,
             'Actividad': 'Revisión del ranking de riesgo',
             'Descripción': 'El jefe de mantenimiento revisa el tablero '
-                          'de soporte preventivo con el ranking de '
+                          'de soporte predictivo con el ranking de '
                           'ambulancias por nivel de riesgo.',
             'Frecuencia': 'Semanal — cada lunes',
             'Responsable': 'Jefe de mantenimiento'
@@ -155,12 +155,12 @@ def generar_protocolo_uso() -> pd.DataFrame:
 def generar_criterios_alerta(df_importancia: pd.DataFrame) -> pd.DataFrame:
     """
     Lineamiento 3: Criterios específicos de alerta temprana
-    basados en la importancia de variables del modelo Random Forest.
+    basados en la importancia de variables del modelo Random Forest seleccionado para soporte preventivo.
     """
     criterios = pd.DataFrame([
         {
             'Variable crítica': 'Servicios prestados en W',
-            'Importancia modelo': '18.99%',
+            'Importancia modelo': 'Variable crítica identificada por el modelo',
             'Umbral de alerta': '> 120 servicios en 60 días',
             'Interpretación': 'Alta carga operativa aumenta el riesgo '
                              'de falla por desgaste acelerado',
@@ -168,7 +168,7 @@ def generar_criterios_alerta(df_importancia: pd.DataFrame) -> pd.DataFrame:
         },
         {
             'Variable crítica': 'Kilometraje en W',
-            'Importancia modelo': '18.58%',
+            'Importancia modelo': 'Variable crítica identificada por el modelo',
             'Umbral de alerta': '> 8,000 km en 60 días',
             'Interpretación': 'Uso intensivo del vehículo asociado '
                              'a mayor probabilidad de falla mecánica',
@@ -176,7 +176,7 @@ def generar_criterios_alerta(df_importancia: pd.DataFrame) -> pd.DataFrame:
         },
         {
             'Variable crítica': 'Días desde última intervención',
-            'Importancia modelo': '10.16%',
+            'Importancia modelo': 'Variable crítica identificada por el modelo',
             'Umbral de alerta': '> 45 días sin intervención',
             'Interpretación': 'Intervalo prolongado sin mantenimiento '
                              'aumenta riesgo de falla no planificada',
@@ -184,7 +184,7 @@ def generar_criterios_alerta(df_importancia: pd.DataFrame) -> pd.DataFrame:
         },
         {
             'Variable crítica': 'Disponibilidad histórica en W',
-            'Importancia modelo': '10.13%',
+            'Importancia modelo': 'Variable crítica identificada por el modelo',
             'Umbral de alerta': '< 0.85 (menos del 85% operativa)',
             'Interpretación': 'Historial reciente de inoperatividad '
                              'es predictor de inoperatividad futura',
@@ -192,7 +192,7 @@ def generar_criterios_alerta(df_importancia: pd.DataFrame) -> pd.DataFrame:
         },
         {
             'Variable crítica': 'Downtime total en W',
-            'Importancia modelo': '9.48%',
+            'Importancia modelo': 'Variable crítica identificada por el modelo',
             'Umbral de alerta': '> 7 días acumulados en 60 días',
             'Interpretación': 'Patrón de inoperatividad recurrente '
                              'indica problema técnico no resuelto',
@@ -200,7 +200,7 @@ def generar_criterios_alerta(df_importancia: pd.DataFrame) -> pd.DataFrame:
         },
         {
             'Variable crítica': 'Equipamiento funcional',
-            'Importancia modelo': '3.97%',
+            'Importancia modelo': 'Variable crítica identificada por el modelo',
             'Umbral de alerta': 'Estado = 0 (no funcional)',
             'Interpretación': 'Indisponibilidad del equipamiento '
                              'obligatorio inhabilita la unidad '
@@ -327,118 +327,285 @@ def analizar_falsos_negativos(df_soporte: pd.DataFrame,
 def generar_visualizacion_lineamientos(df_soporte: pd.DataFrame,
                                         df_val: pd.DataFrame) -> None:
     """
-    Genera visualizaciones de lineamientos tecnicos con estilo cientifico.
-    Paneles: evolucion temporal, distribucion por riesgo,
-             ranking por ambulancia, protocolo semanal.
+    Genera visualizaciones de lineamientos técnicos y operativos.
+    Paneles:
+    1. Evolución temporal anual por nivel de riesgo.
+    2. Distribución de riesgo en el último corte semanal.
+    3. Ranking de probabilidad de inoperatividad en el último corte semanal.
+    4. Protocolo semanal de uso operativo del modelo.
     """
     import matplotlib
     import matplotlib.patches as mpatches
     from matplotlib.patches import FancyBboxPatch
     from matplotlib.gridspec import GridSpec
+
+    # Estilo institucional sobrio
     matplotlib.rcParams.update({
-        'font.family': 'serif', 'axes.spines.top': False,
-        'axes.spines.right': False, 'grid.color': '#dddddd',
-        'grid.linewidth': 0.5, 'figure.facecolor': 'white',
+        'font.family': 'serif',
+        'axes.spines.top': False,
+        'axes.spines.right': False,
+        'grid.color': '#E6E6E6',
+        'grid.linewidth': 0.6,
+        'figure.facecolor': 'white',
         'axes.facecolor': 'white',
+        'axes.titleweight': 'bold'
     })
-    NEGRO='#1a1a1a'; GRIS_OS='#3d3d3d'; GRIS_ME='#767676'
-    ROJO='#7B1515'; VERDE='#1A5236'; MARRON='#6B5200'; AZUL='#1B4F8A'
-    C_RIESGO = {'ALTO': ROJO, 'MEDIO': MARRON, 'BAJO': VERDE}
+
+    # Paleta de colores
+    AZUL_MARINO = '#355C7D'
+    AZUL_MEDIO  = '#6C8EAD'
+    GRIS_OSCURO = '#4B5358'
+    GRIS_MEDIO  = '#8E969B'
+    GRIS_CLARO  = '#FAFAF6'
+
+    ROJO_RIESGO  = '#C96B63'
+    AMBAR_RIESGO = '#F4D35E'
+    VERDE_RIESGO = '#78BFA3'
+
+    C_RIESGO = {
+        'ALTO': ROJO_RIESGO,
+        'MEDIO': AMBAR_RIESGO,
+        'BAJO': VERDE_RIESGO
+    }
 
     df_soporte = df_soporte.copy()
     df_soporte['t0'] = pd.to_datetime(df_soporte['t0'])
 
-    fig = plt.figure(figsize=(15, 10))
-    gs  = GridSpec(2, 3, figure=fig, hspace=0.45, wspace=0.38)
+    # Último corte semanal: debe conversar con la plantilla Excel
+    ultimo_corte = df_soporte['t0'].max()
+    df_corte = df_soporte[df_soporte['t0'] == ultimo_corte].copy()
+    df_corte = df_corte.sort_values('prob_inoperatividad', ascending=False).reset_index(drop=True)
+    corte_txt = ultimo_corte.strftime('%d/%m/%Y')
 
-    # Panel 1: Evolucion temporal
+    fig = plt.figure(figsize=(15, 10))
+    gs = GridSpec(2, 3, figure=fig, hspace=0.48, wspace=0.50)
+
+    # -------------------------------------------------------------------------
+    # Panel 1: Evolución temporal anual
+    # -------------------------------------------------------------------------
     ax1 = fig.add_subplot(gs[0, :2])
-    dist = df_soporte.groupby(['t0','nivel_riesgo']).size().unstack(fill_value=0)
-    for niv, ls, lw in [('ALTO','-',1.8),('MEDIO','--',1.5),('BAJO',':',1.5)]:
-        if niv in dist.columns:
-            ax1.plot(dist.index, dist[niv], color=C_RIESGO[niv],
-                     lw=lw, linestyle=ls, label=f'Riesgo {niv}',
-                     marker='o', markersize=2.5)
+
+    dist = df_soporte.groupby(['t0', 'nivel_riesgo']).size().unstack(fill_value=0)
+
+    estilos = {
+        'ALTO':  {'ls': '-',  'lw': 1.8, 'marker': 'o'},
+        'MEDIO': {'ls': '--', 'lw': 1.6, 'marker': 's'},
+        'BAJO':  {'ls': ':',  'lw': 1.8, 'marker': '^'}
+    }
+
+    for nivel in ['ALTO', 'MEDIO', 'BAJO']:
+        if nivel in dist.columns:
+            ax1.plot(
+                dist.index,
+                dist[nivel],
+                color=C_RIESGO[nivel],
+                linestyle=estilos[nivel]['ls'],
+                linewidth=estilos[nivel]['lw'],
+                marker=estilos[nivel]['marker'],
+                markersize=3,
+                label=f'Riesgo {nivel}',
+                zorder=3
+            )
+
     ax1.set_xlabel('Fecha del corte temporal', fontsize=9)
-    ax1.set_ylabel('Numero de ambulancias', fontsize=9)
-    ax1.set_title('Evolucion semanal del nivel de riesgo - Flota Tipo II 2025',
+    ax1.set_ylabel('Número de ambulancias', fontsize=9)
+    ax1.set_title('Evolución semanal del nivel de riesgo durante 2025',
                   fontsize=10, fontweight='bold')
-    ax1.legend(fontsize=8.5, frameon=True)
-    ax1.grid(True, alpha=0.30)
+    ax1.legend(fontsize=8.5, frameon=True, loc='upper right')
+    ax1.grid(True, alpha=0.35)
     ax1.tick_params(axis='x', rotation=45, labelsize=8)
 
-    # Panel 2: Distribucion porcentual
+    # -------------------------------------------------------------------------
+    # Panel 2: Distribución del último corte semanal
+    # -------------------------------------------------------------------------
     ax2 = fig.add_subplot(gs[0, 2])
-    orden = [n for n in ['ALTO','MEDIO','BAJO']
-             if n in df_soporte['nivel_riesgo'].values]
-    vals  = [df_soporte['nivel_riesgo'].value_counts()[n] for n in orden]
-    wedges, texts, autos = ax2.pie(
-        vals, labels=orden, colors=[C_RIESGO[n] for n in orden],
-        autopct='%1.1f%%', startangle=90,
-        textprops={'fontsize': 9}, wedgeprops={'edgecolor':'white','linewidth':1.5})
-    for a in autos:
-        a.set_fontsize(8.5); a.set_color('white'); a.set_fontweight('bold')
-    ax2.set_title('Distribucion porcentual por',
-              fontsize=10, fontweight='bold')
 
-    # Panel 3: Ranking por ambulancia
+    conteo_corte = df_corte['nivel_riesgo'].value_counts()
+    orden = [n for n in ['ALTO', 'MEDIO', 'BAJO'] if n in conteo_corte.index]
+    vals = [conteo_corte[n] for n in orden]
+    labels = [f'{n}\n({conteo_corte[n]} unidades)' for n in orden]
+
+    wedges, texts, autos = ax2.pie(
+        vals,
+        labels=labels,
+        colors=[C_RIESGO[n] for n in orden],
+        autopct='%1.1f%%',
+        startangle=90,
+        textprops={'fontsize': 8.5},
+        wedgeprops={'edgecolor': 'white', 'linewidth': 2.0}
+    )
+
+    for a in autos:
+        a.set_fontsize(8.5)
+        a.set_color('white')
+        a.set_fontweight('bold')
+
+    ax2.set_title(f'Distribución de riesgo\nCorte {corte_txt}',
+                  fontsize=10, fontweight='bold')
+
+    # -------------------------------------------------------------------------
+    # Panel 3: Ranking del último corte semanal
+    # -------------------------------------------------------------------------
     ax3 = fig.add_subplot(gs[1, :2])
-    prob_amb = (df_soporte.groupby('id_ambulancia')['prob_inoperatividad']
-                .mean().sort_values(ascending=False))
-    cols_bar = [C_RIESGO['ALTO'] if p >= 0.50
-                else C_RIESGO['MEDIO'] if p >= 0.25
-                else C_RIESGO['BAJO'] for p in prob_amb.values]
-    ax3.bar(range(len(prob_amb)), prob_amb.values, color=cols_bar,
-            edgecolor='white', linewidth=0.5, width=0.75, zorder=3)
-    ax3.axhline(y=0.50, color=ROJO,   linestyle='--', lw=1.3, alpha=0.8)
-    ax3.axhline(y=0.25, color=MARRON, linestyle='--', lw=1.3, alpha=0.8)
-    ax3.set_xticks(range(len(prob_amb)))
-    ax3.set_xticklabels(prob_amb.index, rotation=90, fontsize=7)
+
+    colores_barras = [
+        C_RIESGO[nivel] for nivel in df_corte['nivel_riesgo']
+    ]
+
+    ax3.bar(
+        range(len(df_corte)),
+        df_corte['prob_inoperatividad'],
+        color=colores_barras,
+        edgecolor='white',
+        linewidth=0.7,
+        width=0.78,
+        alpha=0.90,
+        zorder=3
+    )
+
+    # Líneas de umbral
+    ax3.axhline(
+        y=0.50,
+        color=ROJO_RIESGO,
+        linestyle='--',
+        lw=1.1,
+        alpha=0.80,
+        zorder=2
+    )
+
+    ax3.axhline(
+        y=0.25,
+        color='#D8A900',
+        linestyle='--',
+        lw=1.1,
+        alpha=0.90,
+        zorder=2
+    )
+
+    # Etiquetas de umbral ubicadas fuera del área de barras
+    ax3.text(
+        1.01,
+        0.50,
+        'Umbral alto\nP = 0,50',
+        transform=ax3.get_yaxis_transform(),
+        fontsize=7.5,
+        color=ROJO_RIESGO,
+        ha='left',
+        va='center'
+    )
+
+    ax3.text(
+        1.01,
+        0.25,
+        'Umbral medio\nP = 0,25',
+        transform=ax3.get_yaxis_transform(),
+        fontsize=7.5,
+        color='#B38F00',
+        ha='left',
+        va='center'
+    )
+
+    ax3.set_xticks(range(len(df_corte)))
+    ax3.set_xticklabels(df_corte['id_ambulancia'], rotation=90, fontsize=7)
+
     ax3.set_xlabel('Ambulancia', fontsize=9)
-    ax3.set_ylabel('Probabilidad promedio de inoperatividad', fontsize=9)
-    ax3.set_title('Ranking de probabilidad promedio de inoperatividad por unidad',
-              fontsize=10, fontweight='bold')
-    ax3.grid(True, axis='y', alpha=0.30, zorder=0); ax3.set_ylim(0, 1.05)
+    ax3.set_ylabel('Probabilidad estimada de inoperatividad', fontsize=9)
+    ax3.set_title(f'Ranking de probabilidad de inoperatividad por unidad — Corte {corte_txt}',
+                  fontsize=10, fontweight='bold')
+    ax3.grid(True, axis='y', alpha=0.35, zorder=0)
+    ax3.set_ylim(0, min(1.0, max(df_corte['prob_inoperatividad']) + 0.15))
+    ax3.margins(x=0.02)
+
     ax3.legend(handles=[
-        mpatches.Patch(color=ROJO,   label='Riesgo ALTO   (P >= 0,50)'),
-        mpatches.Patch(color=MARRON, label='Riesgo MEDIO  (0,25 <= P < 0,50)'),
-        mpatches.Patch(color=VERDE,  label='Riesgo BAJO   (P < 0,25)'),
+        mpatches.Patch(color=ROJO_RIESGO, label='Riesgo ALTO (P ≥ 0,50)'),
+        mpatches.Patch(color=AMBAR_RIESGO, label='Riesgo MEDIO (0,25 ≤ P < 0,50)'),
+        mpatches.Patch(color=VERDE_RIESGO, label='Riesgo BAJO (P < 0,25)'),
     ], fontsize=8, loc='upper right', frameon=True)
 
+    # -------------------------------------------------------------------------
     # Panel 4: Protocolo semanal
+    # -------------------------------------------------------------------------
     ax4 = fig.add_subplot(gs[1, 2])
-    ax4.set_xlim(0, 5); ax4.set_ylim(0, 7.5); ax4.axis('off')
-    ax4.set_title('Protocolo semanal',
-              fontsize=10, fontweight='bold')
+    ax4.set_xlim(0, 5)
+    ax4.set_ylim(0, 7.5)
+    ax4.axis('off')
+    ax4.set_title('Protocolo semanal de uso',
+                  fontsize=10, fontweight='bold')
+
     pasos = [
-        ('1. Actualizar registros operativos',   GRIS_OS),
-        ('2. Ejecutar modelo Gradient Boosting', AZUL),
-        ('3. Revisar ranking de riesgo',         GRIS_OS),
-        ('4. Programar intervenciones',          ROJO),
-        ('5. Ejecutar y registrar',              GRIS_OS),
-        ('6. Retroalimentar con nuevos datos',   VERDE),
+        ('1. Actualizar registros operativos', GRIS_OSCURO),
+        ('2. Ejecutar modelo predictivo', AZUL_MEDIO),
+        ('3. Revisar ranking de riesgo', GRIS_OSCURO),
+        ('4. Priorizar intervenciones', ROJO_RIESGO),
+        ('5. Ejecutar y registrar acciones', GRIS_OSCURO),
+        ('6. Retroalimentar con nuevos datos', VERDE_RIESGO),
     ]
+
     for i, (texto, color) in enumerate(pasos):
         y = 6.8 - i * 1.08
         ax4.add_patch(FancyBboxPatch(
-            (0.15, y - 0.38), 4.7, 0.76, boxstyle='round,pad=0.07',
-            facecolor=color, edgecolor='white', linewidth=1.5,
-            zorder=3, alpha=0.90))
-        ax4.text(2.5, y, texto, ha='center', va='center',
-                 fontsize=8.5, color='white', fontweight='bold', zorder=4)
+            (0.15, y - 0.38),
+            4.7,
+            0.76,
+            boxstyle='round,pad=0.07',
+            facecolor=color,
+            edgecolor='white',
+            linewidth=1.4,
+            zorder=3,
+            alpha=0.95
+        ))
+
+        ax4.text(
+            2.5,
+            y,
+            texto,
+            ha='center',
+            va='center',
+            fontsize=8.4,
+            color='white',
+            fontweight='bold',
+            zorder=4
+        )
+
         if i < len(pasos) - 1:
-            ax4.annotate('', xy=(2.5, y - 0.40), xytext=(2.5, y - 0.60),
-                arrowprops=dict(arrowstyle='->', color=GRIS_ME, lw=1.2))
-    ax4.text(2.5, 0.25, 'Frecuencia: semanal (lunes). Responsable: jefe de mantenimiento',
-             ha='center', va='center', fontsize=7.5, color=GRIS_ME, style='italic')
+            ax4.annotate(
+                '',
+                xy=(2.5, y - 0.42),
+                xytext=(2.5, y - 0.62),
+                arrowprops=dict(arrowstyle='->', color=GRIS_MEDIO, lw=1.2)
+            )
 
+    ax4.text(
+        2.5,
+        0.25,
+        'Frecuencia sugerida: semanal. Responsable: jefatura o coordinación de mantenimiento.',
+        ha='center',
+        va='center',
+        fontsize=7.3,
+        color=GRIS_MEDIO,
+        style='italic'
+    )
+
+    # -------------------------------------------------------------------------
+    # Título general
+    # -------------------------------------------------------------------------
     plt.suptitle(
-        'Lineamientos tecnicos y operativos. Soporte preventivo. Modelo computacional predictivo para ambulancias Tipo II  |  Periodo 2025',
-        fontsize=12, fontweight='bold', y=1.01)
+        'Lineamientos técnicos y operativos para priorización de mantenimiento con soporte predictivo\n'
+        'Modelo computacional Random Forest — Ambulancias Tipo II — Periodo 2025',
+        fontsize=12,
+        fontweight='bold',
+        y=1.03
+    )
 
-    plt.savefig('lineamientos_visualizacion.png', dpi=150,
-                bbox_inches='tight', facecolor='white')
+    plt.savefig(
+        'lineamientos_visualizacion.png',
+        dpi=300,
+        bbox_inches='tight',
+        facecolor='white'
+    )
+
     print("  Figura guardada: lineamientos_visualizacion.png")
+    print(f"  Corte semanal utilizado para ranking y distribución: {corte_txt}")
     plt.close()
 
 
@@ -465,7 +632,7 @@ def generar_reporte_ejecutivo(df_metricas: pd.DataFrame,
 
     reporte.append("\n1. RESUMEN DEL MODELO\n")
     reporte.append("   Tipo de modelo    : Clasificación binaria supervisada")
-    reporte.append("   Algoritmo principal: Gradient Boosting")
+    reporte.append("   Modelo predictivo seleccionado: Random Forest")
     reporte.append("   Ventana histórica  : W = 60 días")
     reporte.append("   Horizonte predicción: T = 14 días")
     reporte.append("   Validación         : Backtesting temporal (2024→2025)")
@@ -500,16 +667,16 @@ def generar_reporte_ejecutivo(df_metricas: pd.DataFrame,
         reporte.append("")
 
     reporte.append("\n6. CONCLUSIONES TÉCNICAS\n")
-    reporte.append("   a) El modelo supera al esquema preventivo tradicional en")
-    reporte.append("      capacidad de anticipación (+190% en sensibilidad).")
-    reporte.append("   b) Las variables de uso operativo (servicios y kilometraje)")
-    reporte.append("      son los predictores más importantes de inoperatividad.")
-    reporte.append("   c) El modelo es reproducible sin infraestructura adicional,")
+    reporte.append("   a) Random Forest incrementa la sensibilidad frente al esquema")
+    reporte.append("      preventivo tradicional, favoreciendo la detección temprana")
+    reporte.append("      de eventos de inoperatividad.")
+    reporte.append("   b) Las variables de uso operativo y mantenimiento reciente")
+    reporte.append("      concentran la mayor importancia relativa del modelo.")
     reporte.append("      ejecutable en entorno Python estándar.")
     reporte.append("   d) Con datos reales del SAMU el desempeño mejorará al")
     reporte.append("      capturar patrones operativos auténticos de la flota.")
-    reporte.append("   e) El protocolo semanal de uso permite integrar el modelo")
-    reporte.append("      al flujo operativo del SAMU sin cambios estructurales.")
+    reporte.append("   e) El protocolo semanal permite traducir las probabilidades")
+    reporte.append("      estimadas por el modelo en criterios operativos de priorización.")
 
     reporte.append("\n7. LIMITACIONES Y TRABAJO FUTURO\n")
     reporte.append("   a) Datos simulados: validación con datos reales del SAMU")

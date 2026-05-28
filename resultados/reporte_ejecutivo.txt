@@ -7,7 +7,7 @@ Período de análisis: 2024-2025
 1. RESUMEN DEL MODELO
 
    Tipo de modelo    : Clasificación binaria supervisada
-   Algoritmo principal: Gradient Boosting
+   Modelo predictivo seleccionado: Random Forest
    Ventana histórica  : W = 60 días
    Horizonte predicción: T = 14 días
    Validación         : Backtesting temporal (2024→2025)
@@ -23,32 +23,32 @@ Período de análisis: 2024-2025
      MAE          : 0.2177
 
    Regresión Logística
-     AUC-ROC      : 0.5254
-     Precisión    : 0.0929
+     AUC-ROC      : 0.5231
+     Precisión    : 0.0925
      Sensibilidad : 1.0
-     MAE          : 0.4888
+     MAE          : 0.491
 
    Random Forest
-     AUC-ROC      : 0.5531
-     Precisión    : 0.0966
-     Sensibilidad : 0.775
-     MAE          : 0.4165
+     AUC-ROC      : 0.5526
+     Precisión    : 0.0994
+     Sensibilidad : 0.8313
+     MAE          : 0.4208
 
    Gradient Boosting
-     AUC-ROC      : 0.5436
-     Precisión    : 0.0995
-     Sensibilidad : 0.55
-     MAE          : 0.3578
+     AUC-ROC      : 0.5324
+     Precisión    : 0.0966
+     Sensibilidad : 0.5312
+     MAE          : 0.3591
 
 
 3. VARIABLES MÁS IMPORTANTES
 
-   servicios_en_w                          : 19.29%
-   km_en_w                                 : 16.92%
-   dias_desde_ultima_interv                : 11.31%
-   disponibilidad_w                        : 9.90%
-   downtime_total_dias_w                   : 9.07%
-   downtime_promedio_dias_w                : 8.28%
+   km_en_w                                 : 18.93%
+   servicios_en_w                          : 18.21%
+   dias_desde_ultima_interv                : 11.12%
+   disponibilidad_w                        : 9.94%
+   downtime_total_dias_w                   : 9.61%
+   downtime_promedio_dias_w                : 8.29%
 
 4. LINEAMIENTOS DE PRIORIZACIÓN
 
@@ -67,43 +67,43 @@ Período de análisis: 2024-2025
 
 5. CRITERIOS DE ALERTA TEMPRANA
 
-   Servicios prestados en W (18.99%)
+   Servicios prestados en W (Variable crítica identificada por el modelo)
      Umbral  : > 120 servicios en 60 días
      Acción  : Adelantar inspección técnica general
 
-   Kilometraje en W (18.58%)
+   Kilometraje en W (Variable crítica identificada por el modelo)
      Umbral  : > 8,000 km en 60 días
      Acción  : Verificar sistema vehicular y tren motriz
 
-   Días desde última intervención (10.16%)
+   Días desde última intervención (Variable crítica identificada por el modelo)
      Umbral  : > 45 días sin intervención
      Acción  : Programar mantenimiento preventivo inmediato
 
-   Disponibilidad histórica en W (10.13%)
+   Disponibilidad histórica en W (Variable crítica identificada por el modelo)
      Umbral  : < 0.85 (menos del 85% operativa)
      Acción  : Revisión técnica integral prioritaria
 
-   Downtime total en W (9.48%)
+   Downtime total en W (Variable crítica identificada por el modelo)
      Umbral  : > 7 días acumulados en 60 días
      Acción  : Análisis de causa raíz y corrección definitiva
 
-   Equipamiento funcional (3.97%)
+   Equipamiento funcional (Variable crítica identificada por el modelo)
      Umbral  : Estado = 0 (no funcional)
      Acción  : Reemplazo o reparación inmediata del equipo
 
 
 6. CONCLUSIONES TÉCNICAS
 
-   a) El modelo supera al esquema preventivo tradicional en
-      capacidad de anticipación (+190% en sensibilidad).
-   b) Las variables de uso operativo (servicios y kilometraje)
-      son los predictores más importantes de inoperatividad.
-   c) El modelo es reproducible sin infraestructura adicional,
+   a) Random Forest incrementa la sensibilidad frente al esquema
+      preventivo tradicional, favoreciendo la detección temprana
+      de eventos de inoperatividad.
+   b) Las variables de uso operativo y mantenimiento reciente
+      concentran la mayor importancia relativa del modelo.
       ejecutable en entorno Python estándar.
    d) Con datos reales del SAMU el desempeño mejorará al
       capturar patrones operativos auténticos de la flota.
-   e) El protocolo semanal de uso permite integrar el modelo
-      al flujo operativo del SAMU sin cambios estructurales.
+   e) El protocolo semanal permite traducir las probabilidades
+      estimadas por el modelo en criterios operativos de priorización.
 
 7. LIMITACIONES Y TRABAJO FUTURO
 

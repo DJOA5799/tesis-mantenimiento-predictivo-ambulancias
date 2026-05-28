@@ -11,9 +11,10 @@ Metodología:
 - Entrenamiento: datos 2024 / Validación: datos 2025
 
 Modelos evaluados:
-- Regresión Logística (línea base)
-- Random Forest (modelo principal)
-- Gradient Boosting (modelo alternativo)
+- Regresión Logística (modelo de referencia interpretable)
+- Random Forest (modelo predictivo seleccionado)
+- Gradient Boosting (modelo comparativo conservador)
+- Mantenimiento preventivo tradicional (línea base operativa)
 
 Métricas de evaluación (OE4 — tesis):
 - Precisión, Sensibilidad, MAE, AUC-ROC, Disponibilidad proyectada
@@ -155,12 +156,12 @@ def entrenar_modelos(X_train: pd.DataFrame,
                       y_train: pd.Series) -> dict:
     """
     Entrena tres modelos de clasificación supervisada:
-    1. Regresión Logística (línea base interpretable)
-    2. Random Forest (modelo principal)
-    3. Gradient Boosting (modelo alternativo)
+    1. Regresión Logística (modelo de referencia interpretable)
+    2. Random Forest (modelo predictivo seleccionado)
+    3. Gradient Boosting (modelo comparativo conservador)
 
-    Todos usan class_weight='balanced' como mecanismo
-    adicional de manejo del desbalance.
+    La Regresión Logística y Random Forest incorporan class_weight='balanced'.
+    Gradient Boosting se entrena sobre el conjunto balanceado por oversampling.
     """
     print("\nEntrenando modelos...")
 
@@ -200,7 +201,7 @@ def entrenar_modelos(X_train: pd.DataFrame,
     # (orden de modelos, variables más importantes) permanece estable.
     # -------------------------------------------------------------------------
 
-    # --- Modelo 2: Random Forest (modelo principal) ---
+    # --- Modelo 2: Random Forest (modelo predictivo seleccionado) ---
     print("  [2/3] Random Forest...")
     rf = RandomForestClassifier(
         n_estimators=200,
@@ -217,7 +218,7 @@ def entrenar_modelos(X_train: pd.DataFrame,
         'requiere_escala': False
     }
 
-    # --- Modelo 3: Gradient Boosting (alternativo) ---
+    # --- Modelo 3: Gradient Boosting (modelo comparativo conservador) ---
     print("  [3/3] Gradient Boosting...")
     gb = GradientBoostingClassifier(
         n_estimators=150,
@@ -289,11 +290,15 @@ def evaluar_modelo(nombre: str,
     # Matriz de confusión
     cm = confusion_matrix(y_val, y_pred)
     tn, fp, fn, tp = cm.ravel()
+    exactitud = (tp + tn) / (tp + tn + fp + fn)
+    especificidad = tn / (tn + fp) if (tn + fp) > 0 else 0 
 
     resultados = {
         'nombre': nombre,
         'precision': round(precision, 4),
         'sensibilidad': round(sensibilidad, 4),
+        'exactitud': round(exactitud, 4),
+        'especificidad': round(especificidad, 4),
         'f1_score': round(f1, 4),
         'auc_roc': round(auc_roc, 4),
         'mae': round(mae, 4),
@@ -345,11 +350,15 @@ def calcular_linea_base(y_val: pd.Series,
 
     cm = confusion_matrix(y_val, y_pred_preventivo)
     tn, fp, fn, tp = cm.ravel() if cm.size == 4 else (0, 0, 0, 0)
+    exactitud = (tp + tn) / (tp + tn + fp + fn) if (tp + tn + fp + fn) > 0 else 0
+    especificidad = tn / (tn + fp) if (tn + fp) > 0 else 0
 
     return {
         'nombre': 'Preventivo tradicional (línea base)',
         'precision': round(precision, 4),
         'sensibilidad': round(sensibilidad, 4),
+        'exactitud': round(exactitud, 4),
+        'especificidad': round(especificidad, 4),
         'f1_score': round(f1, 4),
         'auc_roc': round(auc_roc, 4),
         'mae': round(mae, 4),
@@ -368,18 +377,21 @@ def calcular_linea_base(y_val: pd.Series,
 # FUNCIÓN 6: IMPORTANCIA DE VARIABLES (Random Forest)
 # =============================================================================
 
-def analizar_importancia_variables(modelos: dict) -> pd.DataFrame:
+def analizar_importancia_variables(modelos: dict,
+                                   modelo_base: str = 'Random Forest') -> pd.DataFrame:
     """
-    Extrae la importancia de variables del modelo Random Forest.
-    Útil para interpretar qué factores predicen mejor la inoperatividad.
+    Extrae la importancia de variables del modelo seleccionado.
+    Por defecto utiliza Random Forest, modelo predictivo seleccionado para el soporte preventivo.
     """
-    rf_info = modelos['Random Forest']
-    rf = rf_info['modelo']
+    info_modelo = modelos[modelo_base]
+    modelo = info_modelo['modelo']
 
     importancias = pd.DataFrame({
         'variable': FEATURES,
-        'importancia': rf.feature_importances_
+        'importancia': modelo.feature_importances_
     }).sort_values('importancia', ascending=False).reset_index(drop=True)
+
+    importancias['modelo_base'] = modelo_base
 
     importancias['importancia_pct'] = (
         importancias['importancia'] / importancias['importancia'].sum() * 100
@@ -402,6 +414,8 @@ def generar_tabla_resultados(resultados_lista: list) -> pd.DataFrame:
             'Modelo': r['nombre'],
             'Precisión': f"{r['precision']:.4f}",
             'Sensibilidad': f"{r['sensibilidad']:.4f}",
+            'Especificidad': f"{r['especificidad']:.4f}",
+            'Exactitud': f"{r['exactitud']:.4f}",
             'F1-Score': f"{r['f1_score']:.4f}",
             'AUC-ROC': f"{r['auc_roc']:.4f}",
             'MAE': f"{r['mae']:.4f}",
@@ -426,7 +440,7 @@ def generar_visualizaciones(resultados_lista: list,
     1. Curvas ROC comparativas
     2. Importancia de variables (Top 10, valores canónicos)
     3. Comparación de métricas
-    4. Distribución de probabilidades predichas (Random Forest)
+    4. Distribución de probabilidades predichas (Gradient Boosting)
 
     Estilo científico — serif + escala de grises + azul para RF.
     Valores canónicos de referencia (Tabla 15 y Tabla 16 de la tesis):
@@ -446,7 +460,7 @@ def generar_visualizaciones(resultados_lista: list,
     GRIS_CL = '#bbbbbb'; AZUL    = '#1B4F8A'; ROJO    = '#7B1515'
     fig, axes = plt.subplots(2, 2, figsize=(13, 9))
     fig.suptitle(
-        'Resultados del modelo computacional predictivo\n'
+        'Resultados de la validación retrospectiva del modelo computacional predictivo\n'
         'Ambulancias Tipo II — Lima Metropolitana 2024-2025',
         fontsize=12, fontweight='bold', y=1.01
     )
@@ -476,44 +490,53 @@ def generar_visualizaciones(resultados_lista: list,
     ax1.set_xlim(0, 1); ax1.set_ylim(0, 1.02)
     ax1.set_aspect('equal')
 
-    # --- GRÁFICO 2: Importancia de variables (valores canónicos Tabla 16) ---
+    # --- GRÁFICO 2: Importancia de variables del modelo seleccionado ---
     ax2 = axes[0, 1]
-    vars_canon = [
-        ('n_eventos_vehicular_w',     3.77, '#777777', ''),
-        ('n_eventos_electrico_w',     3.86, '#777777', ''),
-        ('n_eventos_equipamiento_w',  3.97, '#777777', ''),
-        ('n_total_mant_w',            4.60, '#555555', ''),
-        ('downtime_promedio_dias_w',  8.53, '#444444', ''),
-        ('downtime_total_dias_w',     9.48, '#444444', ''),
-        ('disponibilidad_w',         10.13, '#444444', ''),
-        ('dias_desde_ultima_interv', 10.16, '#555555', ''),
-        ('km_en_w',                  18.58, '#1a1a1a', '///'),
-        ('servicios_en_w',           18.99, '#1a1a1a', '///'),
-    ]
-    vlbls = [v[0] for v in vars_canon]
-    vimps = [v[1] for v in vars_canon]
-    vcols = [v[2] for v in vars_canon]
-    vhtch = [v[3] for v in vars_canon]
-    bars2 = ax2.barh(range(len(vlbls)), vimps, color=vcols,
-                     edgecolor='white', linewidth=0.8, height=0.62, zorder=3)
-    for bar, h in zip(bars2, vhtch):
-        bar.set_hatch(h)
+    top_imp = importancias.head(10).sort_values('importancia_pct', ascending=True).copy()
+
+    nombres_legibles = {
+        'km_en_w': 'Kilometraje en W',
+        'servicios_en_w': 'Servicios en W',
+        'dias_desde_ultima_interv': 'Días desde última intervención',
+        'disponibilidad_w': 'Disponibilidad en W',
+        'downtime_promedio_dias_w': 'Downtime promedio en W',
+        'downtime_total_dias_w': 'Downtime total en W',
+        'n_eventos_electrico_w': 'Eventos eléctricos en W',
+        'n_eventos_equipamiento_w': 'Eventos de equipamiento en W',
+        'n_total_mant_w': 'Mantenimientos totales en W',
+        'n_pm_w': 'Mantenimientos preventivos en W',
+        'n_cm_w': 'Mantenimientos correctivos en W',
+        'n_eventos_vehicular_w': 'Eventos vehiculares en W',
+        'n_episodios_downtime_w': 'Episodios de downtime en W',
+        'equipamiento_funcional': 'Equipamiento funcional'
+    }
+
+    top_imp['variable_legible'] = top_imp['variable'].map(nombres_legibles).fillna(top_imp['variable'])
+
+    vlbls = top_imp['variable_legible'].tolist()
+    vimps = top_imp['importancia_pct'].tolist()
+
+    bars2 = ax2.barh(range(len(vlbls)), vimps,
+                    color=NEGRO, edgecolor='white',
+                    linewidth=0.8, height=0.62, zorder=3)
+
     for bar, val in zip(bars2, vimps):
         ax2.text(val + 0.15, bar.get_y() + bar.get_height() / 2,
-                 f'{val:.2f}%', va='center', fontsize=8,
-                 color=NEGRO, fontweight='bold')
+                f'{val:.2f}%', va='center', fontsize=8,
+                color=NEGRO, fontweight='bold')
+
     ax2.set_yticks(range(len(vlbls)))
     ax2.set_yticklabels(vlbls, fontsize=8)
     ax2.set_xlabel('Importancia relativa (%)', fontsize=9)
     ax2.set_title('Importancia de variables - Random Forest (Top 10)',
-                  fontsize=10, fontweight='bold')
+                fontsize=10, fontweight='bold')
     ax2.grid(True, axis='x', alpha=0.30, zorder=0)
     ax2.set_xlim(0, max(vimps) * 1.18)
 
     # --- GRÁFICO 3: Comparativa de métricas ---
     ax3 = axes[1, 0]
-    mets_keys = ['precision', 'sensibilidad', 'f1_score', 'auc_roc']
-    etiq_met  = ['Precision', 'Sensibilidad', 'F1-Score', 'AUC-ROC']
+    mets_keys = ['exactitud', 'especificidad', 'precision', 'sensibilidad', 'f1_score', 'auc_roc']
+    etiq_met  = ['Exactitud', 'Especificidad', 'Precisión', 'Sensibilidad', 'F1-Score', 'AUC-ROC']
     x = np.arange(len(mets_keys))
     n_m   = len(resultados_lista)
     ancho = 0.72 / n_m
@@ -521,7 +544,7 @@ def generar_visualizaciones(resultados_lista: list,
     htchs_m = ['', '///', '\\', '']
     for i, r in enumerate(resultados_lista):
         off  = (i - n_m / 2 + 0.5) * ancho
-        vals = [r[m] for m in mets_keys]
+        vals = [r[m] * 100 for m in mets_keys]
         b = ax3.bar(x + off, vals, ancho * 0.92,
                     color=cols_m[min(i, len(cols_m)-1)],
                     edgecolor='white', linewidth=0.8,
@@ -530,35 +553,37 @@ def generar_visualizaciones(resultados_lista: list,
             bar.set_hatch(htchs_m[min(i, len(htchs_m)-1)])
     ax3.set_xticks(x)
     ax3.set_xticklabels(etiq_met, fontsize=9)
-    ax3.set_ylabel('Valor', fontsize=9)
-    ax3.set_ylim(0, 1.18)
-    ax3.set_title('Comparativa de metricas de desempeno - Periodo 2025 - Umbral 0,30',
-                  fontsize=10, fontweight='bold')
+    ax3.set_ylabel('Valor (%)', fontsize=9)
+    ax3.set_ylim(0, 110)
+    ax3.set_title('Perfil de desempeño de los modelos evaluados - Periodo 2025 - Umbral 0,30',
+                    fontsize=10, fontweight='bold')
     ax3.legend(fontsize=7.5, loc='upper right', frameon=True)
     ax3.grid(True, axis='y', alpha=0.30, zorder=0)
 
-    # --- GRÁFICO 4: Distribución de probabilidades (RF) ---
+    # --- GRÁFICO 4: Distribución de probabilidades (Random Forest) ---
     ax4 = axes[1, 1]
     rf_res = next((r for r in resultados_lista if 'Random Forest' in r['nombre']), None)
     if rf_res:
         y_arr = np.array(y_val)
         ax4.hist(rf_res['y_prob'][y_arr == 0], bins=30, alpha=0.65,
-                 color=AZUL, label='Sin inoperatividad (Y=0)',
-                 density=True, edgecolor='white')
+                color=AZUL, label='Sin inoperatividad (Y=0)',
+                density=True, edgecolor='white')
         ax4.hist(rf_res['y_prob'][y_arr == 1], bins=30, alpha=0.65,
-                 color=ROJO, label='Con inoperatividad (Y=1)',
-                 density=True, edgecolor='white')
+                color=ROJO, label='Con inoperatividad (Y=1)',
+                density=True, edgecolor='white')
         ax4.axvline(x=0.30, color='#F0A500', linestyle='--',
                     linewidth=2, label='Umbral = 0,30')
         ax4.set_xlabel('Probabilidad predicha de inoperatividad', fontsize=9)
         ax4.set_ylabel('Densidad', fontsize=9)
-        ax4.set_title('Distribucion de probabilidades predichas',
-              fontsize=10, fontweight='bold')
+        ax4.set_title('Distribución de probabilidades predichas - Random Forest',
+                    fontsize=10, fontweight='bold')
         ax4.legend(fontsize=8, frameon=True)
         ax4.grid(True, alpha=0.30)
-
+    
+    top_imp['variable_legible'] = top_imp['variable'].map(nombres_legibles).fillna(top_imp['variable'])
+    vlbls = top_imp['variable_legible'].tolist()
     plt.tight_layout()
-    plt.savefig('resultados_modelo.png', dpi=150, bbox_inches='tight', facecolor='white')
+    plt.savefig('resultados_modelo.png', dpi=300, bbox_inches='tight', facecolor='white')
     print("\n  Figura guardada: resultados_modelo.png")
     plt.close()
 
@@ -570,22 +595,35 @@ def generar_visualizaciones(resultados_lista: list,
 def generar_soporte_preventivo(df_val: pd.DataFrame,
                                  modelos: dict,
                                  X_val: pd.DataFrame,
+                                 modelo_base: str = 'Random Forest',
                                  top_n: int = 10) -> pd.DataFrame:
     """
     Genera el ranking de ambulancias por nivel de riesgo operativo.
     Corresponde al Entregable 2 de la tesis: prototipo de soporte preventivo.
+
+    Por defecto utiliza Random Forest, seleccionado para el soporte preventivo
+    por su mayor sensibilidad operativa y capacidad para identificar eventos
+    reales de inoperatividad en el horizonte de 14 días.
 
     Niveles de riesgo:
         ALTO   : probabilidad >= 0.50
         MEDIO  : probabilidad >= 0.25
         BAJO   : probabilidad < 0.25
     """
-    rf_info = modelos['Random Forest']
-    rf = rf_info['modelo']
+    info_modelo = modelos[modelo_base]
+    modelo = info_modelo['modelo']
+    scaler = info_modelo['scaler']
+    requiere_escala = info_modelo['requiere_escala']
 
-    y_prob = rf.predict_proba(X_val.values)[:, 1]
+    if requiere_escala:
+        X_eval = scaler.transform(X_val)
+    else:
+        X_eval = X_val.values
+
+    y_prob = modelo.predict_proba(X_eval)[:, 1]
 
     df_soporte = df_val[['id_ambulancia', 't0']].copy()
+    df_soporte['modelo_base'] = modelo_base
     df_soporte['prob_inoperatividad'] = y_prob.round(4)
 
     # Asignar nivel de riesgo
@@ -599,12 +637,14 @@ def generar_soporte_preventivo(df_val: pd.DataFrame,
 
     df_soporte['nivel_riesgo'] = df_soporte['prob_inoperatividad'].apply(nivel_riesgo)
 
-    # Añadir variables explicativas clave
+    # Añadir variables explicativas clave para soporte preventivo
     df_soporte['dias_desde_ultima_interv'] = X_val['dias_desde_ultima_interv'].values
     df_soporte['downtime_total_dias_w'] = X_val['downtime_total_dias_w'].values
     df_soporte['n_cm_w'] = X_val['n_cm_w'].values
     df_soporte['disponibilidad_w'] = X_val['disponibilidad_w'].values
     df_soporte['equipamiento_funcional'] = X_val['equipamiento_funcional'].values
+    df_soporte['km_en_w'] = X_val['km_en_w'].values
+    df_soporte['servicios_en_w'] = X_val['servicios_en_w'].values
 
     # Ordenar por probabilidad descendente
     df_soporte = df_soporte.sort_values('prob_inoperatividad', ascending=False)
@@ -661,14 +701,15 @@ if __name__ == "__main__":
     print("\n" + "="*60)
     print("IMPORTANCIA DE VARIABLES — Random Forest (Top 10)")
     print("="*60)
-    importancias = analizar_importancia_variables(modelos)
+    importancias = analizar_importancia_variables(modelos, modelo_base='Random Forest')
     print(importancias.head(10).to_string(index=False))
 
     # --- IDENTIFICAR MEJOR MODELO ---
     modelos_pred = [r for r in resultados_lista if 'línea base' not in r['nombre']]
     mejor_modelo = max(modelos_pred, key=lambda x: x['auc_roc'])
     print(f"\n{'='*60}")
-    print(f"MEJOR MODELO: {mejor_modelo['nombre']}")
+    print(f"MODELO CON MAYOR AUC-ROC: {mejor_modelo['nombre']}")
+    print("MODELO PREDICTIVO SELECCIONADO PARA SOPORTE PREVENTIVO: Random Forest")
     print(f"  AUC-ROC    : {mejor_modelo['auc_roc']:.4f}")
     print(f"  Precisión  : {mejor_modelo['precision']:.4f}")
     print(f"  Sensibilidad: {mejor_modelo['sensibilidad']:.4f}")
@@ -676,22 +717,27 @@ if __name__ == "__main__":
     print(f"  Disp. proy.: {mejor_modelo['disponibilidad_proyectada']:.4f}")
 
     lb_res = resultados_lista[0]
-    print(f"\nMEJORA SOBRE LÍNEA BASE PREVENTIVA:")
-    print(f"  AUC-ROC    : {lb_res['auc_roc']:.4f} → {mejor_modelo['auc_roc']:.4f} "
-          f"(+{mejor_modelo['auc_roc']-lb_res['auc_roc']:.4f})")
-    print(f"  Sensibilidad: {lb_res['sensibilidad']:.4f} → {mejor_modelo['sensibilidad']:.4f} "
-          f"(+{mejor_modelo['sensibilidad']-lb_res['sensibilidad']:.4f})")
+    rf_res = next(r for r in resultados_lista if r['nombre'] == 'Random Forest')
+    print(f"\nCOMPARACIÓN DEL MODELO SELECCIONADO FRENTE A LA LÍNEA BASE PREVENTIVA:")
+    print(f"  AUC-ROC    : {lb_res['auc_roc']:.4f} → {rf_res['auc_roc']:.4f} "
+          f"(+{rf_res['auc_roc']-lb_res['auc_roc']:.4f})")
+    print(f"  Sensibilidad: {lb_res['sensibilidad']:.4f} → {rf_res['sensibilidad']:.4f} "
+          f"(+{rf_res['sensibilidad']-lb_res['sensibilidad']:.4f})")
 
     # --- SOPORTE PREVENTIVO (Entregable 2) ---
     print(f"\n{'='*60}")
     print("PROTOTIPO DE SOPORTE PREVENTIVO")
     print("Ranking de ambulancias por nivel de riesgo (Top 15)")
     print("="*60)
-    df_soporte = generar_soporte_preventivo(df_val, modelos, X_val)
+    df_soporte = generar_soporte_preventivo(
+    df_val, modelos, X_val, modelo_base='Random Forest'
+    )
 
     # Mostrar corte más reciente
     ultimo_corte = df_soporte['t0'].max()
-    df_ultimo = df_soporte[df_soporte['t0'] == ultimo_corte].head(15)
+    df_corte = df_soporte[df_soporte['t0'] == ultimo_corte].copy()
+    df_ultimo = df_corte.head(15)
+
     print(f"\nCorte temporal: {ultimo_corte}")
     print(df_ultimo[[
         'id_ambulancia', 'prob_inoperatividad', 'nivel_riesgo',
@@ -699,11 +745,11 @@ if __name__ == "__main__":
         'n_cm_w', 'disponibilidad_w'
     ]].to_string(index=False))
 
-    resumen_riesgo = df_soporte[df_soporte['t0'] == ultimo_corte]['nivel_riesgo'].value_counts()
+    resumen_riesgo = df_corte['nivel_riesgo'].value_counts()
     print(f"\nResumen de riesgo al {ultimo_corte}:")
     for nivel in ['ALTO', 'MEDIO', 'BAJO']:
         n = resumen_riesgo.get(nivel, 0)
-        print(f"  {nivel:5s}: {n:2d} ambulancias ({n/len(df_ultimo)*100:.0f}%)")
+        print(f"  {nivel:5s}: {n:2d} ambulancias ({n/len(df_corte)*100:.0f}%)")
 
     # --- VISUALIZACIONES ---
     print(f"\n{'='*60}")

@@ -1,7 +1,7 @@
 ﻿Paso,Actividad,Descripción,Frecuencia,Responsable
 1,Actualización de registros,"El personal técnico registra todos los eventos de mantenimiento, downtime y uso operativo en el sistema de gestión.",Continua — al ocurrir cada evento,Técnico de turno
 2,Ejecución del modelo,El modelo computacional procesa los registros de los últimos 60 días (W) para cada unidad y genera probabilidades de inoperatividad.,Semanal — cada lunes,Encargado de gestión de datos
-3,Revisión del ranking de riesgo,El jefe de mantenimiento revisa el tablero de soporte preventivo con el ranking de ambulancias por nivel de riesgo.,Semanal — cada lunes,Jefe de mantenimiento
+3,Revisión del ranking de riesgo,El jefe de mantenimiento revisa el tablero de soporte predictivo con el ranking de ambulancias por nivel de riesgo.,Semanal — cada lunes,Jefe de mantenimiento
 4,Programación de intervenciones,"Se programan intervenciones preventivas priorizando unidades de riesgo ALTO y MEDIO, coordinando con disponibilidad operativa.",Semanal,Jefe de mantenimiento
 5,Ejecución y registro de intervención,"El técnico ejecuta la intervención y registra los hallazgos, repuestos utilizados y tiempo de intervención.",Según programación,Técnico de mantenimiento
 6,Retroalimentación al modelo,"Los nuevos registros alimentan el modelo para el siguiente ciclo semanal, mejorando progresivamente su capacidad predictiva.",Continua,Encargado de gestión de datos

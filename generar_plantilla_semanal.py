@@ -29,7 +29,7 @@ from datetime import datetime, date
 import os
 
 # ── PARÁMETROS CONFIGURABLES ──────────────────────────────────────────────────
-INPUT_FILE   = "resultados/lineamiento_priorizacion.csv"
+INPUT_FILE   = "resultados/soporte_preventivo_completo.csv"
 OUTPUT_DIR   = "resultados"
 UMBRAL_ALTO  = 0.50
 UMBRAL_MEDIO = 0.25
@@ -43,23 +43,36 @@ UMBRAL_DIAS_SIN_PM = 45
 UMBRAL_DISP        = 0.85
 UMBRAL_DOWNTIME    = 7.0
 
-# ── COLORES ───────────────────────────────────────────────────────────────────
-C_HEADER_DARK  = "042C53"   # azul marino
-C_HEADER_MID   = "185FA5"   # azul medio
-C_HEADER_LIGHT = "E6F1FB"   # azul claro texto
-C_ALTO_BG      = "FCEBEB"   # rojo claro
-C_ALTO_DARK    = "A32D2D"   # rojo oscuro
-C_MEDIO_BG     = "FAEEDA"   # ámbar claro
-C_MEDIO_DARK   = "854F0B"   # ámbar oscuro
-C_BAJO_BG      = "EAF3DE"   # verde claro
-C_BAJO_DARK    = "3B6D11"   # verde oscuro
-C_MEJORA_BG    = "E1F5EE"   # teal claro
-C_MEJORA_DARK  = "085041"   # teal oscuro
-C_SECTION_BG   = "F1EFE8"   # gris claro
+# Fecha de corte para generar la plantilla.
+# Usar None para tomar automáticamente el último corte disponible.
+CORTE_OBJETIVO = None
+# Ejemplo:
+# CORTE_OBJETIVO = "2025-10-17"
+
+# ── COLORES INSTITUCIONALES ───────────────────────────────────────────────────
+C_HEADER_DARK  = "17365D"   # azul institucional
+C_HEADER_MID   = "355C7D"   # azul secundario
+C_HEADER_LIGHT = "FFFFFF"
+
+C_SECTION_BG   = "F2F5F7"   # gris institucional claro
+C_SUBTLE_BG    = "FAFAF6"   # fondo cálido
 C_WHITE        = "FFFFFF"
-C_BORDER       = "B4B2A9"
-C_ALERT_RED    = "F09595"
-C_ALERT_AMB    = "FAC775"
+C_BORDER       = "B7C1CC"
+C_TEXT_DARK    = "1F2933"
+C_TEXT_MUTED   = "5B6770"
+
+# Colores de alerta, coherentes con tus nuevas figuras
+C_ALTO_BG      = "F8E1DE"
+C_ALTO_DARK    = "C96B63"
+
+C_MEDIO_BG     = "FFF2BF"
+C_MEDIO_DARK   = "B38F00"
+
+C_BAJO_BG      = "E3F3EC"
+C_BAJO_DARK    = "78BFA3"
+
+C_INFO_BG      = "EAF1F7"
+C_INFO_DARK    = "355C7D"
 
 def fill(hex_color):
     return PatternFill("solid", fgColor=hex_color)
@@ -167,7 +180,7 @@ def instruccion(row, alertas):
             base += ": " + " + ".join(subsistemas) if subsistemas else ""
         return base
     else:
-        return "Continuar operación normal. PM según cronograma NTS 051."
+        return "Continuar operación normal. PM según cronograma."
 
 # ── CONSTRUIR EL EXCEL ────────────────────────────────────────────────────────
 def construir_excel(df):
@@ -186,16 +199,19 @@ def construir_excel(df):
         corte_str = corte_dt.strftime("%d/%m/%Y")
     except:
         corte_str = str(corte); semana = "—"; anio = 2025
-
+    
+    df["alertas"]     = df.apply(lambda r: evaluar_alertas(r), axis=1)
+    df["instruccion"] = df.apply(lambda r: instruccion(r, r["alertas"]), axis=1)
+    
     n_alto  = len(df[df["nivel_riesgo"]=="ALTO"])
     n_medio = len(df[df["nivel_riesgo"]=="MEDIO"])
     n_bajo  = len(df[df["nivel_riesgo"]=="BAJO"])
     total   = len(df)
+    n_alertas_activas = df["alertas"].apply(len).gt(0).sum()
 
     # Estimación de unidades que el preventivo no hubiera programado:
     # Unidades de riesgo ALTO/MEDIO cuyo dias_desde_ultima_interv < 37 días
-    df["alertas"]     = df.apply(lambda r: evaluar_alertas(r), axis=1)
-    df["instruccion"] = df.apply(lambda r: instruccion(r, r["alertas"]), axis=1)
+    
     df_no_prev = df[
         (df["nivel_riesgo"].isin(["ALTO","MEDIO"])) &
         (df["dias_desde_ultima_interv"] < 37)
@@ -215,113 +231,235 @@ def construir_excel(df):
         cell.font     = font(bold=bold, color=font_c, size=size, italic=italic)
         cell.alignment = align(h, "center", wrap)
         return cell
+    
+    def write_cell(ws, r, c, value, fill_c=C_WHITE, font_c="000000",
+                   bold=False, size=9, h="left", wrap=True, italic=False):
+        cell = ws.cell(row=r, column=c, value=value)
+        cell.fill = fill(fill_c)
+        cell.font = font(bold=bold, color=font_c, size=size, italic=italic)
+        cell.alignment = align(h, "center", wrap)
+        cell.border = border_thin()
+        return cell
 
-    # Column widths: A=24, B=8, C=10, D=10, E=40, F=35, G=18, H=18
-    col_w = [0, 24, 8, 10, 10, 40, 35, 18, 18]
+    def section_bar(ws, r, title):
+        set_row_height(ws, r, 18)
+        merge_and_write(
+            ws, r, 1, 8, title,
+            C_HEADER_DARK, C_HEADER_LIGHT,
+            bold=True, size=9, h="left", wrap=False
+        )
+    # Column widths institucionales
+    # A=Unidad, B=P, C=Riesgo, D=Alertas, E=Alertas activas,
+    # F=Acción recomendada, G=Plazo, H=Responsable/Obs.
+    col_w = [0, 20, 14, 14, 16, 36, 36, 18, 26]
     for i, w in enumerate(col_w[1:], 1):
         ws.column_dimensions[get_column_letter(i)].width = w
 
-    r = 1
-    # ── CABECERA ──────────────────────────────────────────────────────────────
-    set_row_height(ws, r, 28)
-    merge_and_write(ws, r, 1, 6,
-        "PROGRAMACIÓN SEMANAL DE MANTENIMIENTO — SOPORTE PREDICTIVO",
-        C_HEADER_DARK, C_HEADER_LIGHT, size=12, bold=True, h="center")
-    merge_and_write(ws, r, 7, 8,
-        f"Semana {semana} / {anio}  |  Corte: {corte_str}",
-        C_HEADER_DARK, C_HEADER_LIGHT, size=10, bold=False, h="center")
+        r = 1
 
-    r += 1
-    set_row_height(ws, r, 16)
-    merge_and_write(ws, r, 1, 8,
-        "Ambulancias médicas urbanas Tipo II  ·  SAMU Lima Metropolitana  ·  "
-        f"Flota total: {total} unidades  ·  Horizonte predicción: 14 días  ·  Umbral: τ = 0,30",
-        C_HEADER_MID, C_HEADER_LIGHT, size=9, bold=False, h="center")
+    # ── CABECERA INSTITUCIONAL ────────────────────────────────────────────────
+        set_row_height(ws, r, 26)
+        merge_and_write(
+            ws, r, 1, 8,
+            "PROGRAMACIÓN SEMANAL DE MANTENIMIENTO CON SOPORTE PREDICTIVO",
+            C_HEADER_DARK, C_HEADER_LIGHT,
+            size=12, bold=True, h="center"
+        )
 
-    # ── KPI ROW ───────────────────────────────────────────────────────────────
-    r += 2
-    set_row_height(ws, r, 14)
-    kpis = [
-        (1, 2, f"{n_alto}  RIESGO ALTO",   C_ALTO_BG,   C_ALTO_DARK),
-        (3, 4, f"{n_medio}  RIESGO MEDIO", C_MEDIO_BG,  C_MEDIO_DARK),
-        (5, 6, f"{n_bajo}  RIESGO BAJO",   C_BAJO_BG,   C_BAJO_DARK),
-        (7, 8, f"+{n_mejora}  NO DETECTADAS POR PREVENTIVO", C_MEJORA_BG, C_MEJORA_DARK),
-    ]
-    for c1, c2, txt, bg, fg in kpis:
-        merge_and_write(ws, r, c1, c2, txt, bg, fg,
-                        bold=True, size=11, h="center")
+        r += 1
+        set_row_height(ws, r, 18)
+        merge_and_write(
+            ws, r, 1, 8,
+            f"Ambulancias médicas urbanas Tipo II | Semana {semana} / {anio} | Corte: {corte_str}",
+            C_HEADER_MID, C_HEADER_LIGHT,
+            size=9, bold=False, h="center"
+        )
 
-    r += 1
-    set_row_height(ws, r, 26)
-    subtexts = [
-        (1,2, f"P ≥ 0,50 · Intervenir en ≤ {PLAZO_ALTO} días hábiles"),
-        (3,4, f"0,25 ≤ P < 0,50 · Intervenir en ≤ {PLAZO_MEDIO} días hábiles"),
-        (5,6, "P < 0,25 · Solo NTS 051 cuando corresponda"),
-        (7,8, "Unidades con riesgo alto/medio detectadas antes de vencer intervalo preventivo"),
-    ]
-    fills_sub = [C_ALTO_BG, C_MEDIO_BG, C_BAJO_BG, C_MEJORA_BG]
-    fgcols    = [C_ALTO_DARK, C_MEDIO_DARK, C_BAJO_DARK, C_MEJORA_DARK]
-    for (c1,c2,txt), bg, fg in zip(subtexts, fills_sub, fgcols):
-        merge_and_write(ws, r, c1, c2, txt, bg, fg,
-                        bold=False, size=8, h="center", wrap=True, italic=True)
+        # Espacio
+        r += 2
 
-    # ── BANNER MEJORA ─────────────────────────────────────────────────────────
-    r += 2
-    set_row_height(ws, r, 38)
-    merge_and_write(ws, r, 1, 8,
-        f"MEJORA RESPECTO AL PREVENTIVO NTS 051: El modelo detecta {n_mejora} unidades con riesgo alto o medio "
-        f"cuyo intervalo preventivo NO vence esta semana. Sin soporte predictivo, estas unidades habrían "
-        f"continuado en operación con probabilidad de inoperatividad > 0,50 en los próximos 14 días.",
-        C_MEJORA_BG, C_MEJORA_DARK, bold=False, size=9, h="left", wrap=True)
+        # ── FICHA TÉCNICA GENERAL ────────────────────────────────────────────────
+        section_bar(ws, r, "1. DATOS GENERALES DEL CORTE")
+        r += 1
 
-    # ── TABLA DETALLE ─────────────────────────────────────────────────────────
-    def section_header(ws, r, texto, bg, fg):
-        set_row_height(ws, r, 14)
-        merge_and_write(ws, r, 1, 8, texto, bg, fg,
-                        bold=True, size=9, h="left")
+        ficha = [
+            ("Fecha de corte", corte_str, "Flota evaluada", f"{total} unidades"),
+            ("Horizonte predictivo", "14 días", "Modelo predictivo", df["modelo_base"].iloc[0] if "modelo_base" in df.columns else "Random Forest"),
+            ("Umbral alto", f"P ≥ {UMBRAL_ALTO:.2f}", "Umbral medio", f"{UMBRAL_MEDIO:.2f} ≤ P < {UMBRAL_ALTO:.2f}"),
+            ("Responsable", "Jefatura / Coordinación de mantenimiento", "Frecuencia sugerida", "Semanal"),
+        ]
 
-    def col_headers(ws, r):
+        for fila in ficha:
+            set_row_height(ws, r, 24)
+
+            # Campo 1
+            write_cell(
+                ws, r, 1, fila[0],
+                C_SECTION_BG, C_TEXT_DARK,
+                bold=True, h="center"
+            )
+
+            # Valor 1 combinado en B:C
+            merge_and_write(
+                ws, r, 2, 3, fila[1],
+                C_WHITE, C_TEXT_DARK,
+                bold=False, size=9, h="center", wrap=True
+            )
+            for col in range(2, 4):
+                ws.cell(row=r, column=col).border = border_thin()
+
+            # Campo 2 en D
+            write_cell(
+                ws, r, 4, fila[2],
+                C_SECTION_BG, C_TEXT_DARK,
+                bold=True, h="center"
+            )
+
+            # Valor 2 combinado en E:H
+            merge_and_write(
+                ws, r, 5, 8, fila[3],
+                C_WHITE, C_TEXT_DARK,
+                bold=False, size=9, h="center", wrap=True
+            )
+            for col in range(5, 9):
+                ws.cell(row=r, column=col).border = border_thin()
+
+            r += 1
+
+        # Espacio
+        r += 1
+
+        # ── RESUMEN DE PRIORIZACIÓN ──────────────────────────────────────────────
+        section_bar(ws, r, "2. RESUMEN DE PRIORIZACIÓN")
+        r += 1
+
+        resumen = [
+            ("RIESGO ALTO", n_alto, f"P ≥ {UMBRAL_ALTO:.2f}", C_ALTO_BG, C_ALTO_DARK),
+            ("RIESGO MEDIO", n_medio, f"{UMBRAL_MEDIO:.2f} ≤ P < {UMBRAL_ALTO:.2f}", C_MEDIO_BG, C_MEDIO_DARK),
+            ("RIESGO BAJO", n_bajo, f"P < {UMBRAL_MEDIO:.2f}", C_BAJO_BG, C_BAJO_DARK),
+            ("CON ALERTAS ACTIVAS", n_alertas_activas, "Alertas técnicas registradas", C_INFO_BG, C_INFO_DARK),
+        ]
+
+        # Encabezados resumen
+        set_row_height(ws, r, 20)
+        for idx, (label, n, criterio, bg, fg) in enumerate(resumen):
+            c1 = idx * 2 + 1
+            c2 = c1 + 1
+            merge_and_write(ws, r, c1, c2, label, bg, fg, bold=True, size=9, h="center")
+            for col in range(c1, c2 + 1):
+                ws.cell(row=r, column=col).border = border_thin()
+
+        r += 1
+        set_row_height(ws, r, 24)
+        for idx, (label, n, criterio, bg, fg) in enumerate(resumen):
+            c1 = idx * 2 + 1
+            c2 = c1 + 1
+            merge_and_write(ws, r, c1, c2, str(n), C_WHITE, fg, bold=True, size=14, h="center")
+            for col in range(c1, c2 + 1):
+                ws.cell(row=r, column=col).border = border_thin()
+
+        r += 1
+        set_row_height(ws, r, 24)
+        for idx, (label, n, criterio, bg, fg) in enumerate(resumen):
+            c1 = idx * 2 + 1
+            c2 = c1 + 1
+            merge_and_write(ws, r, c1, c2, criterio, C_WHITE, C_TEXT_MUTED, bold=False, size=8, h="center", wrap=True)
+            for col in range(c1, c2 + 1):
+                ws.cell(row=r, column=col).border = border_thin()
+
+        # Espacio
+        r += 2
+
+        # ── GUÍA DE INTERPRETACIÓN ───────────────────────────────────────────────
+        section_bar(ws, r, "3. GUÍA DE INTERPRETACIÓN")
+        r += 1
+
+        guia = [
+            ("Riesgo alto", f"P ≥ {UMBRAL_ALTO:.2f}", "Intervención prioritaria. Revisar la unidad en el plazo definido y validar alertas técnicas."),
+            ("Riesgo medio", f"{UMBRAL_MEDIO:.2f} ≤ P < {UMBRAL_ALTO:.2f}", "Inspección programada. Confirmar condición técnica y priorizar según disponibilidad operativa."),
+            ("Riesgo bajo", f"P < {UMBRAL_MEDIO:.2f}", "Seguimiento rutinario. Mantener programación preventiva institucional según corresponda."),
+            ("Alertas activas", "Reglas técnicas", "Orientan el tipo de revisión: uso operativo, historial de inoperatividad, disponibilidad o equipamiento biomédico."),
+        ]
+
+        # Headers guía
+        set_row_height(ws, r, 20)
+        headers_guia = ["Nivel / criterio", "Rango o fuente", "Interpretación operativa"]
+        write_cell(ws, r, 1, headers_guia[0], C_HEADER_MID, C_HEADER_LIGHT, bold=True, h="center")
+        write_cell(ws, r, 2, headers_guia[1], C_HEADER_MID, C_HEADER_LIGHT, bold=True, h="center")
+        merge_and_write(ws, r, 3, 8, headers_guia[2], C_HEADER_MID, C_HEADER_LIGHT, bold=True, size=9, h="center", wrap=True)
+        for col in range(3, 9):
+            ws.cell(row=r, column=col).border = border_thin()
+
+        r += 1
+        for nivel_txt, rango, interpretacion in guia:
+            set_row_height(ws, r, 28)
+            if "alto" in nivel_txt.lower():
+                bg, fg = C_ALTO_BG, C_ALTO_DARK
+            elif "medio" in nivel_txt.lower():
+                bg, fg = C_MEDIO_BG, C_MEDIO_DARK
+            elif "bajo" in nivel_txt.lower():
+                bg, fg = C_BAJO_BG, C_BAJO_DARK
+            else:
+                bg, fg = C_INFO_BG, C_INFO_DARK
+
+            write_cell(ws, r, 1, nivel_txt, bg, fg, bold=True, h="center")
+            write_cell(ws, r, 2, rango, C_WHITE, C_TEXT_DARK, h="center")
+            merge_and_write(ws, r, 3, 8, interpretacion, C_WHITE, C_TEXT_DARK, bold=False, size=8, h="left", wrap=True)
+            for col in range(3, 9):
+                ws.cell(row=r, column=col).border = border_thin()
+            r += 1
+    
+    # ── TABLA PRINCIPAL ───────────────────────────────────────────────────────
+        r += 1
+        section_bar(ws, r, "4. PROGRAMACIÓN SEMANAL PRIORIZADA")
+        r += 1
+
         set_row_height(ws, r, 28)
         headers = [
-            (1, "Unidad"), (2, "P(inop.)"), (3, "Riesgo"),
-            (4, "N.° alertas"), (5, "Alertas activas"),
-            (6, "Instrucción al taller"), (7, "Plazo máximo"), (8, "Observaciones")
+            (1, "Unidad"),
+            (2, "P(inop.)"),
+            (3, "Riesgo"),
+            (4, "N.° alertas"),
+            (5, "Alertas activas"),
+            (6, "Acción recomendada"),
+            (7, "Plazo sugerido"),
+            (8, "Observaciones")
         ]
+
         for c, h in headers:
             cell = ws.cell(row=r, column=c, value=h)
-            cell.fill      = fill(C_HEADER_DARK)
-            cell.font      = font(bold=True, color=C_HEADER_LIGHT, size=9)
+            cell.fill = fill(C_HEADER_DARK)
+            cell.font = font(bold=True, color=C_HEADER_LIGHT, size=9)
             cell.alignment = align("center", "center", True)
-            cell.border    = border_thin()
+            cell.border = border_thin()
 
-    for nivel, bg_sec, fg_sec, plazo_txt in [
-        ("ALTO",  C_ALTO_BG,  C_ALTO_DARK,
-         f"Solicitar ingreso al taller ANTES del *** (≤ {PLAZO_ALTO} días hábiles desde corte)"),
-        ("MEDIO", C_MEDIO_BG, C_MEDIO_DARK,
-         f"Programar inspección dirigida ANTES del *** (≤ {PLAZO_MEDIO} días hábiles desde corte)"),
-        ("BAJO",  C_BAJO_BG,  C_BAJO_DARK,
-         "Sin intervención anticipada · Mantener cronograma preventivo NTS 051"),
-    ]:
-        r += 2
-        section_header(ws, r, f"  PRIORIDAD {['ALTO','MEDIO','BAJO'].index(nivel)+1} — RIESGO {nivel}  ·  {plazo_txt}", bg_sec, fg_sec)
-        r += 1
-        col_headers(ws, r)
+        # Orden institucional: alto, medio, bajo; dentro de cada grupo, mayor probabilidad primero
+        orden_riesgo = {"ALTO": 1, "MEDIO": 2, "BAJO": 3}
+        df_tabla = df.copy()
+        df_tabla["orden_riesgo"] = df_tabla["nivel_riesgo"].map(orden_riesgo)
+        df_tabla = df_tabla.sort_values(
+            ["orden_riesgo", "prob_inoperatividad"],
+            ascending=[True, False]
+        ).reset_index(drop=True)
 
-        sub = df[df["nivel_riesgo"]==nivel].reset_index(drop=True)
-        for _, row_data in sub.iterrows():
+        for _, row_data in df_tabla.iterrows():
             r += 1
-            set_row_height(ws, r, 38)
-            alertas   = row_data["alertas"]
+            set_row_height(ws, r, 34)
+
+            nivel = row_data["nivel_riesgo"]
+            alertas = row_data["alertas"]
             n_alertas = len(alertas)
             alerta_str = "\n".join(alertas) if alertas else "—"
-            inst_str  = row_data["instruccion"]
 
             if nivel == "ALTO":
-                row_bg = C_ALTO_BG if n_alertas >= 2 else "FFF5F5"
+                row_bg, fg = "FFF5F4", C_ALTO_DARK
+                plazo = f"≤ {PLAZO_ALTO} días hábiles"
             elif nivel == "MEDIO":
-                row_bg = C_MEDIO_BG if n_alertas >= 1 else "FFFDF7"
+                row_bg, fg = "FFFAE8", C_MEDIO_DARK
+                plazo = f"≤ {PLAZO_MEDIO} días hábiles"
             else:
-                row_bg = C_BAJO_BG
+                row_bg, fg = "F3FAF6", C_BAJO_DARK
+                plazo = "Según cronograma"
 
             vals = [
                 row_data["id_ambulancia"],
@@ -329,102 +467,114 @@ def construir_excel(df):
                 nivel,
                 n_alertas,
                 alerta_str,
-                inst_str,
-                f"≤ {PLAZO_ALTO}d hábiles" if nivel=="ALTO" else
-                (f"≤ {PLAZO_MEDIO}d hábiles" if nivel=="MEDIO" else "Según km NTS 051"),
+                row_data["instruccion"],
+                plazo,
                 ""
             ]
+
             for c, v in enumerate(vals, 1):
                 cell = ws.cell(row=r, column=c, value=v)
-                cell.fill      = fill(row_bg)
-                cell.border    = border_thin()
-                cell.alignment = align("center" if c in [2,3,4,7] else "left",
-                                       "center", wrap=True)
-                cell.font      = font(
-                    bold=(c==1),
-                    color=(C_ALTO_DARK if nivel=="ALTO" else
-                           C_MEDIO_DARK if nivel=="MEDIO" else C_BAJO_DARK)
-                           if c==3 else "000000",
-                    size=9
+                cell.fill = fill(row_bg)
+                cell.border = border_thin()
+                cell.alignment = align("center" if c in [2,3,4,7] else "left", "center", True)
+                cell.font = font(
+                    bold=(c in [1, 3]),
+                    color=fg if c == 3 else C_TEXT_DARK,
+                    size=8
                 )
                 if c == 2:
                     cell.number_format = "0.0000"
 
-    # ── RESUMEN TRAMITACIÓN ────────────────────────────────────────────────────
-    r += 3
-    set_row_height(ws, r, 14)
-    merge_and_write(ws, r, 1, 8,
-        "  RESUMEN PARA TRAMITACIÓN CON EL TALLER",
-        C_HEADER_DARK, C_HEADER_LIGHT, bold=True, size=10)
-
-    r += 1
-    set_row_height(ws, r, 22)
-    res_hdrs = ["Tipo de solicitud","N.° unidades","Plazo máximo ingreso",
-                "Tipo de servicio a solicitar","","","",""]
-    for c, h in enumerate(res_hdrs[:4], 1):
-        cell = ws.cell(row=r, column=c, value=h)
-        cell.fill = fill(C_HEADER_MID)
-        cell.font = font(bold=True, color=C_HEADER_LIGHT, size=9)
-        cell.alignment = align("center","center",True)
-        cell.border = border_thin()
-    ws.merge_cells(start_row=r,start_column=4,end_row=r,end_column=8)
-
-    res_data = [
-        ("URGENTE — Riesgo ALTO",    str(n_alto),
-         f"≤ {PLAZO_ALTO} días hábiles",
-         "Inspección técnica general + PM anticipado (si km corresponde) + revisión por alertas activas",
-         C_ALTO_BG, C_ALTO_DARK),
-        ("PROGRAMADO — Riesgo MEDIO",str(n_medio),
-         f"≤ {PLAZO_MEDIO} días hábiles",
-         "Inspección dirigida por alertas activas + PM estándar si intervalo vence esta semana",
-         C_MEDIO_BG, C_MEDIO_DARK),
-        ("DIFERIDO — Riesgo BAJO",   str(n_bajo),
-         "Según cronograma NTS 051",
-         "Solo PM estándar cuando corresponda por kilometraje acumulado",
-         C_BAJO_BG,  C_BAJO_DARK),
-        (f"ADICIONAL — Detectadas solo por modelo (+{n_mejora})", str(n_mejora),
-         "Esta semana",
-         "Unidades sin intervalo vencido pero con riesgo alto/medio. No programadas por solo preventivo.",
-         C_MEJORA_BG, C_MEJORA_DARK),
-    ]
-    for tipo, nu, plazo, serv, bg, fg in res_data:
+    # ── CONTROL Y SEGUIMIENTO ─────────────────────────────────────────────────
+        r += 3
+        section_bar(ws, r, "5. CONTROL Y SEGUIMIENTO SEMANAL")
         r += 1
-        set_row_height(ws, r, 30)
-        ws.merge_cells(start_row=r,start_column=4,end_row=r,end_column=8)
-        for c, v in enumerate([tipo, nu, plazo, serv], 1):
+
+        control_headers = [
+            "Total alto", "Total medio", "Total bajo", "Con alertas",
+            "Atendidas", "Pendientes", "Reprogramadas", "Cierre"
+        ]
+
+        control_values = [
+            n_alto, n_medio, n_bajo, n_alertas_activas,
+            "", "", "", ""
+        ]
+
+        set_row_height(ws, r, 22)
+        for c, h in enumerate(control_headers, 1):
+            cell = ws.cell(row=r, column=c, value=h)
+            cell.fill = fill(C_SECTION_BG)
+            cell.font = font(bold=True, color=C_TEXT_DARK, size=8)
+            cell.alignment = align("center", "center", True)
+            cell.border = border_thin()
+
+        r += 1
+        set_row_height(ws, r, 26)
+        for c, v in enumerate(control_values, 1):
+            if c == 1:
+                bg, fg = C_ALTO_BG, C_ALTO_DARK
+            elif c == 2:
+                bg, fg = C_MEDIO_BG, C_MEDIO_DARK
+            elif c == 3:
+                bg, fg = C_BAJO_BG, C_BAJO_DARK
+            elif c == 4:
+                bg, fg = C_INFO_BG, C_INFO_DARK
+            else:
+                bg, fg = C_WHITE, C_TEXT_DARK
+
             cell = ws.cell(row=r, column=c, value=v)
-            cell.fill      = fill(bg)
-            cell.font      = font(bold=(c==1), color=fg, size=9)
-            cell.alignment = align("center" if c in [2,3] else "left",
-                                   "center", wrap=True)
-            cell.border    = border_thin()
+            cell.fill = fill(bg)
+            cell.font = font(bold=True, color=fg, size=11 if c <= 4 else 9)
+            cell.alignment = align("center", "center", True)
+            cell.border = border_thin()
 
-    # ── FIRMAS ────────────────────────────────────────────────────────────────
-    r += 3
-    set_row_height(ws, r, 14)
-    merge_and_write(ws, r, 1, 4,
-        "Elaborado por — Encargado de gestión de datos:",
-        C_SECTION_BG, "444441", bold=False, size=9)
-    merge_and_write(ws, r, 5, 8,
-        "Aprobado por — Jefe de mantenimiento:",
-        C_SECTION_BG, "444441", bold=False, size=9)
+        r += 1
+        set_row_height(ws, r, 28)
+        merge_and_write(
+            ws, r, 1, 8,
+            "Observaciones generales: Las acciones programadas deben validarse con la disponibilidad operativa, "
+            "recursos técnicos, repuestos y criterio de la jefatura de mantenimiento.",
+            C_WHITE, C_TEXT_DARK,
+            bold=False, size=8, h="left", wrap=True
+        )
+        for col in range(1, 9):
+            ws.cell(row=r, column=col).border = border_thin()
 
-    r += 1
-    set_row_height(ws, r, 32)
-    merge_and_write(ws, r, 1, 4, f"Nombre y firma:                     Fecha: {corte_str}",
-                    C_WHITE, "000000", bold=False, size=9)
-    merge_and_write(ws, r, 5, 8,  "Nombre y firma:                     Fecha: ___/___/____",
-                    C_WHITE, "000000", bold=False, size=9)
+    # ── FIRMAS / VALIDACIÓN ───────────────────────────────────────────────────
+        r += 3
+        section_bar(ws, r, "6. VALIDACIÓN DEL DOCUMENTO")
+        r += 1
 
-    # ── NOTA PIE ─────────────────────────────────────────────────────────────
-    r += 2
-    set_row_height(ws, r, 38)
-    merge_and_write(ws, r, 1, 8,
-        "Fuente: Elaboración propia. Plantilla generada a partir del modelo computacional Gradient Boosting "
-        "(Entregable 2) y lineamientos técnicos (Entregable 3). Alertas evaluadas conforme Anexo G (NTS N.º "
-        "051-MINSA/OGDN-V.01, MINSA 2006). Esta plantilla es una propuesta metodológica basada en datos "
-        f"simulados. Generado: {datetime.now().strftime('%d/%m/%Y %H:%M')}",
-        C_SECTION_BG, "5F5E5A", bold=False, size=8, h="left", wrap=True, italic=True)
+        set_row_height(ws, r, 20)
+        merge_and_write(ws, r, 1, 2, "Elaborado por", C_SECTION_BG, C_TEXT_DARK, bold=True, size=8, h="center")
+        merge_and_write(ws, r, 3, 5, "Revisado por", C_SECTION_BG, C_TEXT_DARK, bold=True, size=8, h="center")
+        merge_and_write(ws, r, 6, 8, "Aprobado por", C_SECTION_BG, C_TEXT_DARK, bold=True, size=8, h="center")
+
+        for col in range(1, 9):
+            ws.cell(row=r, column=col).border = border_thin()
+
+        r += 1
+        set_row_height(ws, r, 42)
+        merge_and_write(ws, r, 1, 2, f"Nombre / firma:\nFecha: {corte_str}", C_WHITE, C_TEXT_DARK, bold=False, size=8, h="left", wrap=True)
+        merge_and_write(ws, r, 3, 5, "Nombre / firma:\nFecha: ___/___/____", C_WHITE, C_TEXT_DARK, bold=False, size=8, h="left", wrap=True)
+        merge_and_write(ws, r, 6, 8, "Nombre / firma:\nFecha: ___/___/____", C_WHITE, C_TEXT_DARK, bold=False, size=8, h="left", wrap=True)
+
+        for col in range(1, 9):
+            ws.cell(row=r, column=col).border = border_thin()
+
+        modelo_base = df["modelo_base"].iloc[0] if "modelo_base" in df.columns else "Random Forest"
+
+        # ── NOTA PIE ─────────────────────────────────────────────────────────────
+        r += 2
+        set_row_height(ws, r, 34)
+        merge_and_write(
+            ws, r, 1, 8,
+            f"Fuente: Elaboración propia. Plantilla generada a partir de probabilidades estimadas por el modelo predictivo {modelo_base}. "
+            "Documento metodológico elaborado con datos simulados para fines de investigación. "
+            f"Generado: {datetime.now().strftime('%d/%m/%Y %H:%M')}.",
+            C_SECTION_BG, C_TEXT_MUTED,
+            bold=False, size=8, h="left", wrap=True, italic=True
+        )
 
     # ── HOJA 2: DATOS COMPLETOS ───────────────────────────────────────────────
     ws2 = wb.create_sheet("Datos completos")
@@ -446,15 +596,17 @@ def construir_excel(df):
         cell.font = font(bold=True, color=C_HEADER_LIGHT, size=9)
         cell.alignment = align("center","center",True)
 
-    for ri, row_data in df_export.iterrows():
+    for ri, (_, row_data) in enumerate(df_export.iterrows(), start=2):
         nivel = row_data["nivel_riesgo"]
         row_bg = (C_ALTO_BG if nivel=="ALTO" else
                   C_MEDIO_BG if nivel=="MEDIO" else C_BAJO_BG)
+
         for c, v in enumerate(row_data, 1):
-            cell = ws2.cell(row=ri+2, column=c, value=v)
+            cell = ws2.cell(row=ri, column=c, value=v)
             cell.fill = fill(row_bg)
-            cell.font = font(size=9)
-            cell.alignment = align("center","center",True)
+            cell.font = font(size=9, color=C_TEXT_DARK)
+            cell.alignment = align("center", "center", True)
+            cell.border = border_thin()
 
     for c in range(1, len(headers2)+1):
         ws2.column_dimensions[get_column_letter(c)].width = 18
@@ -473,11 +625,34 @@ def construir_excel(df):
     return out_path
 
 # ── MAIN ──────────────────────────────────────────────────────────────────────
-if __name__ == "__main__":
-    print("Cargando datos...")
-    if os.path.exists(INPUT_FILE):
-        df = pd.read_csv(INPUT_FILE)
-        print(f"  Archivo cargado: {INPUT_FILE} ({len(df)} filas)")
+if os.path.exists(INPUT_FILE):
+    df = pd.read_csv(INPUT_FILE)
+    print(f"  Archivo cargado: {INPUT_FILE} ({len(df)} filas)")
+
+    if "t0" in df.columns:
+        df["t0"] = pd.to_datetime(df["t0"])
+
+        if CORTE_OBJETIVO is not None:
+            corte_objetivo_dt = pd.to_datetime(CORTE_OBJETIVO)
+            
+            if corte_objetivo_dt not in df["t0"].unique():
+                cortes_disponibles = sorted(df["t0"].dt.strftime("%Y-%m-%d").unique())
+                raise ValueError(
+                    f"El corte {CORTE_OBJETIVO} no existe en el archivo. "
+                    f"Cortes disponibles: {cortes_disponibles[:5]} ... {cortes_disponibles[-5:]}"
+                )
+
+            corte_seleccionado = corte_objetivo_dt
+            print(f"  Corte seleccionado manualmente: {corte_seleccionado.date()}")
+
+        else:
+            corte_seleccionado = df["t0"].max()
+            print(f"  Corte seleccionado automáticamente: {corte_seleccionado.date()}")
+
+        df = df[df["t0"] == corte_seleccionado].copy().reset_index(drop=True)
+        df["t0"] = df["t0"].dt.strftime("%Y-%m-%d")
+        print(f"  Unidades incluidas en plantilla: {len(df)}")
+
     else:
         print(f"  Archivo '{INPUT_FILE}' no encontrado.")
         print("  Generando datos de ejemplo para demostración...")
