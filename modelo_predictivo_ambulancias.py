@@ -649,6 +649,802 @@ def _mapear_variable_legible(variable: str) -> str:
     }
     return nombres_legibles.get(variable, variable)
 
+def generar_figura_03_sigmoide_regresion_logistica() -> None:
+    """
+    Genera la Figura 3:
+    Función sigmoide empleada en la regresión logística para transformar
+    una combinación lineal de variables en probabilidad.
+
+    Esta figura es conceptual y no depende del dataset de la tesis.
+    """
+    _configurar_estilo_figuras_tesis()
+    _asegurar_directorio_figuras()
+
+    AZUL = '#355C7D'
+    GRIS_OSCURO = '#4B5358'
+    GRIS_MEDIO = '#8E969B'
+    GRIS_CLARO = '#E6E6E6'
+    NEGRO = '#1F2326'
+
+    z = np.linspace(-8, 8, 600)
+    sigmoide = 1 / (1 + np.exp(-z))
+
+    fig, ax = plt.subplots(figsize=(9.5, 5.2))
+
+    # Curva sigmoide
+    ax.plot(
+        z,
+        sigmoide,
+        color=NEGRO,
+        linewidth=2.4,
+        label=r'$\sigma(z)=\frac{1}{1+e^{-z}}$'
+    )
+
+    # Regiones de clasificación para umbral 0.50
+    ax.fill_between(
+        z,
+        sigmoide,
+        1,
+        where=(z >= 0),
+        color=AZUL,
+        alpha=0.08,
+        label=r'Región $\hat{y}=1$  ($\tau=0,50$)'
+    )
+
+    ax.fill_between(
+        z,
+        0,
+        sigmoide,
+        where=(z < 0),
+        color=GRIS_MEDIO,
+        alpha=0.10,
+        label=r'Región $\hat{y}=0$  ($\tau=0,50$)'
+    )
+
+    # Líneas de referencia
+    ax.axhline(
+        y=0.50,
+        color=GRIS_MEDIO,
+        linestyle='--',
+        linewidth=1.1
+    )
+
+    ax.axvline(
+        x=0,
+        color=GRIS_MEDIO,
+        linestyle='--',
+        linewidth=1.1
+    )
+
+    # Punto central
+    ax.scatter(
+        [0],
+        [0.5],
+        color=NEGRO,
+        s=35,
+        zorder=5
+    )
+
+    ax.annotate(
+        r'$\sigma(0)=0,5$',
+        xy=(0, 0.5),
+        xytext=(1.3, 0.39),
+        arrowprops=dict(
+            arrowstyle='->',
+            color=GRIS_OSCURO,
+            lw=1.0
+        ),
+        fontsize=10,
+        color=GRIS_OSCURO
+    )
+
+    ax.text(
+        0.15,
+        0.07,
+        r'$z=0$',
+        fontsize=9,
+        color=GRIS_MEDIO
+    )
+
+    # Etiquetas y formato
+    ax.set_title(
+        'Función sigmoide en la regresión logística',
+        fontsize=12,
+        fontweight='bold'
+    )
+
+    ax.set_xlabel(
+        r'Combinación lineal  $z$',
+        fontsize=10
+    )
+
+    ax.set_ylabel(
+        r'Probabilidad  $\hat{P}(Y=1 \mid x)$',
+        fontsize=10
+    )
+
+    ax.set_xlim(-8, 8)
+    ax.set_ylim(-0.05, 1.05)
+
+    ax.set_yticks([0, 0.25, 0.50, 0.75, 1.00])
+    ax.set_yticklabels(['0', '0,25', '0,50', '0,75', '1,00'])
+
+    ax.grid(True, alpha=0.35)
+    ax.legend(
+        fontsize=8.5,
+        frameon=True,
+        loc='lower right'
+    )
+
+    plt.tight_layout()
+    plt.savefig(
+        "figuras_tesis/figura_03_sigmoide_regresion_logistica.png",
+        dpi=300,
+        bbox_inches='tight',
+        facecolor='white'
+    )
+    plt.close()
+
+    print("  Figura guardada: figuras_tesis/figura_03_sigmoide_regresion_logistica.png")
+
+def generar_figura_04_balanceo_clases(df_train: pd.DataFrame) -> None:
+    """
+    Genera la Figura 4:
+    Distribución de clases antes y después del balanceo mediante
+    oversampling aleatorio con reemplazo.
+
+    La figura se calcula directamente desde el conjunto de entrenamiento 2024,
+    por lo que debe coincidir con la partición final usada por el modelo.
+    """
+    _configurar_estilo_figuras_tesis()
+    _asegurar_directorio_figuras()
+
+    AZUL = '#355C7D'
+    ROJO = '#C96B63'
+    GRIS_OSCURO = '#4B5358'
+    GRIS_CLARO = '#E6E6E6'
+
+    conteos_originales = df_train[TARGET].value_counts().sort_index()
+    n_clase_0 = int(conteos_originales.get(0, 0))
+    n_clase_1 = int(conteos_originales.get(1, 0))
+
+    n_balanceado = max(n_clase_0, n_clase_1)
+    conteos_balanceados = [n_balanceado, n_balanceado]
+
+    fig, axes = plt.subplots(1, 2, figsize=(10.8, 4.4))
+
+    # -------------------------------------------------------------------------
+    # Panel izquierdo: distribución original
+    # -------------------------------------------------------------------------
+    ax1 = axes[0]
+    valores_originales = [n_clase_0, n_clase_1]
+    colores = [AZUL, ROJO]
+
+    barras1 = ax1.bar(
+        [0, 1],
+        valores_originales,
+        color=colores,
+        edgecolor='white',
+        linewidth=0.8,
+        width=0.55
+    )
+
+    total_original = sum(valores_originales)
+
+    for barra, valor, color in zip(barras1, valores_originales, colores):
+        ax1.text(
+            barra.get_x() + barra.get_width() / 2,
+            valor + total_original * 0.02,
+            f"{valor:,}\n({valor / total_original * 100:.1f}%)",
+            ha='center',
+            va='bottom',
+            fontsize=8,
+            fontweight='bold',
+            color=color
+        )
+
+    ax1.set_title(
+        'Dataset de entrenamiento\n(distribución original)',
+        fontsize=10,
+        fontweight='bold'
+    )
+    ax1.set_xticks([0, 1])
+    ax1.set_xticklabels(['Y = 0\n(operativa)', 'Y = 1\n(inoperativa)'], fontsize=8)
+    ax1.set_ylabel('Número de observaciones', fontsize=9)
+    ax1.grid(True, axis='y', alpha=0.35)
+
+    desbalance = n_clase_0 / n_clase_1 if n_clase_1 > 0 else np.nan
+    ax1.text(
+        0.5,
+        max(valores_originales) * 0.12,
+        f"Desbalance ≈ {desbalance:.1f}:1",
+        ha='center',
+        fontsize=8,
+        color=GRIS_OSCURO,
+        style='italic'
+    )
+
+    # -------------------------------------------------------------------------
+    # Panel derecho: distribución posterior al oversampling
+    # -------------------------------------------------------------------------
+    ax2 = axes[1]
+
+    barras2 = ax2.bar(
+        [0, 1],
+        conteos_balanceados,
+        color=colores,
+        edgecolor='white',
+        linewidth=0.8,
+        width=0.55
+    )
+
+    total_balanceado = sum(conteos_balanceados)
+
+    for barra, valor, color in zip(barras2, conteos_balanceados, colores):
+        ax2.text(
+            barra.get_x() + barra.get_width() / 2,
+            valor + total_balanceado * 0.015,
+            f"{valor:,}\n({valor / total_balanceado * 100:.1f}%)",
+            ha='center',
+            va='bottom',
+            fontsize=8,
+            fontweight='bold',
+            color=color
+        )
+
+    ax2.set_title(
+        'Dataset de entrenamiento\n(después del oversampling)',
+        fontsize=10,
+        fontweight='bold'
+    )
+    ax2.set_xticks([0, 1])
+    ax2.set_xticklabels(['Y = 0\n(operativa)', 'Y = 1\n(inoperativa)'], fontsize=8)
+    ax2.set_ylabel('Número de observaciones', fontsize=9)
+    ax2.grid(True, axis='y', alpha=0.35)
+
+    ax2.text(
+        0.5,
+        n_balanceado * 0.12,
+        "Ratio 1:1",
+        ha='center',
+        fontsize=8,
+        color=GRIS_OSCURO,
+        style='italic'
+    )
+
+    plt.suptitle(
+        'Distribución de clases antes y después del balanceo\n'
+        'mediante oversampling aleatorio con reemplazo',
+        fontsize=11,
+        fontweight='bold'
+    )
+
+    plt.tight_layout()
+    plt.savefig(
+        "figuras_tesis/figura_04_balanceo_clases.png",
+        dpi=300,
+        bbox_inches='tight',
+        facecolor='white'
+    )
+    plt.close()
+
+    print("  Figura guardada: figuras_tesis/figura_04_balanceo_clases.png")
+
+
+def generar_figura_05_arbol_decision_ilustrativo() -> None:
+    """
+    Genera la Figura 5:
+    Esquema ilustrativo de reglas de decisión aplicadas al problema
+    de clasificación de inoperatividad.
+
+    Esta figura es conceptual. No representa un árbol individual extraído
+    del Random Forest final, sino la lógica general de particionamiento
+    mediante reglas condicionales.
+    """
+    _configurar_estilo_figuras_tesis()
+    _asegurar_directorio_figuras()
+
+    from matplotlib.patches import FancyBboxPatch
+
+    AZUL = '#355C7D'
+    GRIS_OSCURO = '#4B5358'
+    GRIS_MEDIO = '#8E969B'
+    ROJO = '#C96B63'
+    AMARILLO = '#F4D35E'
+    VERDE = '#78BFA3'
+
+    fig, ax = plt.subplots(figsize=(10.5, 6.6))
+    ax.set_xlim(0, 10)
+    ax.set_ylim(0, 8)
+    ax.axis('off')
+
+    def caja(x, y, w, h, texto, color, fs=8.4, text_color='white'):
+        rect = FancyBboxPatch(
+            (x, y), w, h,
+            boxstyle='round,pad=0.05',
+            facecolor=color,
+            edgecolor='white',
+            linewidth=1.3
+        )
+        ax.add_patch(rect)
+        ax.text(
+            x + w / 2,
+            y + h / 2,
+            texto,
+            ha='center',
+            va='center',
+            fontsize=fs,
+            fontweight='bold',
+            color=text_color
+        )
+
+    def flecha(x1, y1, x2, y2, texto=None, dx=0, dy=0):
+        ax.annotate(
+            '',
+            xy=(x2, y2),
+            xytext=(x1, y1),
+            arrowprops=dict(
+                arrowstyle='->',
+                lw=1.2,
+                color=GRIS_MEDIO
+            )
+        )
+        if texto:
+            ax.text(
+                (x1 + x2) / 2 + dx,
+                (y1 + y2) / 2 + dy,
+                texto,
+                fontsize=7.2,
+                color=GRIS_MEDIO,
+                style='italic',
+                ha='center'
+            )
+
+    caja(3.65, 6.75, 2.7, 0.75, "Variable de uso operativo\nsupera umbral", AZUL)
+    caja(1.0, 5.25, 2.8, 0.75, "Días desde última\nintervención elevados", GRIS_OSCURO)
+    caja(6.2, 5.25, 2.8, 0.75, "Disponibilidad reciente\nreducida", GRIS_OSCURO)
+
+    caja(0.35, 3.65, 2.1, 0.75, "BAJO\nriesgo", VERDE)
+    caja(3.0, 3.65, 2.1, 0.75, "Downtime acumulado\nelevado", GRIS_OSCURO)
+    caja(6.0, 3.65, 2.1, 0.75, "MEDIO\nriesgo", AMARILLO)
+    caja(8.15, 3.65, 1.5, 0.75, "ALTO\nriesgo", ROJO)
+
+    caja(2.55, 2.1, 1.85, 0.75, "MEDIO\nriesgo", AMARILLO)
+    caja(4.75, 2.1, 1.85, 0.75, "ALTO\nriesgo", ROJO)
+
+    flecha(5.0, 6.75, 2.4, 6.0, "No", dx=-0.15, dy=0.08)
+    flecha(5.0, 6.75, 7.6, 6.0, "Sí", dx=0.15, dy=0.08)
+
+    flecha(2.4, 5.25, 1.4, 4.4, "No", dx=-0.15)
+    flecha(2.4, 5.25, 4.05, 4.4, "Sí", dx=0.10)
+
+    flecha(7.6, 5.25, 6.95, 4.4, "No", dx=-0.10)
+    flecha(7.6, 5.25, 8.85, 4.4, "Sí", dx=0.10)
+
+    flecha(4.05, 3.65, 3.45, 2.85, "No", dx=-0.10)
+    flecha(4.05, 3.65, 5.65, 2.85, "Sí", dx=0.10)
+
+    ax.text(
+        5.0,
+        0.95,
+        "Nodo de decisión: regla condicional sobre una variable explicativa | Nodo hoja: nivel de riesgo operativo",
+        ha='center',
+        fontsize=7.3,
+        color=GRIS_MEDIO,
+        style='italic'
+    )
+
+    plt.title(
+        'Estructura ilustrativa de un árbol de decisión aplicado al problema de\n'
+        'clasificación de inoperatividad en ambulancias Tipo II',
+        fontsize=11,
+        fontweight='bold'
+    )
+
+    plt.tight_layout()
+    plt.savefig(
+        "figuras_tesis/figura_05_arbol_decision_ilustrativo.png",
+        dpi=300,
+        bbox_inches='tight',
+        facecolor='white'
+    )
+    plt.close()
+
+    print("  Figura guardada: figuras_tesis/figura_05_arbol_decision_ilustrativo.png")
+
+
+def generar_figura_06_bagging_random_forest() -> None:
+    """
+    Genera la Figura 6:
+    Esquema de bagging en Random Forest: muestreo con reemplazo,
+    entrenamiento de K árboles independientes y agregación por votación.
+    """
+    _configurar_estilo_figuras_tesis()
+    _asegurar_directorio_figuras()
+
+    from matplotlib.patches import FancyBboxPatch
+
+    AZUL = '#355C7D'
+    GRIS_OSCURO = '#4B5358'
+    GRIS_MEDIO = '#8E969B'
+    NEGRO = '#1F2326'
+
+    fig, ax = plt.subplots(figsize=(11.5, 6.0))
+    ax.set_xlim(0, 12)
+    ax.set_ylim(0, 7)
+    ax.axis('off')
+
+    def caja(x, y, w, h, texto, color, fs=8.2):
+        rect = FancyBboxPatch(
+            (x, y), w, h,
+            boxstyle='round,pad=0.05',
+            facecolor=color,
+            edgecolor='white',
+            linewidth=1.3
+        )
+        ax.add_patch(rect)
+        ax.text(
+            x + w / 2,
+            y + h / 2,
+            texto,
+            ha='center',
+            va='center',
+            fontsize=fs,
+            fontweight='bold',
+            color='white'
+        )
+
+    def flecha(x1, y1, x2, y2):
+        ax.annotate(
+            '',
+            xy=(x2, y2),
+            xytext=(x1, y1),
+            arrowprops=dict(
+                arrowstyle='->',
+                lw=1.1,
+                color=GRIS_MEDIO
+            )
+        )
+
+    caja(0.45, 3.55, 1.35, 0.85, "Dataset\noriginal\nN obs.", AZUL)
+
+    caja(2.25, 5.25, 1.8, 0.70, "Bootstrap\nmuestra 1", GRIS_OSCURO)
+    caja(5.10, 5.25, 1.8, 0.70, "Bootstrap\nmuestra 2", GRIS_OSCURO)
+    caja(7.95, 5.25, 1.8, 0.70, "Bootstrap\nmuestra 3", GRIS_OSCURO)
+
+    caja(2.25, 3.55, 1.8, 0.75, "Árbol 1\nprofundidad ≤ 8", GRIS_OSCURO)
+    caja(5.10, 3.55, 1.8, 0.75, "Árbol 2\nprofundidad ≤ 8", GRIS_OSCURO)
+    caja(7.95, 3.55, 1.8, 0.75, "Árbol 3\nprofundidad ≤ 8", GRIS_OSCURO)
+    caja(10.25, 3.55, 1.35, 0.75, "Árbol K\nK = 200", NEGRO)
+
+    caja(3.1, 1.75, 6.7, 0.80,
+         "Agregación por votación mayoritaria\nŷ = mode(h₁(x), h₂(x), ..., hₖ(x))",
+         GRIS_OSCURO)
+
+    caja(4.35, 0.55, 4.2, 0.75,
+         "Predicción final: ŷ ∈ {0, 1}",
+         NEGRO)
+
+    # Flechas dataset -> bootstrap
+    flecha(1.8, 4.0, 2.25, 5.60)
+    flecha(1.8, 4.0, 5.10, 5.60)
+    flecha(1.8, 4.0, 7.95, 5.60)
+
+    # Flechas bootstrap -> árbol
+    flecha(3.15, 5.25, 3.15, 4.30)
+    flecha(6.00, 5.25, 6.00, 4.30)
+    flecha(8.85, 5.25, 8.85, 4.30)
+
+    # Dataset -> árboles
+    flecha(1.8, 4.0, 2.25, 3.95)
+
+    # Árboles -> agregación
+    flecha(3.15, 3.55, 5.0, 2.55)
+    flecha(6.00, 3.55, 6.00, 2.55)
+    flecha(8.85, 3.55, 7.0, 2.55)
+    flecha(10.9, 3.55, 8.1, 2.55)
+
+    # Agregación -> predicción
+    flecha(6.0, 1.75, 6.0, 1.30)
+
+    ax.text(10.0, 4.1, "…", fontsize=16, color=GRIS_MEDIO, ha='center')
+
+    plt.title(
+        'Esquema de bagging en Random Forest: muestreo con reemplazo,\n'
+        'entrenamiento de K árboles independientes y agregación por votación',
+        fontsize=11,
+        fontweight='bold'
+    )
+
+    plt.tight_layout()
+    plt.savefig(
+        "figuras_tesis/figura_06_bagging_random_forest.png",
+        dpi=300,
+        bbox_inches='tight',
+        facecolor='white'
+    )
+    plt.close()
+
+    print("  Figura guardada: figuras_tesis/figura_06_bagging_random_forest.png")
+
+
+def generar_figura_07_gradient_boosting_conceptual() -> None:
+    """
+    Genera la Figura 7:
+    Proceso secuencial de Gradient Boosting como modelo comparativo
+    de ensamble.
+
+    La figura evita mostrar hiperparámetros concretos para no confundir
+    el marco teórico con la configuración final del experimento.
+    """
+    _configurar_estilo_figuras_tesis()
+    _asegurar_directorio_figuras()
+
+    from matplotlib.patches import FancyBboxPatch
+
+    AZUL = '#355C7D'
+    GRIS_OSCURO = '#4B5358'
+    GRIS_MEDIO = '#8E969B'
+    NEGRO = '#1F2326'
+    ROJO = '#C96B63'
+
+    fig, ax = plt.subplots(figsize=(11.5, 4.6))
+    ax.set_xlim(0, 12)
+    ax.set_ylim(0, 5)
+    ax.axis('off')
+
+    def caja(x, y, w, h, texto, color, fs=8.0):
+        rect = FancyBboxPatch(
+            (x, y), w, h,
+            boxstyle='round,pad=0.05',
+            facecolor=color,
+            edgecolor='white',
+            linewidth=1.3
+        )
+        ax.add_patch(rect)
+        ax.text(
+            x + w / 2,
+            y + h / 2,
+            texto,
+            ha='center',
+            va='center',
+            fontsize=fs,
+            fontweight='bold',
+            color='white'
+        )
+
+    def flecha(x1, y1, x2, y2):
+        ax.annotate(
+            '',
+            xy=(x2, y2),
+            xytext=(x1, y1),
+            arrowprops=dict(
+                arrowstyle='->',
+                lw=1.1,
+                color=GRIS_MEDIO
+            )
+        )
+
+    def flecha_error(x, y1, y2):
+        ax.annotate(
+            '',
+            xy=(x, y2),
+            xytext=(x, y1),
+            arrowprops=dict(
+                arrowstyle='->',
+                lw=1.0,
+                color=ROJO,
+                linestyle='--'
+            )
+        )
+
+    caja(0.55, 2.35, 1.65, 0.85, "Modelo inicial\nF₀(x)", AZUL)
+    caja(2.75, 2.35, 1.65, 0.85, "Árbol débil h₁(x)\nresiduales", GRIS_OSCURO)
+    caja(4.95, 2.35, 1.65, 0.85, "Árbol débil h₂(x)\nerror restante", GRIS_OSCURO)
+    caja(7.15, 2.35, 1.65, 0.85, "Árbol débil hₘ(x)\ncorrección iterativa", GRIS_OSCURO)
+    caja(9.70, 2.35, 1.65, 0.85, "Predicción\nfinal Fₘ(x)", NEGRO)
+
+    flecha(2.20, 2.78, 2.75, 2.78)
+    flecha(4.40, 2.78, 4.95, 2.78)
+    flecha(6.60, 2.78, 7.15, 2.78)
+    flecha(8.80, 2.78, 9.70, 2.78)
+
+    flecha_error(3.55, 1.05, 2.35)
+    flecha_error(5.75, 1.05, 2.35)
+    flecha_error(7.95, 1.05, 2.35)
+
+    ax.text(3.55, 0.78, "errores del\nmodelo previo",
+            ha='center', fontsize=7.2, color=ROJO, style='italic')
+    ax.text(5.75, 0.78, "nuevos\nresiduales",
+            ha='center', fontsize=7.2, color=ROJO, style='italic')
+    ax.text(7.95, 0.78, "corrección\nsecuencial",
+            ha='center', fontsize=7.2, color=ROJO, style='italic')
+
+    ax.text(
+        6.0,
+        1.55,
+        "Cada árbol débil se entrena para reducir el error residual del ensamble anterior.",
+        ha='center',
+        fontsize=8,
+        color=GRIS_OSCURO,
+        style='italic'
+    )
+
+    plt.title(
+        'Proceso secuencial de Gradient Boosting como modelo comparativo:\n'
+        'corrección iterativa de errores mediante árboles débiles',
+        fontsize=11,
+        fontweight='bold'
+    )
+
+    plt.tight_layout()
+    plt.savefig(
+        "figuras_tesis/figura_07_gradient_boosting_conceptual.png",
+        dpi=300,
+        bbox_inches='tight',
+        facecolor='white'
+    )
+    plt.close()
+
+    print("  Figura guardada: figuras_tesis/figura_07_gradient_boosting_conceptual.png")
+
+
+def generar_figura_08_matriz_confusion_teorica() -> None:
+    """
+    Genera la Figura 8:
+    Estructura de la matriz de confusión y métricas derivadas para
+    clasificación binaria.
+    """
+    _configurar_estilo_figuras_tesis()
+    _asegurar_directorio_figuras()
+
+    from matplotlib.patches import FancyBboxPatch
+
+    AZUL = '#355C7D'
+    ROJO = '#C96B63'
+    VERDE = '#78BFA3'
+    AMARILLO = '#F4D35E'
+    GRIS_OSCURO = '#4B5358'
+    GRIS_MEDIO = '#8E969B'
+    NEGRO = '#1F2326'
+
+    fig, axes = plt.subplots(1, 2, figsize=(12.2, 5.3))
+    ax1, ax2 = axes
+
+    # -------------------------------------------------------------------------
+    # Panel izquierdo: matriz de confusión
+    # -------------------------------------------------------------------------
+    ax1.set_xlim(0, 5)
+    ax1.set_ylim(0, 5)
+    ax1.axis('off')
+
+    def caja_matriz(x, y, w, h, texto, color, fs=8.2, text_color='white'):
+        rect = FancyBboxPatch(
+            (x, y), w, h,
+            boxstyle='round,pad=0.04',
+            facecolor=color,
+            edgecolor='white',
+            linewidth=1.2
+        )
+        ax1.add_patch(rect)
+        ax1.text(
+            x + w / 2,
+            y + h / 2,
+            texto,
+            ha='center',
+            va='center',
+            fontsize=fs,
+            color=text_color,
+            fontweight='bold'
+        )
+
+    ax1.text(2.65, 4.55, "Predicho Y = 1", ha='center', fontsize=8.5, fontweight='bold')
+    ax1.text(4.05, 4.55, "Predicho Y = 0", ha='center', fontsize=8.5, fontweight='bold')
+    ax1.text(0.58, 3.55, "Real\nY = 1", ha='center', va='center', fontsize=8.5, fontweight='bold')
+    ax1.text(0.58, 2.05, "Real\nY = 0", ha='center', va='center', fontsize=8.5, fontweight='bold')
+
+    caja_matriz(
+        1.65, 3.00, 1.6, 1.1,
+        "VP\nVerdadero positivo\ninoperatividad\npredicha y ocurrida",
+        VERDE,
+        fs=7.1
+    )
+    caja_matriz(
+        3.25, 3.00, 1.6, 1.1,
+        "FN\nFalso negativo\ninoperatividad\nno predicha",
+        ROJO,
+        fs=7.1
+    )
+    caja_matriz(
+        1.65, 1.50, 1.6, 1.1,
+        "FP\nFalso positivo\nalerta sin\ninoperatividad",
+        AMARILLO,
+        fs=7.1
+    )
+    caja_matriz(
+        3.25, 1.50, 1.6, 1.1,
+        "VN\nVerdadero negativo\noperatividad\ncorrectamente predicha",
+        AZUL,
+        fs=7.1
+    )
+
+    ax1.set_title(
+        'Estructura de la matriz de confusión',
+        fontsize=10,
+        fontweight='bold'
+    )
+
+    # -------------------------------------------------------------------------
+    # Panel derecho: métricas derivadas
+    # -------------------------------------------------------------------------
+    ax2.set_xlim(0, 10)
+    ax2.set_ylim(0, 6)
+    ax2.axis('off')
+
+    ax2.set_title(
+        'Métricas derivadas de la matriz de confusión',
+        fontsize=10,
+        fontweight='bold'
+    )
+
+    metricas = [
+        ("Precisión", r"$\frac{VP}{VP + FP}$", "Proporción de alertas positivas correctas", AZUL),
+        ("Sensibilidad\n(recall)", r"$\frac{VP}{VP + FN}$", "Proporción de inoperatividades detectadas", ROJO),
+        ("Especificidad", r"$\frac{VN}{VN + FP}$", "Proporción de operatividades correctamente identificadas", VERDE),
+        ("F1-Score", r"$\frac{2 \cdot VP}{2 \cdot VP + FP + FN}$", "Media armónica entre precisión y sensibilidad", GRIS_OSCURO),
+    ]
+
+    y0 = 5.0
+    for i, (nombre, formula, descripcion, color) in enumerate(metricas):
+        y = y0 - i * 1.15
+
+        ax2.text(
+            0.1, y,
+            nombre,
+            fontsize=8.4,
+            fontweight='bold',
+            color=color,
+            va='center'
+        )
+
+        ax2.text(
+            3.0, y,
+            formula,
+            fontsize=13,
+            color=NEGRO,
+            va='center'
+        )
+
+        ax2.text(
+            6.25, y,
+            descripcion,
+            fontsize=7.6,
+            color=GRIS_MEDIO,
+            va='center',
+            style='italic'
+        )
+
+        ax2.plot([0.1, 9.6], [y - 0.42, y - 0.42],
+                 color='#E6E6E6',
+                 lw=0.8)
+
+    plt.suptitle(
+        'Matriz de confusión y métricas de evaluación para\n'
+        'clasificación binaria desbalanceada',
+        fontsize=11,
+        fontweight='bold'
+    )
+
+    plt.tight_layout()
+    plt.savefig(
+        "figuras_tesis/figura_08_matriz_confusion_teorica.png",
+        dpi=300,
+        bbox_inches='tight',
+        facecolor='white'
+    )
+    plt.close()
+
+    print("  Figura guardada: figuras_tesis/figura_08_matriz_confusion_teorica.png")
 
 def generar_figura_10_umbral_precision_sensibilidad(resultados_lista: list,
                                                      y_val: pd.Series) -> None:
@@ -1213,10 +2009,20 @@ def generar_figuras_individuales_tesis(resultados_lista: list,
     Ejecuta la generación de figuras individuales para la tesis.
 
     Estas figuras reemplazan versiones manuales o antiguas y se generan
-    directamente desde los resultados y datasets finales del flujo computacional.
+    directamente desde los resultados y datasets finales del flujo computacional
+    cuando corresponde.
     """
     print("\nGenerando figuras individuales para la tesis...")
 
+    # Figuras teóricas y metodológicas del marco teórico/metodología
+    generar_figura_03_sigmoide_regresion_logistica()
+    generar_figura_04_balanceo_clases(df_train)
+    generar_figura_05_arbol_decision_ilustrativo()
+    generar_figura_06_bagging_random_forest()
+    generar_figura_07_gradient_boosting_conceptual()
+    generar_figura_08_matriz_confusion_teorica()
+        
+    # Figuras metodológicas y de resultados previamente automatizadas
     generar_figura_10_umbral_precision_sensibilidad(resultados_lista, y_val)
     generar_figura_18_construccion_dataset(df_train, df_val)
     generar_figura_19_pipeline_entrenamiento(resultados_lista, df_train)
@@ -1414,6 +2220,12 @@ if __name__ == "__main__":
     print(f"  importancia_variables.csv")
     print(f"  soporte_preventivo_completo.csv")
     print(f"  resultados_modelo.png")
+    print(f"  figuras_tesis/figura_03_sigmoide_regresion_logistica.png")
+    print(f"  figuras_tesis/figura_04_balanceo_clases.png")
+    print(f"  figuras_tesis/figura_05_arbol_decision_ilustrativo.png")
+    print(f"  figuras_tesis/figura_06_bagging_random_forest.png")
+    print(f"  figuras_tesis/figura_07_gradient_boosting_conceptual.png")
+    print(f"  figuras_tesis/figura_08_matriz_confusion_teorica.png")
     print(f"  figuras_tesis/figura_10_umbral_precision_sensibilidad.png")
     print(f"  figuras_tesis/figura_18_construccion_dataset.png")
     print(f"  figuras_tesis/figura_19_pipeline_entrenamiento.png")
