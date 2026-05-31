@@ -12,6 +12,7 @@ Metodología:
 
 Modelos evaluados:
 - Regresión Logística (modelo de referencia interpretable)
+- Árbol de Decisión (modelo base no lineal interpretable)
 - Random Forest (modelo predictivo seleccionado)
 - Gradient Boosting (modelo comparativo conservador)
 - Mantenimiento preventivo tradicional (línea base operativa)
@@ -33,6 +34,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.metrics import (
     precision_score, recall_score, f1_score,
@@ -172,7 +174,7 @@ def entrenar_modelos(X_train: pd.DataFrame,
     modelos = {}
 
     # --- Modelo 1: Regresión Logística (línea base) ---
-    print("  [1/3] Regresión Logística...")
+    print("  [1/4] Regresión Logística...")
     lr = LogisticRegression(
         class_weight='balanced',
         max_iter=1000,
@@ -200,9 +202,24 @@ def entrenar_modelos(X_train: pd.DataFrame,
     # naturaleza estocástica del oversampling; la interpretación cualitativa
     # (orden de modelos, variables más importantes) permanece estable.
     # -------------------------------------------------------------------------
+    # --- Modelo 2: Árbol de Decisión ---
+    print("  [2/4] Árbol de Decisión...")
+    dt = DecisionTreeClassifier(
+        criterion='gini',
+        max_depth=8,
+        min_samples_leaf=10,
+        class_weight='balanced',
+        random_state=42
+    )
+    dt.fit(X_train, y_train)
+    modelos['Árbol de Decisión'] = {
+        'modelo': dt,
+        'scaler': None,
+        'requiere_escala': False
+    }
 
-    # --- Modelo 2: Random Forest (modelo predictivo seleccionado) ---
-    print("  [2/3] Random Forest...")
+    # --- Modelo 3: Random Forest (modelo predictivo seleccionado) ---
+    print("  [3/4] Random Forest...")
     rf = RandomForestClassifier(
         n_estimators=200,
         max_depth=8,
@@ -218,8 +235,8 @@ def entrenar_modelos(X_train: pd.DataFrame,
         'requiere_escala': False
     }
 
-    # --- Modelo 3: Gradient Boosting (modelo comparativo conservador) ---
-    print("  [3/3] Gradient Boosting...")
+    # --- Modelo 4: Gradient Boosting (modelo comparativo conservador) ---
+    print("  [4/4] Gradient Boosting...")
     gb = GradientBoostingClassifier(
         n_estimators=150,
         max_depth=4,
@@ -472,6 +489,7 @@ def generar_visualizaciones(resultados_lista: list,
     estilos_roc = {
         'Preventivo tradicional (línea base)': (GRIS_CL, (6, 3), 1.0),
         'Regresión Logística':                 (GRIS_ME, (4, 2), 1.3),
+        'Árbol de Decisión':                   (GRIS_OS, (2, 2), 1.3),
         'Random Forest':                       (AZUL,    (3, 1), 1.5),
         'Gradient Boosting':                   (NEGRO,   None,   2.0),
     }
@@ -540,8 +558,8 @@ def generar_visualizaciones(resultados_lista: list,
     x = np.arange(len(mets_keys))
     n_m   = len(resultados_lista)
     ancho = 0.72 / n_m
-    cols_m  = [GRIS_CL, GRIS_ME, AZUL, NEGRO]
-    htchs_m = ['', '///', '\\', '']
+    cols_m  = [GRIS_CL, GRIS_ME, GRIS_OS, AZUL, NEGRO]
+    htchs_m = ['', '///', '..', '\\\\', '']
     for i, r in enumerate(resultados_lista):
         off  = (i - n_m / 2 + 0.5) * ancho
         vals = [r[m] * 100 for m in mets_keys]
@@ -615,6 +633,29 @@ def _asegurar_directorio_figuras():
     import os
     os.makedirs("figuras_tesis", exist_ok=True)
 
+def _limpiar_figuras_tesis() -> None:
+    """
+    Elimina las figuras PNG generadas previamente para evitar archivos antiguos
+    con numeración desactualizada.
+    """
+    _asegurar_directorio_figuras()
+
+    import glob
+    import os
+
+    patrones = [
+        "figuras_tesis/figura_*.png",
+        "figuras_tesis/Figura_*.png"
+    ]
+
+    for patron in patrones:
+        for archivo in glob.glob(patron):
+            try:
+                os.remove(archivo)
+            except OSError:
+                pass
+
+    print("  Figuras antiguas eliminadas de figuras_tesis/")
 
 def _nombre_corto_modelo(nombre: str) -> str:
     """Devuelve nombres cortos para etiquetas de gráficos."""
@@ -622,6 +663,8 @@ def _nombre_corto_modelo(nombre: str) -> str:
         return 'Preventivo\n(base)'
     if 'Regresión' in nombre:
         return 'Reg.\nLogística'
+    if 'Árbol de Decisión' in nombre:
+        return 'Árbol\nde Decisión'
     if 'Random Forest' in nombre:
         return 'Random\nForest'
     if 'Gradient' in nombre:
@@ -1535,8 +1578,8 @@ def generar_figura_10_umbral_precision_sensibilidad(resultados_lista: list,
     nombres = [_nombre_corto_modelo(r['nombre']) for r in resultados_lista]
     sensibilidades_modelos = [r['sensibilidad'] for r in resultados_lista]
 
-    colores = [GRIS_CLARO, GRIS_MEDIO, AZUL, GRIS_OSCURO]
-    hatches = ['', '///', '\\\\', '']
+    colores = [GRIS_CLARO, GRIS_MEDIO, GRIS_OSCURO, AZUL, '#1F2326']
+    hatches = ['', '///', '..', '\\\\', '']
 
     x = np.arange(len(nombres))
     barras = ax2.bar(x, sensibilidades_modelos,
@@ -1585,13 +1628,269 @@ def generar_figura_10_umbral_precision_sensibilidad(resultados_lista: list,
 
     print("  Figura guardada: figuras_tesis/figura_10_umbral_precision_sensibilidad.png")
 
-
-def generar_figura_18_construccion_dataset(df_train: pd.DataFrame,
-                                            df_val: pd.DataFrame) -> None:
+def generar_figura_18_generacion_tablas_simuladas() -> None:
     """
-    Genera la Figura 18:
-    Diagrama de flujo del proceso de construcción del dataset mediante
-    ventanas temporales deslizantes.
+    Figura 18:
+    Arquitectura visual del simulador paramétrico-estocástico empleado para
+    generar las tablas fuente simuladas de mantenimiento, downtime y uso operativo.
+    """
+    _configurar_estilo_figuras_tesis()
+    _asegurar_directorio_figuras()
+    from matplotlib.patches import FancyBboxPatch, Rectangle, Ellipse, Circle
+ 
+    # ── PALETA ─────────────────────────────────────────────────────────────
+    NAVY       = "#1E2F50"
+    BLUE       = "#2F6F9F";  BLUE_LIGHT   = "#EAF3FA"
+    PURPLE     = "#6E5A8A";  PURPLE_LIGHT = "#F1EEF6"  # noqa: F841
+    ORANGE     = "#C7821F";  ORANGE_LIGHT = "#FFF5E6"
+    GREEN      = "#4F8A5B";  GREEN_LIGHT  = "#EEF7EF"
+    RED        = "#B85C50";  RED_LIGHT    = "#FFF0EE"
+    GRAY       = "#5F6B73"
+    BORDER     = "#BFC7CE";  BLACK        = "#1F2326"
+    CARD_FACE = "#F8F6F1"
+    CARD_EDGE = "#A7A7A7"
+    CARD_TITLE = NAVY
+    # ── LIENZO ─────────────────────────────────────────────────────────────
+    W, H = 22.0, 13.0
+    fig, ax = plt.subplots(figsize=(22, 13))
+    ax.set_xlim(0, W); ax.set_ylim(0, H); ax.axis("off")
+ 
+    # ── GEOMETRÍA ──────────────────────────────────────────────────────────
+    CX = 0.70;  CR = 21.30;  CW = CR - CX
+ 
+    F1_Y  = 10.40;  F1_H  = 1.65
+    BUS_Y = F1_Y - 0.34
+    F2_BOT = 4.30;  F2_TOP = 9.80;  F2_H = F2_TOP - F2_BOT
+    F3_Y  = 3.60;   F3_H  = 0.62
+    F4_Y  = 1.50;   F4_H  = 1.25
+    F5_Y  = 0.14;   F5_H  = 0.50
+ 
+    MBND_H = 0.48;  MBND_Y = F2_TOP - MBND_H
+ 
+    MOD_Y = F2_BOT + 0.30
+    MOD_H = MBND_Y - 0.58 - MOD_Y
+    MOD_TOP = MOD_Y + MOD_H  # noqa: F841
+ 
+    CARD_W = CW / 4;  CARD_GAP = 0.20
+    MOD_W  = CW / 3;  MOD_GAP  = 0.32
+ 
+    def card_x(i):    return CX + i * CARD_W
+    def card_cx(i):   return card_x(i) + CARD_W / 2
+    def mod_x(i):     return CX + i * MOD_W
+    def mod_cx(i):    return mod_x(i) + MOD_W / 2
+    def mod_right(i): return mod_x(i) + MOD_W - MOD_GAP / 2
+    def mod_left(i):  return mod_x(i) + MOD_GAP / 2
+ 
+    CYL_W = MOD_W * 0.80
+    def cyl_x(i):  return mod_cx(i) - CYL_W / 2
+    def cyl_cx(i): return mod_cx(i)
+ 
+    Y_CONN = MOD_Y + MOD_H * 0.52
+ 
+    # ── HELPERS ────────────────────────────────────────────────────────────
+    def card(x, y, w, h, title, body, face, edge,
+             body_color=BLACK, fs_t=13.5, fs_b=11.5):
+        ax.add_patch(FancyBboxPatch(
+            (x + CARD_GAP / 2, y), w - CARD_GAP, h,
+            boxstyle="round,pad=0.035,rounding_size=0.09",
+            facecolor=face, edgecolor=edge, linewidth=1.2))
+        ax.text(x + w / 2, y + h - 0.30, title,
+                ha="center", va="top", fontsize=fs_t, fontweight="bold",
+                color=CARD_TITLE, linespacing=1.05)
+        ax.text(x + CARD_GAP / 2 + 0.24, y + h - 0.80, body,
+                ha="left", va="top", fontsize=fs_b, color=body_color, linespacing=1.22)
+ 
+    def module(x, y, w, h, title, sections, color, light):
+        ax.add_patch(FancyBboxPatch(
+            (x + MOD_GAP / 2, y), w - MOD_GAP, h,
+            boxstyle="round,pad=0.035,rounding_size=0.09",
+            facecolor="white", edgecolor=color, linewidth=1.4))
+        ax.add_patch(FancyBboxPatch(
+            (x + MOD_GAP / 2 + 0.12, y + h - 0.52), w - MOD_GAP - 0.24, 0.40,
+            boxstyle="round,pad=0.02,rounding_size=0.06",
+            facecolor=color, edgecolor=color, linewidth=0.8))
+        ax.text(x + w / 2, y + h - 0.32, title,
+                ha="center", va="center", fontsize=12.5, color="white", fontweight="bold")
+        n = len(sections);  avail_h = h - 0.70;  sec_h = avail_h / n
+        for i, (stitle, sbody) in enumerate(sections):
+            sy = y + h - 0.70 - (i + 1) * sec_h
+            ax.add_patch(FancyBboxPatch(
+                (x + MOD_GAP / 2 + 0.16, sy + 0.08), w - MOD_GAP - 0.32, sec_h - 0.14,
+                boxstyle="round,pad=0.018,rounding_size=0.04",
+                facecolor=light, edgecolor=color, linewidth=0.60, alpha=0.97))
+            ax.text(x + MOD_GAP / 2 + 0.32, sy + sec_h - 0.16, stitle,
+                    ha="left", va="top", fontsize=12.8, color=color, fontweight="bold")
+            ax.text(x + MOD_GAP / 2 + 0.32, sy + sec_h - 0.46, sbody,
+                    ha="left", va="top", fontsize=11.2, color=BLACK, linespacing=1.10)
+ 
+    def arrow_v(x, y1, y2, color=BLUE, lw=2.0):
+        ax.annotate("", xy=(x, y2), xytext=(x, y1),
+                    arrowprops=dict(arrowstyle="-|>", lw=lw, color=color,
+                                    shrinkA=0, shrinkB=0, mutation_scale=14))
+ 
+    def inter_module_connector(i_from, i_to, label):
+        x1 = mod_right(i_from);  x2 = mod_left(i_to);  y = Y_CONN
+        ax.annotate("", xy=(x2, y), xytext=(x1, y),
+                    arrowprops=dict(arrowstyle="-|>", lw=1.6, color=GRAY,
+                                    shrinkA=2, shrinkB=2, mutation_scale=12))
+        ax.text((x1 + x2) / 2, y + 0.22, label,
+                ha="center", va="bottom", fontsize=10, color=GRAY,
+                style="italic", linespacing=1.12,
+                bbox=dict(boxstyle="round,pad=0.10", facecolor="white",
+                          edgecolor=GRAY, linewidth=0.5, alpha=0.92))
+ 
+    def db_cylinder(i, title, fields, color, light):
+        x = cyl_x(i);  y = F4_Y;  w = CYL_W;  h = F4_H
+        ax.add_patch(Rectangle((x, y), w, h,
+                                facecolor=light, edgecolor=color, linewidth=1.3))
+        ax.add_patch(Ellipse((x + w / 2, y + h), w, 0.38,
+                              facecolor=light, edgecolor=color, linewidth=1.3))
+        ax.add_patch(Ellipse((x + w / 2, y), w, 0.38,
+                              facecolor=light, edgecolor=color, linewidth=1.3))
+        ax.text(x + w / 2, y + h * 0.68, title,
+                ha="center", va="center", fontsize=13.0, color=color, fontweight="bold")
+        ax.text(x + w / 2, y + h * 0.32, fields,
+                ha="center", va="center", fontsize=11.5, color=BLACK, linespacing=1.16)
+ 
+    # ── TÍTULO ─────────────────────────────────────────────────────────────
+    ax.text(W / 2, H - 0.42,
+            "Arquitectura del simulador paramétrico-estocástico para generar las tablas fuente",
+            ha="center", va="center", fontsize=16, fontweight="bold", color=BLACK)
+ 
+    # ── CARDS ──────────────────────────────────────────────────────────────
+    card_specs = [
+        ("CONFIGURACIÓN GENERAL",
+         "• Flota: 35 ambulancias Tipo II\n• Período: 2024–2025\n"
+         "• Semilla: np.random.seed(42)\n• Corte temporal: semanal",
+         CARD_FACE, CARD_EDGE),
+        ("HETEROGENEIDAD",
+         "Distribuciones individuales:\n• factor_riesgo ~ U(0.70, 1.50)\n"
+         "• factor_uso ~ U(0.70, 1.40)",
+         CARD_FACE, CARD_EDGE),
+        ("PARÁMETROS CALIBRADOS",
+         "• PM: μ = 37 días, σ = 8\n• Prob. inoperatividad base: 18%/mes\n"
+         "• Falla equipamiento: 8%/mes",
+         CARD_FACE, CARD_EDGE),
+        ("DISTRIBUCIÓN DE SUBSISTEMAS",
+         "• Vehicular: 55%\n• Eléctrico: 28%\n• Equipamiento: 17%",
+         CARD_FACE, CARD_EDGE),
+    ]
+    for i, (title, body, face, edge) in enumerate(card_specs):
+        card(card_x(i), F1_Y, CARD_W, F1_H, title, body, face, edge)
+ 
+    for i in range(4):
+        ax.plot([card_cx(i), card_cx(i)], [F1_Y, BUS_Y],
+                color=BLUE, lw=1.5, solid_capstyle='round')
+    ax.plot([card_cx(0), card_cx(3)], [BUS_Y, BUS_Y],
+            color=BLUE, lw=2.0, solid_capstyle='round')
+    arrow_v((card_cx(0) + card_cx(3)) / 2, BUS_Y, F2_TOP + 0.06, color=BLUE, lw=2.2)
+ 
+    # ── MOTOR ──────────────────────────────────────────────────────────────
+    ax.add_patch(FancyBboxPatch((CX, F2_BOT), CW, F2_H,
+        boxstyle="round,pad=0.035,rounding_size=0.10",
+        facecolor="white", edgecolor=BLUE, linewidth=1.3, linestyle=(0, (4, 3))))
+    ax.add_patch(FancyBboxPatch((CX + 0.12, MBND_Y), CW - 0.24, MBND_H,
+        boxstyle="round,pad=0.02,rounding_size=0.07",
+        facecolor=NAVY, edgecolor=NAVY, linewidth=0.8))
+    ax.text(CX + CW / 2, MBND_Y + MBND_H / 2,
+            "MOTOR DE SIMULACIÓN TEMPORAL 2024–2025",
+            ha="center", va="center", fontsize=11.0, fontweight="bold", color="white")
+ 
+    mod_specs = [
+        ("MÓDULO DE MANTENIMIENTO",
+         [("PM programado",
+           "Δt_PM ~ max(20, N(37, 8²))\ndur_PM ~ max(0.5, N(1.2, 0.4²))"),
+          ("CM probabilístico",
+           "N_CM ~ Poisson(λ_CM)\nλ_CM = (0.18/30)·Δt_PM·factor_riesgo·0.6"),
+          ("Salida",
+           "fecha_inicio, fecha_fin, tipo,\nsubsistema, deriva, duración")],
+         BLUE, BLUE_LIGHT),
+        ("MÓDULO DE INOPERATIVIDAD",
+         [("Desde correctivos",
+           "Z_down ~ Bernoulli(0.65·factor_riesgo)\ndur_down ~ max(0.5, N(3.5, 2.0²))"),
+          ("Eventos espontáneos",
+           "N_esp ~ Poisson(3·factor_riesgo)\ndur_esp ~ max(1.0, Exp(4.0))"),
+          ("Salida",
+           "fecha_inicio, fecha_fin,\nduración_días, causa")],
+         RED, RED_LIGHT),
+        ("MÓDULO DE USO OPERATIVO",
+         [("Carga mensual",
+           "km_mes ~ max(500, N(2800·factor_uso, 600²))\nserv_mes ~ max(10, N(45·factor_uso, 12²))"),
+          ("Acumulación",
+           "km_acum(t) = km_acum(t−1) + km_mes"),
+          ("Salida",
+           "fecha, kilometraje_periodo,\nnumero_servicios, km_acumulado")],
+         GREEN, GREEN_LIGHT),
+    ]
+    for i, (title, sections, color, light) in enumerate(mod_specs):
+        module(mod_x(i), MOD_Y, MOD_W, MOD_H, title, sections, color, light)
+ 
+    inter_module_connector(0, 1, "CM puede activar downtime")
+    inter_module_connector(1, 2, "downtime afecta uso operativo")
+ 
+    # ── EVENTOS SINTÉTICOS ─────────────────────────────────────────────────
+    for i, color in enumerate([BLUE, RED, GREEN]):
+        arrow_v(mod_cx(i), MOD_Y - 0.02, F3_Y + F3_H, color=color, lw=2.2)
+    ax.add_patch(FancyBboxPatch((CX, F3_Y), CW, F3_H,
+        boxstyle="round,pad=0.02,rounding_size=0.05",
+        facecolor="#FFF9EE", edgecolor=ORANGE, linewidth=1.1))
+    ax.text(CX + CW / 2, F3_Y + F3_H / 2,
+            "EVENTOS SINTÉTICOS GENERADOS EN EL TIEMPO\n"
+            "mantenimientos preventivos, correctivos, episodios de downtime, "
+            "kilometraje y servicios mensuales por ambulancia",
+            ha="center", va="center", fontsize=12, color=BLACK, linespacing=1.20)
+ 
+    # ── CILINDROS ──────────────────────────────────────────────────────────
+    ax.text(CX + CW / 2, F3_Y - 0.30, "TABLAS SIMULADAS RESULTANTES",
+            ha="center", va="center", fontsize=10.5, color=NAVY, fontweight="bold")
+    for i, color in enumerate([BLUE, RED, GREEN]):
+        arrow_v(cyl_cx(i), F3_Y, F4_Y + F4_H + 0.18, color=color, lw=2.0)
+    cyl_specs = [
+        ("tabla_mantenimiento.csv",
+        "id_ambulancia | fecha_inicio | fecha_fin\n"
+        "tipo_mantenimiento | subsistema\n"
+        "deriva | duración_días",
+        BLUE, BLUE_LIGHT),
+        ("tabla_downtime.csv",
+        "id_ambulancia | fecha_inicio_downtime\n"
+        "fecha_fin_downtime | duración_días\n"
+        "causa",
+        RED, RED_LIGHT),
+        ("tabla_uso.csv",
+        "id_ambulancia | fecha\n"
+        "kilometraje | servicios\n"
+        "km_acumulado",
+        GREEN, GREEN_LIGHT),
+    ]
+    for i, (title, fields, color, light) in enumerate(cyl_specs):
+        db_cylinder(i, title, fields, color, light)
+ 
+    # ── NOTA ───────────────────────────────────────────────────────────────
+    ax.add_patch(FancyBboxPatch((CX, F5_Y), CW, F5_H,
+        boxstyle="round,pad=0.02,rounding_size=0.05",
+        facecolor="white", edgecolor=PURPLE, linewidth=0.8, linestyle=(0, (3, 3))))
+    ax.text(CX + CW / 2, F5_Y + F5_H / 2,
+            "Nota: el simulador no produce observaciones del modelo directamente; "
+            "primero genera tres tablas fuente sintéticas, "
+            "que luego se integran mediante ventanas temporales deslizantes.",
+            ha="center", va="center", fontsize=12.5, color=GRAY, style="italic")
+ 
+    plt.tight_layout()
+    plt.savefig(
+        "figuras_tesis/figura_18_generacion_tablas_simuladas.png",
+        dpi=360,
+        bbox_inches="tight",
+        facecolor="white"
+    )
+    plt.close()
+    print("  Figura guardada: figuras_tesis/figura_18_generacion_tablas_simuladas.png")
+
+def generar_figura_19_construccion_dataset_observaciones(df_train: pd.DataFrame,
+                                                          df_val: pd.DataFrame) -> None:
+    """
+    Genera la Figura 19:
+    Construcción del dataset modelable mediante ventanas temporales deslizantes,
+    incorporando notación matemática, variables explicativas y partición temporal.
     """
     _configurar_estilo_figuras_tesis()
     _asegurar_directorio_figuras()
@@ -1601,96 +1900,163 @@ def generar_figura_18_construccion_dataset(df_train: pd.DataFrame,
     AZUL = '#355C7D'
     GRIS_OSCURO = '#4B5358'
     GRIS_MEDIO = '#8E969B'
-    ROJO = '#C96B63'
     VERDE = '#78BFA3'
+    ROJO = '#C96B63'
     NEGRO = '#1F2326'
 
     total_obs = len(df_train) + len(df_val)
+    n_train = len(df_train)
+    n_val = len(df_val)
+
     n_unidades = pd.concat([
         df_train[['id_ambulancia']],
         df_val[['id_ambulancia']]
     ], ignore_index=True)['id_ambulancia'].nunique()
 
-    fig, ax = plt.subplots(figsize=(10.5, 7.2))
-    ax.set_xlim(0, 10)
+    n_cortes = pd.concat([
+        df_train[['t0']],
+        df_val[['t0']]
+    ], ignore_index=True)['t0'].nunique()
+
+    fig, ax = plt.subplots(figsize=(13.2, 8.0))
+    ax.set_xlim(0, 14)
     ax.set_ylim(0, 10)
     ax.axis('off')
 
-    def caja(x, y, w, h, texto, color, fs=8.6):
+    def caja(x, y, w, h, texto, color, fs=7.8):
         rect = FancyBboxPatch(
             (x, y), w, h,
-            boxstyle='round,pad=0.04',
+            boxstyle='round,pad=0.045',
             facecolor=color,
             edgecolor='white',
-            linewidth=1.4
+            linewidth=1.3
         )
         ax.add_patch(rect)
-        ax.text(x + w / 2, y + h / 2, texto,
-                ha='center', va='center',
-                fontsize=fs, fontweight='bold',
-                color='white')
+        ax.text(
+            x + w/2, y + h/2, texto,
+            ha='center', va='center',
+            fontsize=fs,
+            fontweight='bold',
+            color='white',
+            linespacing=1.25
+        )
 
     def flecha(x1, y1, x2, y2):
-        ax.annotate('', xy=(x2, y2), xytext=(x1, y1),
-                    arrowprops=dict(arrowstyle='->',
-                                    lw=1.2,
-                                    color=GRIS_MEDIO))
+        ax.annotate(
+            '',
+            xy=(x2, y2), xytext=(x1, y1),
+            arrowprops=dict(arrowstyle='->', lw=1.15, color=GRIS_MEDIO)
+        )
 
-    caja(0.7, 8.4, 2.0, 0.75, "Tabla\nMantenimiento", GRIS_OSCURO)
-    caja(4.0, 8.4, 2.0, 0.75, "Tabla\nDowntime", GRIS_OSCURO)
-    caja(7.3, 8.4, 2.0, 0.75, "Tabla\nUso operativo", GRIS_OSCURO)
+    ax.text(
+        7, 9.55,
+        'Construcción del dataset de observaciones mediante ventanas temporales deslizantes',
+        ha='center', fontsize=12, fontweight='bold', color=NEGRO
+    )
 
-    caja(2.1, 6.95, 5.8, 0.82,
-         "Integración por ambulancia y período\n(cortes semanales)", AZUL)
-    caja(1.8, 5.50, 6.4, 0.82,
-         "Para cada corte temporal t₀:\ncalcular variables explicativas en W = 60 días previos",
-         GRIS_OSCURO)
-    caja(1.5, 4.05, 7.0, 0.88,
-         "Determinar variable objetivo en T = 14 días siguientes\n"
-         "Y = 1 si hubo inoperatividad | Y = 0 en caso contrario",
-         ROJO)
-    caja(2.2, 2.60, 5.6, 0.82,
-         "Observación modelada:\n14 variables explicativas + variable objetivo Y ∈ {0,1}",
-         VERDE)
-    caja(1.8, 1.12, 6.4, 0.90,
-         f"Dataset final: {total_obs:,} observaciones × 15 columnas\n"
-         f"{n_unidades} ambulancias simuladas | np.random.seed(42)",
-         NEGRO)
+    # Entradas
+    caja(0.6, 8.25, 3.4, 0.75, 'Tabla mantenimiento', GRIS_OSCURO, fs=8.2)
+    caja(5.3, 8.25, 3.4, 0.75, 'Tabla downtime', GRIS_OSCURO, fs=8.2)
+    caja(10.0, 8.25, 3.4, 0.75, 'Tabla uso operativo', GRIS_OSCURO, fs=8.2)
 
-    flecha(1.7, 8.4, 3.6, 7.77)
-    flecha(5.0, 8.4, 5.0, 7.77)
-    flecha(8.3, 8.4, 6.4, 7.77)
-    flecha(5.0, 6.95, 5.0, 6.32)
-    flecha(5.0, 5.50, 5.0, 4.93)
-    flecha(5.0, 4.05, 5.0, 3.42)
-    flecha(5.0, 2.60, 5.0, 2.02)
+    caja(
+        3.35, 6.95, 7.3, 0.85,
+        f'Integración por ambulancia y corte temporal t₀\n'
+        f'{n_unidades} ambulancias × {n_cortes} cortes semanales válidos',
+        AZUL, fs=8.2
+    )
 
-    ax.text(5.0, 0.35,
-            f"Partición temporal: entrenamiento 2024 ({len(df_train):,} obs.) | "
-            f"validación 2025 ({len(df_val):,} obs.)",
-            ha='center',
-            va='center',
-            fontsize=8,
-            color=GRIS_OSCURO,
-            style='italic')
+    caja(
+        1.0, 5.45, 5.6, 1.0,
+        'Ventana histórica\nW = 60 días previos\n(t₀ − W, t₀]',
+        GRIS_OSCURO, fs=8.0
+    )
 
-    plt.title('Diagrama de flujo del proceso de construcción del dataset\n'
-              'mediante ventanas temporales deslizantes',
-              fontsize=11,
-              fontweight='bold')
+    caja(
+        7.4, 5.45, 5.6, 1.0,
+        'Horizonte predictivo\nT = 14 días posteriores\n(t₀, t₀ + T]',
+        GRIS_OSCURO, fs=8.0
+    )
+
+    caja(
+        0.75, 3.95, 5.95, 1.05,
+        'Vector de variables explicativas\n'
+        'X(t₀) = [x₁, x₂, …, x₁₄]\n'
+        'mantenimiento + downtime + uso + equipamiento',
+        VERDE, fs=7.8
+    )
+
+    caja(
+        7.25, 3.95, 6.0, 1.05,
+        'Variable objetivo binaria\n'
+        'Y(t₀) = 1 si existe inoperatividad en (t₀, t₀+14]\n'
+        'Y(t₀) = 0 en caso contrario',
+        ROJO, fs=7.55
+    )
+
+    caja(
+        3.7, 2.55, 6.6, 0.8,
+        'Una observación = {id_ambulancia, t₀, X(t₀), Y(t₀)}',
+        NEGRO, fs=8.4
+    )
+
+    caja(
+        4.4, 1.35, 5.2, 0.75,
+        f'Dataset final: {total_obs:,} observaciones × 15 columnas',
+        NEGRO, fs=8.8
+    )
+
+    caja(
+        1.45, 0.25, 4.7, 0.72,
+        f'Entrenamiento temporal\n2024 | {n_train:,} observaciones',
+        VERDE, fs=7.8
+    )
+
+    caja(
+        7.85, 0.25, 4.7, 0.72,
+        f'Validación retrospectiva\n2025 | {n_val:,} observaciones',
+        AZUL, fs=7.8
+    )
+
+    # Flechas
+    flecha(2.3, 8.25, 5.0, 7.80)
+    flecha(7.0, 8.25, 7.0, 7.80)
+    flecha(11.7, 8.25, 9.0, 7.80)
+
+    flecha(7.0, 6.95, 3.8, 6.45)
+    flecha(7.0, 6.95, 10.2, 6.45)
+
+    flecha(3.8, 5.45, 3.8, 5.00)
+    flecha(10.2, 5.45, 10.2, 5.00)
+
+    flecha(3.8, 3.95, 5.8, 3.35)
+    flecha(10.2, 3.95, 8.2, 3.35)
+
+    flecha(7.0, 2.55, 7.0, 2.10)
+    flecha(7.0, 1.35, 3.8, 0.97)
+    flecha(7.0, 1.35, 10.2, 0.97)
+
+    ax.text(
+        7, -0.25,
+        'Nota: cada fila del dataset representa una ambulancia en un corte temporal específico; no representa una unidad distinta.',
+        ha='center', fontsize=7.8, color=GRIS_OSCURO, style='italic'
+    )
 
     plt.tight_layout()
-    plt.savefig("figuras_tesis/figura_18_construccion_dataset.png",
-                dpi=300, bbox_inches='tight')
+    plt.savefig(
+        "figuras_tesis/figura_19_construccion_dataset_observaciones.png",
+        dpi=320,
+        bbox_inches='tight',
+        facecolor='white'
+    )
     plt.close()
 
-    print("  Figura guardada: figuras_tesis/figura_18_construccion_dataset.png")
-
-
-def generar_figura_19_pipeline_entrenamiento(resultados_lista: list,
+    print("  Figura guardada: figuras_tesis/figura_19_construccion_dataset_observaciones.png")
+    
+def generar_figura_20_pipeline_entrenamiento(resultados_lista: list,
                                              df_train: pd.DataFrame) -> None:
     """
-    Genera la Figura 19:
+    Genera la Figura 20:
     Diagrama de flujo del pipeline de entrenamiento de modelos de
     clasificación supervisada.
     """
@@ -1750,7 +2116,7 @@ def generar_figura_19_pipeline_entrenamiento(resultados_lista: list,
          GRIS_OSCURO)
 
     caja(6.95, y, 2.30, 1.0,
-         "Entrenamiento\n3 algoritmos\nRL | RF | GB",
+         "Entrenamiento\n4 algoritmos\nRL | AD | RF | GB",
          GRIS_OSCURO)
 
     caja(9.60, y, 2.10, 1.0,
@@ -1774,7 +2140,7 @@ def generar_figura_19_pipeline_entrenamiento(resultados_lista: list,
     ax.text(5.68, 1.22, "StandardScaler\nsolo para RL",
             ha='center', fontsize=7.2, color=GRIS_OSCURO, style='italic')
     ax.text(8.10, 1.05,
-            "RL: C = 0,1\nRF: n = 200, depth = 8\nGB: n = 150, lr = 0,05",
+            "RL: C = 0,1\nAD: Gini, depth = 8\nRF: n = 200, depth = 8\nGB: n = 150, lr = 0,05",
             ha='center', fontsize=7.1, color=GRIS_OSCURO, style='italic')
     ax.text(10.65, 1.22,
             "Métricas: exactitud, especificidad,\nprecisión, sensibilidad, F1, AUC y MAE",
@@ -1789,17 +2155,16 @@ def generar_figura_19_pipeline_entrenamiento(resultados_lista: list,
               fontweight='bold')
 
     plt.tight_layout()
-    plt.savefig("figuras_tesis/figura_19_pipeline_entrenamiento.png",
+    plt.savefig("figuras_tesis/figura_20_pipeline_entrenamiento.png",
                 dpi=300, bbox_inches='tight')
     plt.close()
 
-    print("  Figura guardada: figuras_tesis/figura_19_pipeline_entrenamiento.png")
+    print("  Figura guardada: figuras_tesis/figura_20_pipeline_entrenamiento.png")
 
-
-def generar_figura_23_distribucion_variable_objetivo(df_train: pd.DataFrame,
+def generar_figura_24_distribucion_variable_objetivo(df_train: pd.DataFrame,
                                                       df_val: pd.DataFrame) -> None:
     """
-    Genera la Figura 23:
+    Genera la Figura 24:
     Distribución de la variable objetivo por conjunto de datos.
     """
     _configurar_estilo_figuras_tesis()
@@ -1859,17 +2224,17 @@ def generar_figura_23_distribucion_variable_objetivo(df_train: pd.DataFrame,
                  fontweight='bold')
 
     plt.tight_layout()
-    plt.savefig("figuras_tesis/figura_23_distribucion_variable_objetivo.png",
+    plt.savefig("figuras_tesis/figura_24_distribucion_variable_objetivo.png",
                 dpi=300, bbox_inches='tight')
     plt.close()
 
-    print("  Figura guardada: figuras_tesis/figura_23_distribucion_variable_objetivo.png")
+    print("  Figura guardada: figuras_tesis/figura_24_distribucion_variable_objetivo.png")
 
 
-def generar_figura_24_mapa_correlaciones(df_train: pd.DataFrame,
+def generar_figura_25_mapa_correlaciones(df_train: pd.DataFrame,
                                           df_val: pd.DataFrame) -> None:
     """
-    Genera la Figura 24:
+    Genera la Figura 25:
     Mapa de calor de correlaciones entre las 14 variables explicativas.
     """
     _configurar_estilo_figuras_tesis()
@@ -1911,16 +2276,233 @@ def generar_figura_24_mapa_correlaciones(df_train: pd.DataFrame,
                  fontweight='bold')
 
     plt.tight_layout()
-    plt.savefig("figuras_tesis/figura_24_mapa_correlaciones.png",
+    plt.savefig("figuras_tesis/figura_25_mapa_correlaciones.png",
                 dpi=320, bbox_inches='tight')
     plt.close()
 
-    print("  Figura guardada: figuras_tesis/figura_24_mapa_correlaciones.png")
+    print("  Figura guardada: figuras_tesis/figura_25_mapa_correlaciones.png")
 
-
-def generar_figura_25_matrices_confusion(resultados_lista: list) -> None:
+def generar_figura_26_dispersion_variables_clave(df_train: pd.DataFrame,
+                                                  df_val: pd.DataFrame) -> None:
     """
-    Genera la Figura 25:
+    Genera la Figura 26:
+    Diagramas de dispersión entre variables explicativas relevantes y eventos
+    de inoperatividad, usando marcadores triangulares para mejorar la distinción visual.
+    """
+    _configurar_estilo_figuras_tesis()
+    _asegurar_directorio_figuras()
+
+    AZUL = '#355C7D'
+    ROJO = '#C96B63'
+    GRIS_OSCURO = '#4B5358'
+
+    df_total = pd.concat([df_train, df_val], ignore_index=True).copy()
+
+    fig, axes = plt.subplots(1, 3, figsize=(15, 4.8))
+
+    pares = [
+        (
+            'km_en_w',
+            'servicios_en_w',
+            'Kilometraje en W',
+            'Servicios prestados en W',
+            'Intensidad de uso operativo'
+        ),
+        (
+            'dias_desde_ultima_interv',
+            'downtime_total_dias_w',
+            'Días desde última intervención',
+            'Downtime total en W',
+            'Antigüedad de intervención y downtime'
+        ),
+        (
+            'disponibilidad_w',
+            'servicios_en_w',
+            'Disponibilidad en W',
+            'Servicios prestados en W',
+            'Disponibilidad reciente y demanda operativa'
+        )
+    ]
+
+    for ax, (x_var, y_var, x_label, y_label, titulo) in zip(axes, pares):
+        df_0 = df_total[df_total[TARGET] == 0]
+        df_1 = df_total[df_total[TARGET] == 1]
+
+        ax.scatter(
+            df_0[x_var],
+            df_0[y_var],
+            marker='^',
+            s=28,
+            alpha=0.42,
+            color=AZUL,
+            edgecolors='none',
+            label='Y = 0 operativa'
+        )
+
+        ax.scatter(
+            df_1[x_var],
+            df_1[y_var],
+            marker='^',
+            s=38,
+            alpha=0.78,
+            color=ROJO,
+            edgecolors='black',
+            linewidths=0.25,
+            label='Y = 1 inoperativa'
+        )
+
+        ax.set_title(titulo, fontsize=10, fontweight='bold')
+        ax.set_xlabel(x_label, fontsize=9)
+        ax.set_ylabel(y_label, fontsize=9)
+        ax.grid(True, alpha=0.35)
+        ax.tick_params(axis='both', labelsize=8)
+
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(
+        handles,
+        labels,
+        loc='lower center',
+        ncol=2,
+        fontsize=8.5,
+        frameon=True,
+        bbox_to_anchor=(0.5, -0.02)
+    )
+
+    plt.suptitle(
+        'Diagramas de dispersión entre variables explicativas relevantes y eventos de inoperatividad',
+        fontsize=12,
+        fontweight='bold',
+        y=1.03
+    )
+
+    plt.tight_layout(rect=[0, 0.07, 1, 0.98])
+    plt.savefig(
+        "figuras_tesis/figura_26_dispersion_variables_clave.png",
+        dpi=320,
+        bbox_inches='tight',
+        facecolor='white'
+    )
+    plt.close()
+
+    print("  Figura guardada: figuras_tesis/figura_26_dispersion_variables_clave.png")
+
+def generar_figura_27_boxplots_variables_por_clase(df_train: pd.DataFrame,
+                                                    df_val: pd.DataFrame) -> None:
+    """
+    Genera la Figura 27:
+    Distribución de las 14 variables explicativas según la clase objetivo,
+    comparando observaciones operativas (Y=0) e inoperativas (Y=1).
+    """
+    _configurar_estilo_figuras_tesis()
+    _asegurar_directorio_figuras()
+
+    AZUL = '#355C7D'
+    ROJO = '#C96B63'
+    GRIS_OSCURO = '#4B5358'
+
+    df_total = pd.concat([df_train, df_val], ignore_index=True).copy()
+
+    variables_clave = [
+        'km_en_w',
+        'servicios_en_w',
+        'dias_desde_ultima_interv',
+        'disponibilidad_w',
+        'downtime_total_dias_w',
+        'downtime_promedio_dias_w'
+    ]
+
+    variables = [(var, _mapear_variable_legible(var)) for var in variables_clave]
+
+    fig, axes = plt.subplots(2, 3, figsize=(14, 8))
+    axes = axes.flatten()
+
+    for ax, (var, etiqueta) in zip(axes, variables):
+        data_0 = df_total.loc[df_total[TARGET] == 0, var].dropna()
+        data_1 = df_total.loc[df_total[TARGET] == 1, var].dropna()
+
+        bp = ax.boxplot(
+            [data_0, data_1],
+            labels=['Y=0', 'Y=1'],
+            patch_artist=True,
+            widths=0.55,
+            showfliers=True,
+            medianprops=dict(color='black', linewidth=1.0),
+            boxprops=dict(linewidth=0.9),
+            whiskerprops=dict(linewidth=0.8),
+            capprops=dict(linewidth=0.8),
+            flierprops=dict(
+                marker='^',
+                markersize=2.8,
+                markerfacecolor=GRIS_OSCURO,
+                markeredgecolor=GRIS_OSCURO,
+                alpha=0.28
+            )
+        )
+
+        for patch, color in zip(bp['boxes'], [AZUL, ROJO]):
+            patch.set_facecolor(color)
+            patch.set_alpha(0.35)
+            patch.set_edgecolor(color)
+
+        med_0 = data_0.median()
+        med_1 = data_1.median()
+
+        ax.set_title(etiqueta, fontsize=8.2, fontweight='bold')
+        ax.grid(True, axis='y', alpha=0.28)
+        ax.tick_params(axis='both', labelsize=7)
+        ax.set_xlabel('')
+        ax.set_ylabel('')
+
+        # Medianas compactas arriba del panel
+        ax.text(
+            0.03, 0.96,
+            f"Med: {med_0:.1f} | {med_1:.1f}",
+            transform=ax.transAxes,
+            ha='left',
+            va='top',
+            fontsize=6.5,
+            color=GRIS_OSCURO,
+            bbox=dict(facecolor='white', edgecolor='none', alpha=0.75, pad=1.5)
+        )
+
+    # Apagar paneles vacíos
+    for ax in axes[len(variables):]:
+        ax.axis('off')
+
+    # Leyenda general
+    patch_0 = mpatches.Patch(facecolor=AZUL, alpha=0.35, label='Y = 0 operativa')
+    patch_1 = mpatches.Patch(facecolor=ROJO, alpha=0.35, label='Y = 1 inoperativa')
+
+    fig.legend(
+        handles=[patch_0, patch_1],
+        loc='lower center',
+        ncol=2,
+        fontsize=9,
+        frameon=True,
+        bbox_to_anchor=(0.5, 0.015)
+    )
+
+    plt.suptitle(
+        'Distribución de variables explicativas principales según la clase objetivo',
+        fontsize=13,
+        fontweight='bold',
+        y=0.995
+    )
+
+    plt.tight_layout(rect=[0, 0.04, 1, 0.97])
+    plt.savefig(
+        "figuras_tesis/figura_27_boxplots_variables_por_clase.png",
+        dpi=320,
+        bbox_inches='tight',
+        facecolor='white'
+    )
+    plt.close()
+
+    print("  Figura guardada: figuras_tesis/figura_27_boxplots_variables_por_clase.png")
+
+def generar_figura_28_matrices_confusion(resultados_lista: list) -> None:
+    """
+    Genera la Figura 28:
     Matrices de confusión comparativas de los cuatro enfoques evaluados.
     """
     _configurar_estilo_figuras_tesis()
@@ -1929,6 +2511,7 @@ def generar_figura_25_matrices_confusion(resultados_lista: list) -> None:
     modelos_orden = [
         'Preventivo tradicional (línea base)',
         'Regresión Logística',
+        'Árbol de Decisión',
         'Random Forest',
         'Gradient Boosting'
     ]
@@ -1936,7 +2519,7 @@ def generar_figura_25_matrices_confusion(resultados_lista: list) -> None:
     AZUL = '#355C7D'
     GRIS_OSCURO = '#4B5358'
 
-    fig, axes = plt.subplots(1, 4, figsize=(14, 3.8))
+    fig, axes = plt.subplots(1, 5, figsize=(16.5, 3.8))
 
     for ax, nombre in zip(axes, modelos_orden):
         r = next((x for x in resultados_lista if x['nombre'] == nombre), None)
@@ -1988,17 +2571,17 @@ def generar_figura_25_matrices_confusion(resultados_lista: list) -> None:
                      fontsize=8.4,
                      fontweight='bold')
 
-    plt.suptitle('Matrices de confusión de los cuatro enfoques evaluados\n'
+    plt.suptitle('Matrices de confusión de los cinco enfoques evaluados\n'
                  'Período de validación 2025 | n = 1 750 | Umbral τ = 0,30',
                  fontsize=11,
                  fontweight='bold')
 
     plt.tight_layout()
-    plt.savefig("figuras_tesis/figura_25_matrices_confusion.png",
+    plt.savefig("figuras_tesis/figura_28_matrices_confusion.png",
                 dpi=320, bbox_inches='tight')
     plt.close()
 
-    print("  Figura guardada: figuras_tesis/figura_25_matrices_confusion.png")
+    print("  Figura guardada: figuras_tesis/figura_28_matrices_confusion.png")
 
 
 def generar_figuras_individuales_tesis(resultados_lista: list,
@@ -2012,6 +2595,8 @@ def generar_figuras_individuales_tesis(resultados_lista: list,
     directamente desde los resultados y datasets finales del flujo computacional
     cuando corresponde.
     """
+    _limpiar_figuras_tesis()
+
     print("\nGenerando figuras individuales para la tesis...")
 
     # Figuras teóricas y metodológicas del marco teórico/metodología
@@ -2024,11 +2609,14 @@ def generar_figuras_individuales_tesis(resultados_lista: list,
         
     # Figuras metodológicas y de resultados previamente automatizadas
     generar_figura_10_umbral_precision_sensibilidad(resultados_lista, y_val)
-    generar_figura_18_construccion_dataset(df_train, df_val)
-    generar_figura_19_pipeline_entrenamiento(resultados_lista, df_train)
-    generar_figura_23_distribucion_variable_objetivo(df_train, df_val)
-    generar_figura_24_mapa_correlaciones(df_train, df_val)
-    generar_figura_25_matrices_confusion(resultados_lista)
+    generar_figura_18_generacion_tablas_simuladas()
+    generar_figura_19_construccion_dataset_observaciones(df_train, df_val)
+    generar_figura_20_pipeline_entrenamiento(resultados_lista, df_train)
+    generar_figura_24_distribucion_variable_objetivo(df_train, df_val)
+    generar_figura_25_mapa_correlaciones(df_train, df_val)
+    generar_figura_26_dispersion_variables_clave(df_train, df_val)
+    generar_figura_27_boxplots_variables_por_clase(df_train, df_val)
+    generar_figura_28_matrices_confusion(resultados_lista)
 
     print("  Figuras individuales generadas en la carpeta: figuras_tesis/")
 
@@ -2227,11 +2815,14 @@ if __name__ == "__main__":
     print(f"  figuras_tesis/figura_07_gradient_boosting_conceptual.png")
     print(f"  figuras_tesis/figura_08_matriz_confusion_teorica.png")
     print(f"  figuras_tesis/figura_10_umbral_precision_sensibilidad.png")
-    print(f"  figuras_tesis/figura_18_construccion_dataset.png")
-    print(f"  figuras_tesis/figura_19_pipeline_entrenamiento.png")
-    print(f"  figuras_tesis/figura_23_distribucion_variable_objetivo.png")
-    print(f"  figuras_tesis/figura_24_mapa_correlaciones.png")
-    print(f"  figuras_tesis/figura_25_matrices_confusion.png")
+    print(f"  figuras_tesis/figura_18_generacion_tablas_simuladas.png")
+    print(f"  figuras_tesis/figura_19_construccion_dataset_observaciones.png")
+    print(f"  figuras_tesis/figura_20_pipeline_entrenamiento.png")
+    print(f"  figuras_tesis/figura_24_distribucion_variable_objetivo.png")
+    print(f"  figuras_tesis/figura_25_mapa_correlaciones.png")
+    print(f"  figuras_tesis/figura_26_dispersion_variables_clave.png")
+    print(f"  figuras_tesis/figura_27_boxplots_variables_por_clase.png")
+    print(f"  figuras_tesis/figura_28_matrices_confusion.png")
 
     print("\n¡Fase 3-4 completada exitosamente!")
     print("Siguiente paso: Fase 5 — Lineamientos técnicos y redacción de resultados")
