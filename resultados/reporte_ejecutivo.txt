@@ -17,38 +17,44 @@ Período de análisis: 2024-2025
 2. MÉTRICAS DE DESEMPEÑO (Validación 2025)
 
    Preventivo tradicional (línea base)
-     AUC-ROC      : 0.5038
-     Precisión    : 0.1095
-     Sensibilidad : 0.1938
-     MAE          : 0.2177
+     AUC-ROC      : 0.4247
+     Precisión    : 0.1623
+     Sensibilidad : 0.3052
+     MAE          : 0.4733
 
    Regresión Logística
-     AUC-ROC      : 0.5231
-     Precisión    : 0.0925
+     AUC-ROC      : 0.5309
+     Precisión    : 0.2085
      Sensibilidad : 1.0
-     MAE          : 0.491
+     MAE          : 0.5012
+
+   Árbol de Decisión
+     AUC-ROC      : 0.5046
+     Precisión    : 0.2021
+     Sensibilidad : 0.5552
+     MAE          : 0.411
 
    Random Forest
-     AUC-ROC      : 0.5526
-     Precisión    : 0.0994
-     Sensibilidad : 0.8313
-     MAE          : 0.4208
+     AUC-ROC      : 0.5603
+     Precisión    : 0.2118
+     Sensibilidad : 0.9186
+     MAE          : 0.4539
 
    Gradient Boosting
-     AUC-ROC      : 0.5324
-     Precisión    : 0.0966
-     Sensibilidad : 0.5312
-     MAE          : 0.3591
+     AUC-ROC      : 0.5258
+     Precisión    : 0.2217
+     Sensibilidad : 0.6541
+     MAE          : 0.4205
 
 
 3. VARIABLES MÁS IMPORTANTES
 
-   km_en_w                                 : 18.93%
-   servicios_en_w                          : 18.21%
-   dias_desde_ultima_interv                : 11.12%
-   disponibilidad_w                        : 9.94%
-   downtime_total_dias_w                   : 9.61%
-   downtime_promedio_dias_w                : 8.29%
+   km_en_w                                 : 18.52%
+   servicios_en_w                          : 16.91%
+   dias_desde_ultima_interv                : 12.21%
+   downtime_promedio_dias_w                : 9.99%
+   disponibilidad_w                        : 8.71%
+   downtime_total_dias_w                   : 8.10%
 
 4. LINEAMIENTOS DE PRIORIZACIÓN
 

@@ -613,9 +613,9 @@ def generar_visualizacion_lineamientos(df_soporte: pd.DataFrame,
 # FUNCIÓN 7B: FIGURA INDIVIDUAL PARA TESIS — PROTOCOLO SEMANAL
 # =============================================================================
 
-def generar_figura_32_protocolo_semanal() -> None:
+def generar_figura_35_protocolo_semanal() -> None:
     """
-    Genera la Figura 32:
+    Genera la Figura 35:
     Protocolo semanal de uso del modelo computacional predictivo
     para soporte al mantenimiento preventivo de ambulancias Tipo II.
 
@@ -815,14 +815,14 @@ def generar_figura_32_protocolo_semanal() -> None:
 
     plt.tight_layout()
     plt.savefig(
-        "figuras_tesis/figura_32_protocolo_semanal.png",
+        "figuras_tesis/figura_35_protocolo_semanal.png",
         dpi=300,
         bbox_inches='tight',
         facecolor='white'
     )
     plt.close()
 
-    print("  Figura guardada: figuras_tesis/figura_32_protocolo_semanal.png")
+    print("  Figura guardada: figuras_tesis/figura_35_protocolo_semanal.png")
 
 # =============================================================================
 # FUNCIÓN 8: REPORTE EJECUTIVO CONSOLIDADO
@@ -951,7 +951,7 @@ if __name__ == "__main__":
     # Visualizaciones
     print("\n[6/6] Generando visualizaciones de lineamientos...")
     generar_visualizacion_lineamientos(df_soporte, df_val)
-    generar_figura_32_protocolo_semanal()
+    generar_figura_35_protocolo_semanal()
 
     # Reporte ejecutivo
     print("\n" + "="*60)
@@ -985,7 +985,7 @@ if __name__ == "__main__":
     print(f"  recomendaciones_datos.csv")
     print(f"  reporte_ejecutivo.txt")
     print(f"  lineamientos_visualizacion.png")
-    print(f"  figuras_tesis/figura_32_protocolo_semanal.png")
+    print(f"  figuras_tesis/figura_35_protocolo_semanal.png")
 
     print("\n¡Fase 5 completada exitosamente!")
     print("\nRESUMEN DE ENTREGABLES DE TESIS:")

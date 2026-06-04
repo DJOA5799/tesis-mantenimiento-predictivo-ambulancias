@@ -11,22 +11,23 @@
 
 ## Descripción
 
-Repositorio digital de la tesis para optar al Título Profesional de 
-Ingeniero Biomédico. Contiene el código fuente completo del modelo 
-computacional predictivo para el mantenimiento de ambulancias médicas 
-urbanas Tipo II del SAMU en Lima Metropolitana.
+Repositorio digital de la tesis para optar al Título Profesional de Ingeniero Biomédico. Contiene el código fuente, datasets simulados, resultados, figuras y plantilla semanal asociados al modelo computacional basado en datos para el mantenimiento predictivo con soporte preventivo de ambulancias médicas urbanas Tipo II en Lima Metropolitana.
+
+Los datos incluidos en este repositorio son sintéticos y fueron generados mediante simulación paramétrica-estocástica reproducible. No corresponden a registros institucionales reales del SAMU.
 
 ---
 
 ## Estructura del repositorio
 
-| Archivo | Descripción |
+| Archivo o carpeta | Descripción |
 |---|---|
-| `generar_dataset_ambulancias.py` | Fase 1-2: Generación del dataset simulado |
-| `modelo_predictivo_ambulancias.py` | Fase 3-4: Modelo predictivo y validación |
-| `lineamientos_tecnicos.py` | Fase 5: Lineamientos técnicos y soporte preventivo |
-| `datos_simulados/` | Carpeta con los datasets generados (CSV) |
-| `resultados/` | Carpeta con los resultados del modelo (CSV) |
+| `generar_dataset_ambulancias.py` | Fases 1-2: generación del dataset simulado y construcción de observaciones por ventanas temporales |
+| `modelo_predictivo_ambulancias.py` | Fases 3-4: entrenamiento de modelos, validación retrospectiva y generación de métricas |
+| `lineamientos_tecnicos.py` | Fase 5: generación de lineamientos técnicos, criterios de alerta temprana y soporte preventivo |
+| `generar_plantilla_semanal.py` | Generación de plantilla semanal editable de programación de mantenimiento |
+| `datos_simulados/` | Datasets simulados generados en formato CSV |
+| `resultados/` | Resultados del modelo, métricas, salidas de soporte preventivo y plantilla semanal |
+| `figuras_tesis/` | Figuras generadas para la tesis |
 
 ---
 
@@ -37,10 +38,10 @@ urbanas Tipo II del SAMU en Lima Metropolitana.
 - numpy
 - scikit-learn
 - matplotlib
-- seaborn
+- openpyxl
 
 Instalación de dependencias:
-pip install pandas numpy scikit-learn matplotlib seaborn
+pip install pandas numpy scikit-learn matplotlib openpyxl
 
 
 ---
@@ -58,6 +59,49 @@ python modelo_predictivo_ambulancias.py
 3. Generar lineamientos técnicos:
 python lineamientos_tecnicos.py
 
+4. Generar la plantilla semanal:
+python generar_plantilla_semanal.py
+
+---
+
+## Resultados finales reproducibles
+
+La versión final del repositorio corresponde al dataset simulado utilizado en la tesis:
+
+- Flota simulada: 33 ambulancias urbanas Tipo II.
+- Dataset final: 3 102 observaciones.
+- Entrenamiento 2024: 1 452 observaciones.
+- Validación 2025: 1 650 observaciones.
+- Variable objetivo positiva total: 18,9%.
+- Y = 1 en entrenamiento: 16,7%.
+- Y = 1 en validación: 20,8%.
+- Ventana histórica: W = 60 días.
+- Horizonte de predicción: T = 14 días.
+- Paso temporal: semanal.
+- Umbral de clasificación: τ = 0,30.
+- Modelo principal seleccionado: Random Forest.
+
+Resultados del modelo Random Forest en validación retrospectiva 2025:
+
+| Métrica | Valor |
+|---|---:|
+| Precisión | 21,18% |
+| Sensibilidad | 91,86% |
+| Especificidad | 9,95% |
+| Exactitud | 27,03% |
+| F1-Score | 34,42% |
+| AUC-ROC | 56,03% |
+| MAE | 45,39% |
+| Disponibilidad proyectada | 9,58% |
+
+Estos resultados corresponden a una demostración metodológica con datos simulados y no deben interpretarse como desempeño operativo real del SAMU.
+
+---
+
+## Reproducibilidad
+
+La generación del dataset utiliza una semilla fija:
+np.random.seed(42)
 
 ---
 

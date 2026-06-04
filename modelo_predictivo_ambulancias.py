@@ -190,17 +190,20 @@ def entrenar_modelos(X_train: pd.DataFrame,
 
     # -------------------------------------------------------------------------
     # NOTA DE REPRODUCIBILIDAD
-    # Los valores de referencia reportados en la tesis (Tabla 15) corresponden
-    # a la ejecución de validación del 30/04/2026 con los siguientes resultados:
-    #   GB  → AUC-ROC: 0.5551 | Sensibilidad: 0.5625 | VP=90, FP=748, VN=842, FN=70
-    #   RF  → AUC-ROC: 0.5514 | Sensibilidad: 0.8250 | VP=132, FP=1193, VN=397, FN=28
-    #   RL  → AUC-ROC: 0.5498 | Sensibilidad: 1.0000 | VP=160, FP=1580, VN=10, FN=0
-    # Importancia de variables (RF): servicios_en_w=18.99%, km_en_w=18.58%
-    # Umbral de clasificación: τ = 0.30
-    # Estos valores son los canónicos del documento de tesis.
-    # Pequeñas variaciones en ejecuciones futuras son esperables por la
-    # naturaleza estocástica del oversampling; la interpretación cualitativa
-    # (orden de modelos, variables más importantes) permanece estable.
+    # Los valores finales reportados en la tesis corresponden a la ejecución
+    # congelada del dataset simulado actualizado:
+    #   Dataset final: 3 102 observaciones
+    #   Entrenamiento 2024: 1 452 observaciones
+    #   Validación 2025: 1 650 observaciones
+    #   Umbral de clasificación: τ = 0.30
+    #
+    # Resultados principales:
+    #   Random Forest → AUC-ROC: 0.5603 | Sensibilidad: 0.9186 | Precisión: 0.2118
+    #
+    # La interpretación metodológica debe mantenerse prudente: Random Forest
+    # mostró el mejor desempeño relativo para soporte preventivo, con alta
+    # sensibilidad y precisión limitada por el desbalance de clases y el umbral
+    # conservador.
     # -------------------------------------------------------------------------
     # --- Modelo 2: Árbol de Decisión ---
     print("  [2/4] Árbol de Decisión...")
@@ -342,11 +345,14 @@ def calcular_linea_base(y_val: pd.Series,
     Simula el esquema de mantenimiento preventivo tradicional como
     línea base de comparación (OE4).
 
-    Lógica: El esquema preventivo interviene cada ~37 días sin considerar
-    el estado real del activo. Se modela como un clasificador que predice
-    inoperatividad cuando días_desde_ultima_interv > 30 días.
+    Lógica: El esquema preventivo programado se representa como una línea base
+    operativa simplificada, basada en días transcurridos desde la última
+    intervención, sin considerar el estado real del activo. El umbral empleado
+    se mantiene fijo para preservar la comparabilidad de los resultados
+    congelados.
     """
-    # El preventivo "alerta" cuando han pasado más de 30 días sin intervención
+    # Línea base simplificada: alerta según días desde la última intervención.
+    # No modificar este umbral sin recalcular y recongelar los resultados.
     umbral_dias = 30
     y_pred_preventivo = (X_val['dias_desde_ultima_interv'] > umbral_dias).astype(int)
 
@@ -1760,19 +1766,25 @@ def generar_figura_18_generacion_tablas_simuladas() -> None:
     # ── CARDS ──────────────────────────────────────────────────────────────
     card_specs = [
         ("CONFIGURACIÓN GENERAL",
-         "• Flota: 35 ambulancias Tipo II\n• Período: 2024–2025\n"
+         "• Flota: 33 ambulancias Tipo II\n• Período: 2024–2025\n"
          "• Semilla: np.random.seed(42)\n• Corte temporal: semanal",
          CARD_FACE, CARD_EDGE),
+
         ("HETEROGENEIDAD",
          "Distribuciones individuales:\n• factor_riesgo ~ U(0.70, 1.50)\n"
          "• factor_uso ~ U(0.70, 1.40)",
          CARD_FACE, CARD_EDGE),
+
         ("PARÁMETROS CALIBRADOS",
-         "• PM: μ = 37 días, σ = 8\n• Prob. inoperatividad base: 18%/mes\n"
-         "• Falla equipamiento: 8%/mes",
+         "• PM: μ = 180 días, σ = 15\n"
+         "• Referencia inoperatividad base: 21,2%\n"
+         "• Base documentada: 7/33 unidades",
          CARD_FACE, CARD_EDGE),
-        ("DISTRIBUCIÓN DE SUBSISTEMAS",
-         "• Vehicular: 55%\n• Eléctrico: 28%\n• Equipamiento: 17%",
+
+        ("DISTRIBUCIÓN DE MACRO-SUBSISTEMAS",
+         "• Vehicular: 55%\n"
+         "• Eléctrico/electrónico: 28%\n"
+         "• Biomédico-asistencial: 17%",
          CARD_FACE, CARD_EDGE),
     ]
     for i, (title, body, face, edge) in enumerate(card_specs):
@@ -1799,27 +1811,35 @@ def generar_figura_18_generacion_tablas_simuladas() -> None:
     mod_specs = [
         ("MÓDULO DE MANTENIMIENTO",
          [("PM programado",
-           "Δt_PM ~ max(20, N(37, 8²))\ndur_PM ~ max(0.5, N(1.2, 0.4²))"),
+           "Δt_PM ~ max(150, N(180, 15²))\n"
+           "dur_PM ~ max(0.5, N(1.2, 0.4²))"),
           ("CM probabilístico",
-           "N_CM ~ Poisson(λ_CM)\nλ_CM = (0.18/30)·Δt_PM·factor_riesgo·0.6"),
+           "N_CM ~ Poisson(λ_CM)\n"
+           "λ_CM = (0.18/30)·Δt_PM·factor_riesgo·0.6"),
           ("Salida",
-           "fecha_inicio, fecha_fin, tipo,\nsubsistema, deriva, duración")],
+           "fecha_inicio, fecha_fin, tipo,\n"
+           "macro_subsistema, deriva, duración")],
          BLUE, BLUE_LIGHT),
         ("MÓDULO DE INOPERATIVIDAD",
          [("Desde correctivos",
-           "Z_down ~ Bernoulli(0.65·factor_riesgo)\ndur_down ~ max(0.5, N(3.5, 2.0²))"),
+           "Z_down ~ Bernoulli(0.65·factor_riesgo)\n"
+           "dur_down ~ max(0.5, N(3.5, 2.0²))"),
           ("Eventos espontáneos",
-           "N_esp ~ Poisson(3·factor_riesgo)\ndur_esp ~ max(1.0, Exp(4.0))"),
+           "N_esp ~ Poisson(3·factor_riesgo)\n"
+           "dur_esp ~ max(1.0, Exp(4.0))"),
           ("Salida",
-           "fecha_inicio, fecha_fin,\nduración_días, causa")],
+           "fecha_inicio, fecha_fin,\n"
+           "duración_días, causa")],
          RED, RED_LIGHT),
         ("MÓDULO DE USO OPERATIVO",
          [("Carga mensual",
-           "km_mes ~ max(500, N(2800·factor_uso, 600²))\nserv_mes ~ max(10, N(45·factor_uso, 12²))"),
+           "km_mes ~ max(500, N(2800·factor_uso, 600²))\n"
+           "serv_mes ~ max(10, N(45·factor_uso, 12²))"),
           ("Acumulación",
            "km_acum(t) = km_acum(t−1) + km_mes"),
           ("Salida",
-           "fecha, kilometraje_periodo,\nnumero_servicios, km_acumulado")],
+           "fecha, kilometraje_periodo,\n"
+           "numero_servicios, km_acumulado")],
          GREEN, GREEN_LIGHT),
     ]
     for i, (title, sections, color, light) in enumerate(mod_specs):
@@ -1849,7 +1869,7 @@ def generar_figura_18_generacion_tablas_simuladas() -> None:
         ("tabla_mantenimiento.csv",
         "id_ambulancia | fecha_inicio | fecha_fin\n"
         "tipo_mantenimiento | subsistema\n"
-        "deriva | duración_días",
+        "deriva_inoperatividad | duración_días",
         BLUE, BLUE_LIGHT),
         ("tabla_downtime.csv",
         "id_ambulancia | fecha_inicio_downtime\n"
@@ -2002,19 +2022,19 @@ def generar_figura_19_construccion_dataset_observaciones(df_train: pd.DataFrame,
 
     caja(
         4.4, 1.35, 5.2, 0.75,
-        f'Dataset final: {total_obs:,} observaciones × 15 columnas',
+        f'Dataset final: {total_obs:,}'.replace(',', ' ') + ' observaciones × 15 columnas',
         NEGRO, fs=8.8
     )
 
     caja(
         1.45, 0.25, 4.7, 0.72,
-        f'Entrenamiento temporal\n2024 | {n_train:,} observaciones',
+        f'Entrenamiento temporal\n2024 | {n_train:,}'.replace(',', ' ') + ' observaciones',
         VERDE, fs=7.8
     )
 
     caja(
         7.85, 0.25, 4.7, 0.72,
-        f'Validación retrospectiva\n2025 | {n_val:,} observaciones',
+        f'Validación retrospectiva\n2025 | {n_val:,}'.replace(',', ' ') + ' observaciones',
         AZUL, fs=7.8
     )
 
@@ -2038,7 +2058,7 @@ def generar_figura_19_construccion_dataset_observaciones(df_train: pd.DataFrame,
 
     ax.text(
         7, -0.25,
-        'Nota: cada fila del dataset representa una ambulancia en un corte temporal específico; no representa una unidad distinta.',
+        'Nota: cada fila del dataset representa una observación ambulancia-corte temporal; no representa una ambulancia distinta.',
         ha='center', fontsize=7.8, color=GRIS_OSCURO, style='italic'
     )
 
@@ -2074,6 +2094,7 @@ def generar_figura_20_pipeline_entrenamiento(resultados_lista: list,
     rf_res = next((r for r in resultados_lista if r['nombre'] == 'Random Forest'), None)
     auc_rf = rf_res['auc_roc'] if rf_res else 0.0
     sens_rf = rf_res['sensibilidad'] if rf_res else 0.0
+    prec_rf = rf_res['precision'] if rf_res else 0.0
 
     fig, ax = plt.subplots(figsize=(12.5, 4.8))
     ax.set_xlim(0, 14.2)
@@ -2145,9 +2166,9 @@ def generar_figura_20_pipeline_entrenamiento(resultados_lista: list,
     ax.text(10.65, 1.22,
             "Métricas: exactitud, especificidad,\nprecisión, sensibilidad, F1, AUC y MAE",
             ha='center', fontsize=7.1, color=GRIS_OSCURO, style='italic')
-    ax.text(12.98, 1.22,
-            f"AUC-ROC = {auc_rf:.4f}\nSens. = {sens_rf:.4f}",
-            ha='center', fontsize=7.2, color=GRIS_OSCURO, style='italic')
+    ax.text(12.98, 1.12,
+            f"AUC-ROC = {auc_rf:.4f}\nSens. = {sens_rf:.4f}\nPrec. = {prec_rf:.4f}",
+            ha='center', fontsize=7.0, color=GRIS_OSCURO, style='italic')
 
     plt.title('Diagrama de flujo del pipeline de entrenamiento de los modelos\n'
               'de clasificación supervisada',
@@ -2572,7 +2593,7 @@ def generar_figura_28_matrices_confusion(resultados_lista: list) -> None:
                      fontweight='bold')
 
     plt.suptitle('Matrices de confusión de los cinco enfoques evaluados\n'
-                 'Período de validación 2025 | n = 1 750 | Umbral τ = 0,30',
+                 'Período de validación 2025 | n = 1 650 | Umbral τ = 0,30',
                  fontsize=11,
                  fontweight='bold')
 
