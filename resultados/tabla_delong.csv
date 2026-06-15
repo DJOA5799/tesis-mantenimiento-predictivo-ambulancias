@@ -1,0 +1,5 @@
+Comparación,AUC A,AUC B,Diferencia (A-B),z,Valor p,Significativo (p<0.05)
+Random Forest vs. Gradient Boosting,0.5603,0.5258,0.0345,2.157,0.031005554603617425,Sí
+Random Forest vs. Árbol de Decisión,0.5603,0.5046,0.0557,2.7893,0.0052822370248784,Sí
+Random Forest vs. Regresión Logística,0.5603,0.5309,0.0294,1.5075,0.13168664785723916,No
+Random Forest vs. Preventivo tradicional (línea base),0.5603,0.4247,0.1355,4.5789,4.673647892694532e-06,Sí

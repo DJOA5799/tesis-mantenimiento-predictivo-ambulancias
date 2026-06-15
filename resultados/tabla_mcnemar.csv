@@ -1,0 +1,5 @@
+Comparación,n10 (solo A correcto),n01 (solo B correcto),Tipo de prueba,Estadístico,Valor p,Significativo (p<0.05)
+Random Forest vs. Preventivo tradicional (línea base),322,745,Chi² (Yates),166.9016,3.5149982029555744e-38,Sí
+Random Forest vs. Regresión Logística,130,28,Chi² (Yates),64.5633,9.34808271953698e-16,Sí
+Random Forest vs. Árbol de Decisión,188,485,Chi² (Yates),130.1872,3.728943334851304e-30,Sí
+Random Forest vs. Gradient Boosting,129,424,Chi² (Yates),156.3038,7.26576751215489e-36,Sí

@@ -1,0 +1,20 @@
+ANÁLISIS INFERENCIAL COMPLEMENTARIO
+Comparación estadística formal de clasificadores
+n = 1650 (validación 2025); positivos = 344; negativos = 1306
+Umbral de clasificación: tau = 0.30
+
+--- PRUEBA DE McNEMAR ---
+                                          Comparación  n10 (solo A correcto)  n01 (solo B correcto) Tipo de prueba  Estadístico      Valor p Significativo (p<0.05)
+Random Forest vs. Preventivo tradicional (línea base)                    322                    745   Chi² (Yates)     166.9016 3.514998e-38                     Sí
+                Random Forest vs. Regresión Logística                    130                     28   Chi² (Yates)      64.5633 9.348083e-16                     Sí
+                  Random Forest vs. Árbol de Decisión                    188                    485   Chi² (Yates)     130.1872 3.728943e-30                     Sí
+                  Random Forest vs. Gradient Boosting                    129                    424   Chi² (Yates)     156.3038 7.265768e-36                     Sí
+
+--- PRUEBA DE DeLONG ---
+                                          Comparación  AUC A  AUC B  Diferencia (A-B)      z  Valor p Significativo (p<0.05)
+                  Random Forest vs. Gradient Boosting 0.5603 0.5258            0.0345 2.1570 0.031006                     Sí
+                  Random Forest vs. Árbol de Decisión 0.5603 0.5046            0.0557 2.7893 0.005282                     Sí
+                Random Forest vs. Regresión Logística 0.5603 0.5309            0.0294 1.5075 0.131687                     No
+Random Forest vs. Preventivo tradicional (línea base) 0.5603 0.4247            0.1355 4.5789 0.000005                     Sí
+
+--- ANÁLISIS DE COSTO ESPERADO (puntos de cruce) ---
